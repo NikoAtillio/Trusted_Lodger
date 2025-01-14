@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Support Tickets</h2>
+
+{% if tickets %}
+    <ul>
+        {% for ticket in tickets %}
+            <li>
+                <strong>{{ ticket.subject }}</strong> - {{ ticket.created_at|date:"F j, Y" }} - {% if ticket.is_resolved %}Resolved{% else %}Pending{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tickets found.</p>
+{% endif %}
+
+<a href="{% url 'create_ticket' %}">Create New Ticket</a>
+{% endblock %}
