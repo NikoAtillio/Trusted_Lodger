@@ -1,9 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
-def home_page_view(request):
-    return HttpResponse('Hello, World!')
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import ListView
@@ -15,11 +11,21 @@ from .forms import (
     SearchForm, MessageForm
 )
 
+# Base View
+def base(request):
+    """Display the base template."""
+    return render(request, 'hello_world/base.html')  # Ensure this path is correct
+
+# Index View
+def index(request):
+    """Display the homepage."""
+    return render(request, 'hello_world/index.html')  # Ensure this path is correct
+
 # Home View
 def home(request):
     """Display homepage with featured listings"""
     listings = RoomListing.objects.filter(available=True)[:6]
-    return render(request, 'core/index.html', {
+    return render(request, 'hello_world/index.html', {  # Corrected path
         'listings': listings,
         'search_form': SearchForm()
     })
@@ -35,14 +41,14 @@ def register(request):
             return redirect('login')
     else:
         form = CustomUserCreationForm()
-    return render(request, 'core/account/register.html', {'form': form})
+    return render(request, 'hello_world/account/register.html', {'form': form})  # Corrected path
 
 # Profile Views
 @login_required
 def profile_view(request):
     """Display user profile"""
     profile = Profile.objects.get_or_create(user=request.user)[0]
-    return render(request, 'core/profiles/profile.html', {'profile': profile})
+    return render(request, 'hello_world/profiles/profile.html', {'profile': profile})  # Corrected path
 
 @login_required
 def edit_profile(request):
@@ -56,13 +62,13 @@ def edit_profile(request):
             return redirect('profile')
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'core/profiles/edit_profile.html', {'form': form})
+    return render(request, 'hello_world/profiles/edit_profile.html', {'form': form})  # Corrected path
 
 # Room Listing Views
 class RoomListingListView(ListView):
     """Display and filter room listings"""
     model = RoomListing
-    template_name = 'core/listings/search_results.html'
+    template_name = 'hello_world/listings/search_results.html'  # Corrected path
     context_object_name = 'listings'
     paginate_by = 12
 
@@ -101,13 +107,13 @@ def create_listing(request):
             return redirect('listing_detail', pk=listing.pk)
     else:
         form = RoomListingForm()
-    return render(request, 'core/listings/create_listing.html', {'form': form})
+    return render(request, 'hello_world/listings/create_listing.html', {'form': form})  # Corrected path
 
 @login_required
 def listing_detail(request, pk):
     """Display room listing details"""
     listing = get_object_or_404(RoomListing, pk=pk)
-    return render(request, 'core/listings/listing_detail.html', {'listing': listing})
+    return render(request, 'hello_world/listings/listing_detail.html', {'listing': listing})  # Corrected path
 
 # Messaging Views
 @login_required
@@ -116,7 +122,7 @@ def message_list(request):
     messages = Message.objects.filter(
         Q(sender=request.user) | Q(recipient=request.user)
     ).order_by('-created_at')
-    return render(request, 'core/messages/message_list.html', {'messages': messages})
+    return render(request, 'hello_world/messages/message_list.html', {'messages': messages})  # Corrected path
 
 @login_required
 def send_message(request, recipient_id):
@@ -133,14 +139,14 @@ def send_message(request, recipient_id):
             return redirect('message_list')
     else:
         form = MessageForm()
-    return render(request, 'core/messages/send_message.html', {
+    return render(request, 'hello_world/messages/send_message.html', {
         'form': form,
         'recipient': recipient
-    })
+    })  # Corrected path
 
 # Error Handlers
 def custom_404(request, exception):
-    return render(request, 'core/errors/404.html', status=404)
+    return render(request, 'hello_world/errors/404.html', status=404)  # Corrected path
 
 def custom_500(request):
-    return render(request, 'core/errors/500.html', status=500)
+    return render(request, 'hello_world/errors/500.html', status=500)  # Corrected path
