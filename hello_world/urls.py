@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import home_page_view
+from .views import index, base
 
 urlpatterns = [
-    path('', home_page_view),
+    path('', index, name='index'),
+    path('base/', base, name='base'),
 ]
