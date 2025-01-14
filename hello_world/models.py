@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MinValueValidator, MaxValueValidator
 from uuid import uuid4
 
@@ -11,11 +11,21 @@ ROOM_TYPES = [
 ]
 
 class User(AbstractUser):
-    """Custom user model for authentication"""
+    """Custom user model for authentication with related names updated"""
     email = models.EmailField(unique=True)
     user_type = models.CharField(
         max_length=20,
         choices=[('lodger', 'Lodger'), ('homesharer', 'Homesharer')]
+    )
+    groups = models.ManyToManyField(
+        Group,
+        related_name='hello_world_users',  # Changed related_name
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='hello_world_users_permissions',  # Changed related_name
+        blank=True
     )
 
     def __str__(self):
@@ -62,4 +72,4 @@ class Message(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}"
+        return f"Message from {self.sender.username} to {self.recipient.username}"  # Ensured usernames are displayed

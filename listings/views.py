@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.generic import ListView
 from .models import RoomListing
-from listings.forms import RoomListingForm
+from .forms import RoomListingForm, SearchForm
 
 @login_required
 def create_listing(request):
@@ -54,3 +55,25 @@ def delete_listing(request, pk):
         messages.success(request, 'Listing deleted successfully!')
         return redirect('listing_list')
     return render(request, 'listings/delete_listing.html', {'listing': listing})
+
+# Room Listing Views
+class RoomListingListView(ListView):
+    """Display and filter room listings"""
+    model = RoomListing
+    template_name = 'listings/search_results.html'
+    context_object_name = 'listings'
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = RoomListing.objects.filter(available=True)
+        form = SearchForm(self.request.GET)
+        if form.is_valid():
+            if form.cleaned_data.get('location'):
+                queryset = queryset.filter(location__icontains=form.cleaned_data['location'])
+            if form.cleaned_data.get('min_price'):
+                queryset = queryset.filter(price__gte=form.cleaned_data['min_price'])
+            if form.cleaned_data.get('max_price'):
+                queryset = queryset.filter(price__lte=form.cleaned_data['max_price'])
+            if form.cleaned_data.get('room_type'):
+                queryset = queryset.filter(room_type=form.cleaned_data['room_type'])
+        return queryset

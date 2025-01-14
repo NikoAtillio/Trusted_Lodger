@@ -1,12 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class User(AbstractUser):
-    """Custom user model for authentication"""
+    """Custom user model for authentication with related names updated"""
     email = models.EmailField(unique=True)
     user_type = models.CharField(
         max_length=20,
         choices=[('lodger', 'Lodger'), ('homesharer', 'Homesharer')]
+    )
+    groups = models.ManyToManyField(
+        Group,
+        related_name='accounts_users',  # Changed related_name
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='accounts_users_permissions',  # Changed related_name
+        blank=True
     )
 
     def __str__(self):

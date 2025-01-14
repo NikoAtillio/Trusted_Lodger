@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 
+from .models import Profile  # Correctly import the Profile model
+
 User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
@@ -23,5 +25,5 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     """Form for updating user profile information."""
     class Meta:
-        model = 'accounts.Profile'  # Use string reference to avoid circular import
-        fields = ('bio', 'location')  # Ensure 'birth_date' is NOT included
+        model = Profile  # Use the imported Profile model directly
+        fields = ('bio', 'location')
