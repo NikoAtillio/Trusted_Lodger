@@ -16,7 +16,7 @@ class Profile(models.Model):
     """User profile for both lodgers and homesharers"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, blank=True)  # Made location optional
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
