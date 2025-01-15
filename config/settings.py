@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY") or 'django-insecure-l^g7)-e&8ohk%nv$o@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', ]
+ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = ['https://*.8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net']
 
@@ -66,8 +66,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'hello_world/templates'],
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'hello_world/templates'],  # Keep this line to include the templates directory
+        'APP_DIRS': True,  # This allows Django to look for templates in app directories
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
