@@ -1,0 +1,19 @@
+{% extends 'hello_world/base.html' %}
+
+{% block content %}
+<div class="login-form">
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <p>Don't have an account? <a href="{% url 'accounts:register' %}">Sign up here</a>.</p>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser, Group, Permission, User
 
 class User(AbstractUser):
     """Custom user model for authentication with related names updated"""

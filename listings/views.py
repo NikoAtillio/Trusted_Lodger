@@ -54,13 +54,15 @@ def delete_listing(request, pk):
         listing.delete()
         messages.success(request, 'Listing deleted successfully!')
         return redirect('listing_list')
+    else:
+        form = RoomListingForm(instance=listing)
     return render(request, 'listings/delete_listing.html', {'listing': listing})
 
 # Room Listing Views
 class RoomListingListView(ListView):
     """Display and filter room listings"""
     model = RoomListing
-    template_name = 'listings/search_results.html'  # Correct path for search results
+    template_name = 'listings/search_results.html'
     context_object_name = 'listings'
     paginate_by = 12
 
