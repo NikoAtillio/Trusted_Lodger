@@ -24,3 +24,11 @@ def ticket_list(request):
     """Display a list of support tickets for the logged-in user."""
     tickets = SupportTicket.objects.filter(user=request.user)
     return render(request, 'support/ticket_list.html', {'tickets': tickets})
+
+def about(request):
+    """Display the about page."""
+    return render(request, 'support/about.html')  # Ensure this path is correct
+
+def faq_support(request):
+    """Display the FAQ support page."""
+    return render(request, 'support/faq_support.html')  # Ensure this path is correct

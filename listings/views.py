@@ -60,7 +60,7 @@ def delete_listing(request, pk):
 class RoomListingListView(ListView):
     """Display and filter room listings"""
     model = RoomListing
-    template_name = 'listings/search_results.html'
+    template_name = 'listings/search_results.html'  # Correct path for search results
     context_object_name = 'listings'
     paginate_by = 12
 

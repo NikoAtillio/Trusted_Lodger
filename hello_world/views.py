@@ -14,18 +14,18 @@ from .forms import (
 # Base View
 def base(request):
     """Display the base template."""
-    return render(request, 'hello_world/base.html')  # Ensure this path is correct
+    return render(request, 'hello_world/base.html')  # Correct path
 
 # Index View
 def index(request):
     """Display the homepage."""
-    return render(request, 'hello_world/index.html')  # Ensure this path is correct
+    return render(request, 'hello_world/index.html')  # Correct path
 
 # Home View
 def home(request):
     """Display homepage with featured listings"""
     listings = RoomListing.objects.filter(available=True)[:6]
-    return render(request, 'hello_world/index.html', {  # Corrected path
+    return render(request, 'hello_world/index.html', {
         'listings': listings,
         'search_form': SearchForm()
     })
@@ -41,19 +41,19 @@ def register(request):
             return redirect('login')
     else:
         form = CustomUserCreationForm()
-    return render(request, 'hello_world/account/register.html', {'form': form})  # Corrected path
+    return render(request, 'hello_world/account/register.html', {'form': form})  # Correct path
 
 # Profile Views
 @login_required
 def profile_view(request):
     """Display user profile"""
-    profile = Profile.objects.get_or_create(user=request.user)[0]
-    return render(request, 'hello_world/profiles/profile.html', {'profile': profile})  # Corrected path
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'hello_world/profiles/profile.html', {'profile': profile})  # Correct path
 
 @login_required
 def edit_profile(request):
     """Edit user profile"""
-    profile = Profile.objects.get_or_create(user=request.user)[0]
+    profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
@@ -62,13 +62,13 @@ def edit_profile(request):
             return redirect('profile')
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'hello_world/profiles/edit_profile.html', {'form': form})  # Corrected path
+    return render(request, 'hello_world/profiles/edit_profile.html', {'form': form})  # Correct path
 
 # Room Listing Views
 class RoomListingListView(ListView):
     """Display and filter room listings"""
     model = RoomListing
-    template_name = 'hello_world/listings/search_results.html'  # Corrected path
+    template_name = 'hello_world/listings/search_results.html'  # Correct path
     context_object_name = 'listings'
     paginate_by = 12
 
@@ -77,21 +77,13 @@ class RoomListingListView(ListView):
         form = SearchForm(self.request.GET)
         if form.is_valid():
             if form.cleaned_data.get('location'):
-                queryset = queryset.filter(
-                    location__icontains=form.cleaned_data['location']
-                )
+                queryset = queryset.filter(location__icontains=form.cleaned_data['location'])
             if form.cleaned_data.get('min_price'):
-                queryset = queryset.filter(
-                    price__gte=form.cleaned_data['min_price']
-                )
+                queryset = queryset.filter(price__gte=form.cleaned_data['min_price'])
             if form.cleaned_data.get('max_price'):
-                queryset = queryset.filter(
-                    price__lte=form.cleaned_data['max_price']
-                )
+                queryset = queryset.filter(price__lte=form.cleaned_data['max_price'])
             if form.cleaned_data.get('room_type'):
-                queryset = queryset.filter(
-                    room_type=form.cleaned_data['room_type']
-                )
+                queryset = queryset.filter(room_type=form.cleaned_data['room_type'])
         return queryset
 
 @login_required
@@ -107,13 +99,13 @@ def create_listing(request):
             return redirect('listing_detail', pk=listing.pk)
     else:
         form = RoomListingForm()
-    return render(request, 'hello_world/listings/create_listing.html', {'form': form})  # Corrected path
+    return render(request, 'hello_world/listings/create_listing.html', {'form': form})  # Correct path
 
 @login_required
 def listing_detail(request, pk):
     """Display room listing details"""
     listing = get_object_or_404(RoomListing, pk=pk)
-    return render(request, 'hello_world/listings/listing_detail.html', {'listing': listing})  # Corrected path
+    return render(request, 'hello_world/listings/listing_detail.html', {'listing': listing})  # Correct path
 
 # Messaging Views
 @login_required
@@ -122,7 +114,7 @@ def message_list(request):
     messages = Message.objects.filter(
         Q(sender=request.user) | Q(recipient=request.user)
     ).order_by('-created_at')
-    return render(request, 'hello_world/messages/message_list.html', {'messages': messages})  # Corrected path
+    return render(request, 'hello_world/messages/message_list.html', {'messages': messages})  # Correct path
 
 @login_required
 def send_message(request, recipient_id):
@@ -142,11 +134,11 @@ def send_message(request, recipient_id):
     return render(request, 'hello_world/messages/send_message.html', {
         'form': form,
         'recipient': recipient
-    })  # Corrected path
+    })  # Correct path
 
 # Error Handlers
 def custom_404(request, exception):
-    return render(request, 'hello_world/errors/404.html', status=404)  # Corrected path
+    return render(request, 'hello_world/errors/404.html', status=404)  # Correct path
 
 def custom_500(request):
-    return render(request, 'hello_world/errors/500.html', status=500)  # Corrected path
+    return render(request, 'hello_world/errors/500.html', status=500)  # Correct path

@@ -57,3 +57,33 @@ def edit_profile(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'accounts/edit_profile.html', {'form': form})
+
+@login_required
+def account_settings(request):
+    """Display account settings page."""
+    return render(request, 'accounts/account_settings.html')
+
+@login_required
+def inbox(request):
+    """Display inbox page."""
+    return render(request, 'accounts/inbox.html')
+
+@login_required
+def list_room(request):
+    """Display the list room page."""
+    return render(request, 'accounts/list_room.html')
+
+@login_required
+def manage_listing(request):
+    """Display manage listing page."""
+    return render(request, 'accounts/manage_listing.html')
+
+@login_required
+def room_setup(request):
+    """Display room setup page."""
+    return render(request, 'accounts/room_setup.html')
+
+@login_required
+def saved_searches(request):
+    """Display saved searches page."""
+    return render(request, 'accounts/saved_searches.html')
