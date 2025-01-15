@@ -6,6 +6,8 @@ from .views import (
     edit_listing,
 )
 
+app_name = 'listings'
+
 urlpatterns = [
     path('', RoomListingListView.as_view(), name='listing_list'),  # List of room listings
     path('create/', create_listing, name='create_listing'),  # Create a new room listing

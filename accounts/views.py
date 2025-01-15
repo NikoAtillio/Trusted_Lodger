@@ -87,3 +87,8 @@ def room_setup(request):
 def saved_searches(request):
     """Display saved searches page."""
     return render(request, 'accounts/saved_searches.html')
+
+@login_required
+def profile_setup(request):
+    """Display profile setup page."""
+    return render(request, 'accounts/profile_setup.html')

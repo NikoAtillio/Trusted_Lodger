@@ -11,7 +11,10 @@ from .views import (
     manage_listing,    # New view for managing listings
     room_setup,        # New view for room setup
     saved_searches,    # New view for saved searches
+    profile_setup,     # New view for profile setup
 )
+
+app_name = 'accounts'
 
 urlpatterns = [
     path('register/', register, name='register'),  # User registration
@@ -25,4 +28,5 @@ urlpatterns = [
     path('manage-listing/', manage_listing, name='manage_listing'),  # Manage listing
     path('room-setup/', room_setup, name='room_setup'),  # Room setup
     path('saved-searches/', saved_searches, name='saved_searches'),  # Saved searches
+    path('profile-setup/', profile_setup, name='profile_setup'),  # Setup profile
 ]
