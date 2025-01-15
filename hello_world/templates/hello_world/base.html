@@ -13,7 +13,7 @@
             <div class="left-column logo-container">
                 <h1>Trusted </h1>
                 <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
-                <h1> Lodger</h1>
+                <h1>Lodger</h1>
             </div>
             <div class="center-column nav-links">
                 <a href="{% url 'index' %}">Home</a>
@@ -30,12 +30,17 @@
                     </div>
                 </div>
                 {% else %}
-                <a href="{% url 'accounts:login' %}">Login</a>
+                <div class="user-menu">
+                    <img src="{% static 'images/icons/user-icon.png' %}" alt="Login Icon" class="user-icon">
+                    <div class="dropdown-content">
+                        <a href="{% url 'accounts:login' %}">Login</a>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
     </header>
-    
+
     <!-- Main Content -->
     <main class="main-content content">
         {% if messages %}
@@ -48,7 +53,6 @@
             {% endfor %}
         </div>
         {% endif %}
-        
         <div class="container">
             <div class="left-column">
                 <!-- Filters go here for future implementation -->
@@ -74,23 +78,19 @@
     <script src="{% static 'js/navbar.js' %}"></script>
     <script src="{% static 'js/search.js' %}"></script>
 
-    <!-- Additional JavaScript -->
-    {% block extra_js %}{% endblock %}
-
     <!-- Initialize Bootstrap tooltips and popovers -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            // Initialize popovers
+
             var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            var popoverList = popoverTriggerTriggerList.map(function (popoverTriggerEl) {
                 return new bootstrap.Popover(popoverTriggerEl);
             });
-            // Handle the sticky navbar
+
             const navbar = document.querySelector('.navbar');
             let lastScrollTop = 0;
 
@@ -105,5 +105,6 @@
             });
         });
     </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

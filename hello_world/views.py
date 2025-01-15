@@ -79,7 +79,7 @@ class RoomListingListView(ListView):
             if form.cleaned_data.get('location'):
                 queryset = queryset.filter(location__icontains=form.cleaned_data['location'])
             if form.cleaned_data.get('min_price'):
-                queryset = queryset.filter(price__gte=form.cleaned_data['min_price'])
+                queryset = filter(price__gte=form.cleaned_data['min_price'])
             if form.cleaned_data.get('max_price'):
                 queryset = queryset.filter(price__lte=form.cleaned_data['max_price'])
             if form.cleaned_data.get('room_type'):
@@ -135,6 +135,26 @@ def send_message(request, recipient_id):
         'form': form,
         'recipient': recipient
     })  # Correct path
+
+# Support Views
+def faq_support(request):
+    """Display FAQ support page"""
+    return render(request, 'support/faq_support.html')  # Correct path
+
+@login_required
+def create_listing(request):
+    """Create new room listing"""
+    if request.method == 'POST':
+        form = RoomListingForm(request.POST)
+        if form.is_valid():
+            listing = form.save(commit=False)
+            listing.owner = request.user
+            listing.save()
+            messages.success(request, 'Listing created successfully!')
+            return redirect('listing_detail', pk=listing.pk)
+    else:
+        form = RoomListingForm()
+    return render(request, 'hello_world/listings/create_listing.html', {'form': form})  # Correct path
 
 # Error Handlers
 def custom_404(request, exception):

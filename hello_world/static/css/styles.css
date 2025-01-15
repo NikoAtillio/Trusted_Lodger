@@ -154,6 +154,104 @@ body {
     width: 100%;
 }
 
+/* Hero section */
+.hero {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
+    margin: 0 auto; /* Center on page */
+}
+
+.hero-image-container {
+    position: relative;
+    width: 125%; /* Extend to cover columns */
+    height: 100%;
+    display: flex;
+    justify-content: start; /* Adjusted */
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+}
+
+.hero-text-box {
+    position: absolute;
+    top: 50%;
+    left: 60%; /* Offset to the right */
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 2; /* Ensure it's displayed above the image */
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #00E5A0;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #00C787;
+}
+
+/* Features Section */
+.features-section .feature {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+.features-section .feature img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.features-section .feature .feature-text-box {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 2; /* Ensure the text box is above the image */
+}
+
+.features-section .feature .cta-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #00E5A0;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.features-section .feature .cta-button:hover {
+    background-color: #00C787;
+}
+
 @media (max-width: 768px) {
     .navbar-content {
         flex-direction: column;
@@ -180,5 +278,9 @@ body {
         flex: 0 0 100%;
         text-align: center;
         display: none;
+    }
+
+    .features-section .feature {
+        flex: 0 0 100%;
     }
 }

@@ -1,7 +1,64 @@
 {% extends 'hello_world/base.html' %}
 
+{% load static %}
+
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
-<a href="{% url 'accounts:list_room' %}">List a Room</a>
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Welcome To trusted Lodger</h1>
+    <img src="{% static 'images/tl-key.png' %}" alt=" " class="logo-small">
+    <h2>We Are Redefining Homesharing</h2>
+    <div class="hero-image-container">
+        <img src="{% static 'images/housemates.jpg' %}" alt="Hero Image" class="hero-image">
+        <div class="hero-text-box">
+            <h2>Find Your Perfect Roommate!</h2>
+            <p>Use our platform to connect with potential roommates.</p>
+            <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="about-text">
+            <h3>About Us</h3>
+            <p>Learn more about our mission to connect people and enhance communities.</p>
+            <a href="{% url 'support:about' %}" class="cta-button">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="feature left-feature">
+            <img src="{% static 'images/tenant.jpg' %}" alt="Feature Image" class="feature-image">
+            <div class="feature-text-box">
+                <h3>For Tenants</h3>
+                <p>Explore verified listings and find the perfect place to call home.</p>
+                <a href="{% url 'accounts:profile_setup' %}" class="cta-button">Create Profile</a>
+            </div>
+        </div>
+        <div class="feature right-feature">
+            <img src="{% static 'images/landlord.jpg' %}" alt="Feature Image" class="feature-image">
+            <div class="feature-text-box">
+                <h3>For Landlords</h3>
+                <p>List your property and find your ideal tenants with ease.</p>
+                <a href="{% url 'list_room' %}" class="cta-button">List a Room</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<main class="main-content content">
+    <!-- Add additional content here if needed -->
+</main>
+
+<!-- Custom JavaScript -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/navbar.js' %}"></script>
+<script src="{% static 'js/search.js' %}"></script>
 {% endblock %}
