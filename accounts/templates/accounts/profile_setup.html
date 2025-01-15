@@ -1,6 +1,12 @@
 {% extends 'hello_world/base.html' %}
 
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
+<div class="profile-setup-form">
+    <h2>Profile Setup</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save Profile</button>
+    </form>
+</div>
 {% endblock %}

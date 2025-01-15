@@ -10,10 +10,13 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            print("Form is valid")
             user = form.save()
             messages.success(request, 'Account created successfully!')
             login(request, user)  # Automatically log in the user after registration
-            return redirect('home')  # Redirect to home after registration
+            return redirect('accounts:profile_setup')  # Redirect to profile setup page
+        else:
+           messages.error(request, 'Please correct the errors below.') # Add a general error message
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -36,7 +39,7 @@ def logout_view(request):
     """Handle user logout"""
     logout(request)
     messages.success(request, 'Logged out successfully!')
-    return redirect('login')  # Redirect to login page after logout
+    return redirect('index')  # Redirect to home page after logout
 
 @login_required
 def profile_view(request):

@@ -6,23 +6,43 @@
     <form method="post">
         {% csrf_token %}
         
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required>
-        
-        <label for="first_name">First Name:</label>
-        <input type="text" name="first_name" id="first_name" required>
-        
-        <label for="last_name">Last Name:</label>
-        <input type="text" name="last_name" id="last_name" required>
-        
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-        
-        <label for="password1">Password:</label>
-        <input type="password" name="password1" id="password1" required>
-        
-        <label for="password2">Confirm Password:</label>
-        <input type="password" name="password2" id="password2" required>
+        {{ form.non_field_errors }}  <!-- Display non-field errors here -->
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            {{ form.username.errors }}  <!-- Display username errors here -->
+        </div>
+
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" id="first_name" required>
+            {{ form.first_name.errors }}  <!-- Display first name errors here -->
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" id="last_name" required>
+            {{ form.last_name.errors }}  <!-- Display last name errors here -->
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            {{ form.email.errors }}  <!-- Display email errors here -->
+        </div>
+
+        <div class="form-group">
+            <label for="password1">Password:</label>
+            <input type="password" name="password1" id="password1" required>
+            {{ form.password1.errors }}  <!-- Display password1 errors here -->
+        </div>
+
+        <div class="form-group">
+            <label for="password2">Confirm Password:</label>
+            <input type="password" name="password2" id="password2" required>
+            {{ form.password2.errors }}  <!-- Display password2 errors here -->
+        </div>
         
         <button type="submit" class="btn btn-primary">Register</button>
     </form>

@@ -1,28 +1,109 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trusted Lodger</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <header>
-        <h1>Welcome to Trusted Lodger</h1>
-        <nav>
-            <a href="{% url 'index' %}">Home</a>
-            <a href="{% url 'accounts:profile_setup' %}">Profile Setup</a>
-            <a href="{% url 'listings:search_results' %}">Search Listings</a>
-            <a href="{% url 'support:faq_support' %}">FAQ</a>
-        </nav>
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="navbar-content container">
+            <div class="left-column logo-container">
+                <h1>Trusted </h1>
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+                <h1> Lodger</h1>
+            </div>
+            <div class="center-column nav-links">
+                <a href="{% url 'index' %}">Home</a>
+                <a href="{% url 'accounts:profile_setup' %}">Profile Setup</a>
+                <a href="{% url 'listings:search_results' %}">Search Listings</a>
+                <a href="{% url 'support:faq_support' %}">FAQ</a>
+            </div>
+            <div class="right-column">
+                {% if request.user.is_authenticated %}
+                <div class="user-menu">
+                    <img src="{% static 'images/icons/user-icon.png' %}" alt="User Icon" class="user-icon">
+                    <div class="dropdown-content">
+                        <a href="{% url 'accounts:logout' %}">Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'accounts:login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
     </header>
-    <main>
-        {% block content %}
-        {% endblock %}
+    
+    <!-- Main Content -->
+    <main class="main-content content">
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="container">
+            <div class="left-column">
+                <!-- Filters go here for future implementation -->
+            </div>
+            <div class="center-column">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="right-column">
+                <!-- Placeholder for additional right column content -->
+            </div>
+        </div>
     </main>
+
+    <!-- Footer -->
     <footer>
         <p>&copy; 2025 Trusted Lodger</p>
     </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
+
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- Initialize Bootstrap tooltips and popovers -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            // Initialize popovers
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            });
+            // Handle the sticky navbar
+            const navbar = document.querySelector('.navbar');
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > lastScrollTop) {
+                    navbar.classList.add('hidden');
+                } else {
+                    navbar.classList.remove('hidden');
+                }
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
 </body>
 </html>

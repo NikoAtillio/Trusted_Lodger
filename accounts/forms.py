@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 
-from .models import Profile  # Correctly import the Profile model
+from .models import Profile  
 
 User = get_user_model()
 
@@ -29,5 +29,5 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     """Form for updating user profile information."""
     class Meta:
-        model = Profile  # Use the imported Profile model directly
+        model = Profile  
         fields = ('bio', 'location')  # Ensure these fields exist in the Profile model
