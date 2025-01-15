@@ -66,7 +66,10 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'hello_world/templates'],  # Keep this line to include the templates directory
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'hello_world/templates'
+        ],
         'APP_DIRS': True,  # This allows Django to look for templates in app directories
         'OPTIONS': {
             'context_processors': [
