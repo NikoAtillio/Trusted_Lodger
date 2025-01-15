@@ -284,3 +284,57 @@ body {
         flex: 0 0 100%;
     }
 }
+
+/* Process Walkthrough Section */
+.process-section {
+    padding: 50px 0;
+    background-color: #f9f9f9;
+}
+
+.process-intro {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.process-steps {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.step {
+    position: relative;
+    flex: 1;
+    margin: 20px;
+    text-align: center;
+}
+
+.step-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.step-text-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.cta-signup {
+    text-align: center;
+}
+
+.cta-signup h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
