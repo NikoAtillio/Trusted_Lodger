@@ -1,6 +1,95 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Detail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    {% extends 'base.html' %}
 
-{% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
-{% endblock %}
+    {% block content %}
+    <div class="container mx-auto px-4 py-8">
+        <!-- Property Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ property.title }}</h1>
+            <div class="flex items-center text-gray-600 mb-4">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                <span>{{ property.location }}</span>
+                <span class="mx-4">|</span>
+                <i class="fas fa-pound-sign mr-2"></i>
+                <span>{{ property.price }} per month</span>
+            </div>
+        </div>
+
+        <!-- Property Images -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <img src="https://placehold.co/600x400" alt="Property Main Image" class="w-full h-64 object-cover rounded-lg">
+                <img src="https://placehold.co/600x400" alt="Property Secondary Image" class="w-full h-64 object-cover rounded-lg">
+            </div>
+        </div>
+
+        <!-- Property Details -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Main Details -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-2xl font-semibold mb-4">About this property</h2>
+                    <p class="text-gray-700 mb-4">{{ property.description }}</p>
+
+                    <h3 class="text-xl font-semibold mb-3">Amenities</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        {% for amenity in property.amenities.split(',') %}
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>{{ amenity|title }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Sidebar -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-6">
+                    <h3 class="text-xl font-semibold mb-4">Contact Property Owner</h3>
+                    <div class="mb-4">
+                        <img src="https://placehold.co/100x100" alt="Owner Profile" class="w-16 h-16 rounded-full mx-auto mb-2">
+                        <p class="text-center font-medium">{{ property.owner.get_full_name }}</p>
+                    </div>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Message</label>
+                            <textarea class="w-full p-2 border rounded-lg" rows="4" placeholder="I'm interested in this property..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Similar Properties -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Similar Properties</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for i in '123'|make_list %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Similar Property" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2">Similar Property {{ i }}</h3>
+                        <p class="text-gray-600 mb-2">Location {{ i }}</p>
+                        <p class="text-blue-600 font-semibold">£XXX per month</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</body>
+</html>

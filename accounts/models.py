@@ -40,7 +40,7 @@ class RoomListing(models.Model):
         ('Studio', 'Studio'),
     ]
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='listings')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='room_listings')  # Updated related_name
     title = models.CharField(max_length=200)
     description = models.TextField()
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES, default='Single')

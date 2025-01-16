@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .forms import AdvancedSearchForm
-from .models import SavedSearch, RoomListing
+from accounts.models import RoomListing
+from .models import SavedSearch
 
 def search(request):
     """Initial search page with basic search form"""
@@ -73,10 +74,11 @@ def search_results(request):
 
     return render(request, 'searches/search_results.html', context)
 
-def room_detail(request, pk):
-    """Display detailed view of a specific room"""
-    room = get_object_or_404(RoomListing, pk=pk)
-    return render(request, 'searches/room_detail.html', {'room': room})
+@login_required  # Add this if you want to restrict access to logged-in users only
+def property_detail(request, pk):
+    """Display detailed view of a specific property"""
+    property = get_object_or_404(RoomListing, pk=pk)
+    return render(request, 'searches/property_detail.html', {'property': property})
 
 @login_required
 def save_search(request):
