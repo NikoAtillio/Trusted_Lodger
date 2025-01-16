@@ -5,9 +5,6 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="hero">
-    <h1>Welcome To trusted Lodger</h1>
-    <img src="{% static 'images/tl-key.png' %}" alt=" " class="logo-small">
-    <h2>We Are Redefining Homesharing</h2>
     <div class="hero-image-container">
         <img src="{% static 'images/housemates.jpg' %}" alt="Hero Image" class="hero-image">
         <div class="hero-text-box">
@@ -29,7 +26,7 @@
     </div>
 </section>
 
-<!-- Features Section -->
+<!-- Features Section (For Tenants and For Landlords) -->
 <section class="features-section">
     <div class="container">
         <div class="feature left-feature">
@@ -51,10 +48,42 @@
     </div>
 </section>
 
-<!-- Main Content -->
-<main class="main-content content">
-    <!-- Add additional content here if needed -->
-</main>
+<!-- Process Walkthrough Section -->
+<section class="process-section">
+    <div class="container">
+        <div class="process-intro">
+            <h2>How does it work?</h2>
+            <p>Creating a profile and finding a match has never been easier.</p>
+        </div>
+        <div class="process-steps">
+            <div class="step">
+                <img src="{% static 'images/step1.jpg' %}" alt="Step 1 Image" class="step-image">
+                <div class="step-text-box">
+                    <h3>Step 1: Create Profile</h3>
+                    <p>Provide some basic information to get started.</p>
+                </div>
+            </div>
+            <div class="step">
+                <img src="{% static 'images/step2.jpg' %}" alt="Step 2 Image" class="step-image">
+                <div class="step-text-box">
+                    <h3>Step 2: Search Listings</h3>
+                    <p>Browse through listings to find potential roomies!</p>
+                </div>
+            </div>
+            <div class="step">
+                <img src="{% static 'images/step3.jpg' %}" alt="Step 3 Image" class="step-image">
+                <div class="step-text-box">
+                    <h3>Step 3: Review Results</h3>
+                    <p>Choose your match and get in touch.</p>
+                </div>
+            </div>
+        </div>
+        <div class="cta-signup">
+            <h2>It's that easy!</h2>
+            <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up Now</a>
+        </div>
+    </div>
+</section>
 
 <!-- Custom JavaScript -->
 <script src="{% static 'js/jquery.min.js' %}"></script>
