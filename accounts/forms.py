@@ -1,33 +1,39 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
+from .models import User, Profile, RoomListing, Message
 
-from .models import Profile  
-
-User = get_user_model()
-
-class CustomUserCreationForm(UserCreationForm):
-    """Form for creating a new user with additional fields."""
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-
+class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ['username', 'email', 'first_name', 'last_name',
+                 'password1', 'password2', 'user_type']
 
-    def save(self, commit=True):
-        """Override save method to include email and names."""
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        if commit:
-            user.save()
-        return user
-
-class ProfileForm(forms.ModelForm):
-    """Form for updating user profile information."""
+class ProfileSetupForm(forms.ModelForm):
     class Meta:
-        model = Profile  
-        fields = ('bio', 'location')  # Ensure these fields exist in the Profile model
+        model = Profile
+        fields = ['bio', 'location', 'personality_type', 'living_preferences']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4}),
+            'living_preferences': forms.Textarea(attrs={'rows': 4}),
+        }
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'location', 'personality_type', 'living_preferences']
+
+class RoomListingForm(forms.ModelForm):
+    class Meta:
+        model = RoomListing
+        exclude = ['owner', 'created_at', 'updated_at']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'available_from': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['subject', 'content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 4}),
+        }

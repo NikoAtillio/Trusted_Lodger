@@ -1,4 +1,4 @@
-{% extends 'hello_world/base.html' %}
+{% extends 'base.html' %}
 
 {% load static %}
 
@@ -42,7 +42,7 @@
             <div class="feature-text-box">
                 <h3>For Landlords</h3>
                 <p>List your property and find your ideal tenants with ease.</p>
-                <a href="{% url 'list_room' %}" class="cta-button">List a Room</a>
+                <a href="{% url 'listings:create_listing' %}" class="cta-button">List a Room</a>
             </div>
         </div>
     </div>

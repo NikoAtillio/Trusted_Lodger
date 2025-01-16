@@ -1,97 +1,80 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
-from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import User, Profile
-from .forms import CustomUserCreationForm, ProfileForm
-
-def register(request):
-    """Handle user registration"""
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            print("Form is valid")
-            user = form.save()
-            messages.success(request, 'Account created successfully!')
-            login(request, user)  # Automatically log in the user after registration
-            return redirect('accounts:profile_setup')  # Redirect to profile setup page
-        else:
-           messages.error(request, 'Please correct the errors below.') # Add a general error message
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+from django.contrib import messages
+from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm
+from .models import Profile, RoomListing
+from django.shortcuts import get_object_or_404
 
 def login_view(request):
-    """Handle user login"""
+    """Handle user login."""
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, 'Logged in successfully!')
-            return redirect('home')  # Redirect to home after login
-        else:
-            messages.error(request, 'Invalid username or password.')
+            messages.success(request, 'Successfully logged in!')
+            return redirect('hello_world:index')
+        messages.error(request, 'Invalid credentials.')
     return render(request, 'accounts/login.html')
 
 def logout_view(request):
-    """Handle user logout"""
+    """Handle user logout."""
     logout(request)
-    messages.success(request, 'Logged out successfully!')
-    return redirect('index')  # Redirect to home page after logout
+    messages.success(request, 'Successfully logged out!')
+    return redirect('hello_world:index')
 
-@login_required
-def profile_view(request):
-    """Display user profile"""
-    profile = get_object_or_404(Profile, user=request.user)
-    return render(request, 'accounts/profile.html', {'profile': profile})
-
-@login_required
-def edit_profile(request):
-    """Edit user profile"""
-    profile = get_object_or_404(Profile, user=request.user)
+def register(request):
+    """Handle user registration."""
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('profile')
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful!')
+            return redirect('accounts:profile_setup')
     else:
-        form = ProfileForm(instance=profile)
-    return render(request, 'accounts/edit_profile.html', {'form': form})
-
-@login_required
-def account_settings(request):
-    """Display account settings page."""
-    return render(request, 'accounts/account_settings.html')
-
-@login_required
-def inbox(request):
-    """Display inbox page."""
-    return render(request, 'accounts/inbox.html')
-
-@login_required
-def list_room(request):
-    """Display the list room page."""
-    return render(request, 'accounts/list_room.html')
-
-@login_required
-def manage_listing(request):
-    """Display manage listing page."""
-    return render(request, 'accounts/manage_listing.html')
-
-@login_required
-def room_setup(request):
-    """Display room setup page."""
-    return render(request, 'accounts/room_setup.html')
-
-@login_required
-def saved_searches(request):
-    """Display saved searches page."""
-    return render(request, 'accounts/saved_searches.html')
+        form = UserRegistrationForm()
+    return render(request, 'accounts/register.html', {'form': form})
 
 @login_required
 def profile_setup(request):
-    """Display profile setup page."""
-    return render(request, 'accounts/profile_setup.html')
+    """Handle initial profile setup."""
+    if request.method == 'POST':
+        form = ProfileSetupForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            messages.success(request, 'Profile created successfully!')
+            return redirect('hello_world:index')
+    else:
+        form = ProfileSetupForm()
+    return render(request, 'accounts/profile_setup.html', {'form': form})
+
+@login_required
+def edit_profile(request):
+    """Handle profile editing."""
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('accounts:edit_profile')
+    else:
+        form = ProfileEditForm(instance=profile)
+    return render(request, 'accounts/edit_profile.html', {'form': form})
+
+@login_required
+def inbox(request):
+    """Display user's messages."""
+    messages = request.user.received_messages.all()
+    return render(request, 'accounts/inbox.html', {'messages': messages})
+
+@login_required
+def manage_listing(request):
+    """Handle property listing management."""
+    listings = request.user.listings.all()
+    return render(request, 'accounts/manage_listing.html', {'listings': listings})

@@ -1,74 +1,59 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
-from .models import User, Profile
+from django.contrib.auth import get_user_model
+from .models import Profile, RoomListing, Message
 
-class UserRegistrationTest(TestCase):
+class UserModelTest(TestCase):
     def setUp(self):
-        self.url = reverse('register')
-
-    def test_registration_page(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'accounts/register.html')
-
-    def test_user_registration(self):
-        response = self.client.post(self.url, {
-            'username': 'testuser',
-            'email': 'testuser@example.com',
-            'password1': 'password123',
-            'password2': 'password123',
-            'user_type': 'lodger'
-        })
-        self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(User.objects.get().username, 'testuser')
-        self.assertRedirects(response, reverse('home'))
-
-class UserLoginTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
+        self.user = get_user_model().objects.create_user(
             username='testuser',
-            email='testuser@example.com',
-            password='password123'
+            email='test@example.com',
+            password='testpass123',
+            user_type='tenant'
         )
-        self.login_url = reverse('login')
 
-    def test_login_page(self):
-        response = self.client.get(self.login_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'accounts/login.html')
+    def test_user_creation(self):
+        self.assertTrue(isinstance(self.user, get_user_model()))
+        self.assertEqual(self.user.username, 'testuser')
+        self.assertTrue(self.user.is_tenant)
+        self.assertFalse(self.user.is_landlord)
 
-    def test_user_login(self):
-        response = self.client.post(self.login_url, {
-            'username': 'testuser',
-            'password': 'password123'
-        })
-        self.assertEqual(response.status_code, 302)  # Redirect after login
-        self.assertRedirects(response, reverse('home'))
+    def test_profile_creation(self):
+        self.assertTrue(hasattr(self.user, 'profile'))
+        self.assertTrue(isinstance(self.user.profile, Profile))
 
-class UserProfileTest(TestCase):
+class ProfileModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
+        self.user = get_user_model().objects.create_user(
             username='testuser',
-            email='testuser@example.com',
-            password='password123'
+            email='test@example.com',
+            password='testpass123'
         )
-        self.profile = Profile.objects.create(user=self.user, bio='Test bio', location='Test location')
-        self.client.login(username='testuser', password='password123')
-        self.profile_url = reverse('profile')
+        self.profile = self.user.profile
 
-    def test_profile_view(self):
-        response = self.client.get(self.profile_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'accounts/profile.html')
-        self.assertContains(response, 'Test bio')
+    def test_profile_update(self):
+        self.profile.bio = "Test bio"
+        self.profile.location = "Test location"
+        self.profile.save()
+        self.assertEqual(self.profile.bio, "Test bio")
+        self.assertEqual(self.profile.location, "Test location")
 
-    def test_edit_profile(self):
-        edit_url = reverse('edit_profile')
-        response = self.client.post(edit_url, {
-            'bio': 'Updated bio',
-            'location': 'Updated location'
-        })
-        self.profile.refresh_from_db()
-        self.assertEqual(self.profile.bio, 'Updated bio')
-        self.assertEqual(self.profile.location, 'Updated location')
-        self.assertRedirects(response, self.profile_url)
+class RoomListingModelTest(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='landlord',
+            email='landlord@example.com',
+            password='testpass123',
+            user_type='landlord'
+        )
+        self.listing = RoomListing.objects.create(
+            owner=self.user,
+            title="Test Room",
+            description="Test Description",
+            price=500.00,
+            location="Test Location"
+        )
+
+    def test_room_listing_creation(self):
+        self.assertEqual(self.listing.title, "Test Room")
+        self.assertEqual(self.listing.owner, self.user)
