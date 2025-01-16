@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import User, Profile, RoomListing, Message
+from .models import RoomListing, Message
 
 ROOM_TYPES = [
     ('Single', 'Single Room'),
@@ -8,33 +7,6 @@ ROOM_TYPES = [
     ('Ensuite', 'Ensuite Room'),
     ('Studio', 'Studio'),
 ]
-
-class CustomUserCreationForm(UserCreationForm):
-    """Form for user registration"""
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'user_type', 'password1', 'password2']
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('This email is already registered.')
-        return email
-
-class ProfileForm(forms.ModelForm):
-    """Form for user profile creation/editing"""
-    class Meta:
-        model = Profile
-        fields = ['bio', 'location']
-        widgets = {
-            'bio': forms.Textarea(attrs={
-                'rows': 4,
-                'placeholder': 'Tell us about yourself...'
-            }),
-            'location': forms.TextInput(attrs={
-                'placeholder': 'Enter your location'
-            })
-        }
 
 class RoomListingForm(forms.ModelForm):
     """Form for creating/editing room listings"""
