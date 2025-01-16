@@ -38,20 +38,25 @@ CSRF_TRUSTED_ORIGINS = ['https://*.8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.c
 # Application definition
 
 INSTALLED_APPS = [
+    # Custom apps first
+    'accounts',  # This must come before admin
+
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Other custom apps
     'hello_world',
-    'accounts',
     'listings',
     'matching',
     'support',
 ]
 
-# Custom User Model Setting
+# Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
