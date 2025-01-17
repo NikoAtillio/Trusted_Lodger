@@ -4,30 +4,18 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 
 class User(AbstractUser):
-    USER_TYPES = [
-        ('landlord', 'Landlord'),
+    USER_TYPES = (
         ('tenant', 'Tenant'),
-    ]
-    user_type = models.CharField(max_length=10, choices=USER_TYPES, null=True)
-    is_landlord = models.BooleanField(default=False)
-    is_tenant = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        if self.user_type == 'landlord':
-            self.is_landlord = True
-            self.is_tenant = False
-        elif self.user_type == 'tenant':
-            self.is_tenant = True
-            self.is_landlord = False
-        super().save(*args, **kwargs)
+        ('landlord', 'Landlord'),
+    )
+    user_type = models.CharField(max_length=10, choices=USER_TYPES, null=True, blank=True)
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
     personality_type = models.CharField(max_length=100, blank=True)
     living_preferences = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}'s profile"

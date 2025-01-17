@@ -1,6 +1,20 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from allauth.account.forms import SignupForm
 from .models import User, Profile, RoomListing, Message
+
+class CustomSignupForm(SignupForm):
+    user_type = forms.ChoiceField(
+        choices=[('tenant', 'Tenant'), ('landlord', 'Landlord')],
+        widget=forms.RadioSelect,
+        label="I am a"
+    )
+
+    def save(self, request):
+        user = super().save(request)
+        user.user_type = self.cleaned_data['user_type']
+        user.save()
+        return user
 
 class UserRegistrationForm(UserCreationForm):
     class Meta:

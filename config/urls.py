@@ -16,10 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('hello_world.urls')),  # Include URLs from hello_world app
     path('accounts/', include('accounts.urls')),  # Include URLs from accounts app
     path('searches/', include('searches.urls')),  # Include URLs from searches app
+    path('accounts/', include('allauth.urls')),
+path('summernote/', include('django_summernote.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

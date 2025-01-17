@@ -2,6 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Profile, RoomListing, Message
 
+admin.site.register(User, UserAdmin)
+admin.site.register(Profile)
+admin.site.register(RoomListing)
+admin.site.register(Message)
+
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_landlord', 'is_tenant', 'is_staff')
     list_filter = ('is_landlord', 'is_tenant', 'is_staff', 'is_active')
