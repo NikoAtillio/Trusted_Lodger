@@ -15,7 +15,6 @@ print("\nEnvironment Configuration:")
 print("- Current working directory:", os.getcwd())
 print("- Checking for env.py...")
 if os.path.isfile("env.py"):
-    import env
     print("- env.py loaded successfully")
 else:
     print("- env.py not found")
@@ -27,9 +26,8 @@ print("- Secret Key exists:", bool(os.environ.get('SECRET_KEY')))
 SECRET_KEY = os.environ.get("SECRET_KEY") or 'django-insecure-l^g7)-e&8ohk%nv$o@b=&a7+u_6yymc0thh0u7=5q4q=#32_@s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 'localhost', '.herokuapp.com']
+DEBUG = os.environ.get('DEBUG', 'False') == 'True' 
+ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 'localhost', '.herokuapp.com', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = ['https://*.8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net']
 
