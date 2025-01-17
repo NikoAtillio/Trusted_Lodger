@@ -16,10 +16,10 @@
                 <h1>Lodger</h1>
             </div>
             <div class="center-column nav-links">
-                <a href="{% url 'index' %}">Home</a>
-                <a href="{% url 'accounts:profile_setup' %}">Profile Setup</a>
-                <a href="{% url 'listings:search_results' %}">Search Listings</a>
-                <a href="{% url 'support:faq_support' %}">FAQ</a>
+                <a href="{% url 'hello_world:index' %}">Home</a>
+                <a href="{% url 'accounts:profile_setup' %}">Account</a>
+                <a href="{% url 'searches:search' %}">Search</a>
+                <a href="{% url 'hello_world:about' %}">About</a>
             </div>
             <div class="right-column">
                 {% if request.user.is_authenticated %}
