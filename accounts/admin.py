@@ -2,18 +2,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Profile, RoomListing, Message
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Profile)
-admin.site.register(RoomListing)
-admin.site.register(Message)
-
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_landlord', 'is_tenant', 'is_staff')
-    list_filter = ('is_landlord', 'is_tenant', 'is_staff', 'is_active')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'user_type', 'is_staff')
+    list_filter = ('user_type', 'is_staff', 'is_active')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
-        ('User type', {'fields': ('user_type', 'is_landlord', 'is_tenant')}),
+        ('User type', {'fields': ('user_type',)}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
@@ -27,9 +22,13 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('username',)
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location', 'created_at')
+    list_display = ('user', 'location', 'get_created_at')
     search_fields = ('user__username', 'location')
-    list_filter = ('created_at',)
+    list_filter = ('updated_at',)
+
+    def get_created_at(self, obj):
+        return obj.created_at
+    get_created_at.short_description = 'Created At'
 
 class RoomListingAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner', 'location', 'price', 'room_type', 'available', 'created_at')
@@ -61,6 +60,7 @@ class MessageAdmin(admin.ModelAdmin):
     search_fields = ('sender__username', 'recipient__username', 'subject', 'content')
     readonly_fields = ('created_at',)
 
+# Register models with their respective admin classes
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(RoomListing, RoomListingAdmin)
