@@ -85,29 +85,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# print("\nDatabase Configuration:")
-# print("- Database URL exists:", bool(os.environ.get('DATABASE_URL')))
-# print("- Database URL:", os.environ.get('DATABASE_URL'))
-
-# # Add error handling for database configuration
-# try:
-#     DATABASES = {
-#         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-#     }
-#     print("- Database configuration successful")
-# except Exception as e:
-#     print("- Database configuration error:", str(e))
-#     raise e
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database Configuration
+if 'DATABASE_URL' in os.environ:
+    # Production database (PostgreSQL)
+    try:
+        DATABASES = {
+            'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        }
+        print("PostgreSQL database connected successfully")
+    except Exception as e:
+        print(f"PostgreSQL connection error: {e}")
+        # Fallback to SQLite if PostgreSQL connection fails
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print("Fallback to SQLite database")
+else:
+    # Development database (SQLite3)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+    print("Development mode: SQLite database in use")
+
+# Add this after your database configuration to help debug
+if DEBUG:
+    print(f"\nCurrent database engine: {DATABASES['default']['ENGINE']}")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
