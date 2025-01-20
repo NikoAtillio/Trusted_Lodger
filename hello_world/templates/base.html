@@ -4,14 +4,15 @@
     {% load static %}
     <meta charset="UTF-8">
     <title>Trusted Lodger</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Global CSS -->
+    {% block extra_css %}{% endblock %} <!-- Block for additional CSS files -->
 </head>
 <body>
     <!-- Navigation -->
     <header class="navbar">
         <div class="navbar-content container">
             <div class="left-column logo-container">
-                <h1>Trusted </h1>
+                <h1>Trusted</h1>
                 <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
                 <h1>Lodger</h1>
             </div>

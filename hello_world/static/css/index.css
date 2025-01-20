@@ -1,4 +1,7 @@
 /* index.css */
+/* Add this to index.css to test */ 
+body { background-color: yellow; 
+/* This should change the background color of the entire page */ }
 
 /* Hero Section */
 .hero {
@@ -104,7 +107,7 @@
 }
 
 .cta-button:hover {
-    background-color: #00c787;
+    background-color: #3c1181;
 }
 
 /* Responsive Design */
