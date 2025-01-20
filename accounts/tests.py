@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from .models import Profile, RoomListing, Message
+from datetime import date
 
 class UserModelTest(TestCase):
     def setUp(self):
@@ -57,3 +58,40 @@ class RoomListingModelTest(TestCase):
     def test_room_listing_creation(self):
         self.assertEqual(self.listing.title, "Test Room")
         self.assertEqual(self.listing.owner, self.user)
+
+
+class RoomListingViewTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='password',
+            user_type='landlord'
+        )
+        self.client = Client()
+        self.client.login(username='testuser', password='password')
+
+    def test_create_listing_view(self):
+        # Test GET request
+        response = self.client.get(reverse('accounts:create_listing'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/create_listing.html')
+
+        # Test POST request
+        test_data = {
+            'title': 'Test Room',
+            'description': 'A nice room',
+            'room_type': 'Single',
+            'price': '500.00',
+            'location': 'London',
+            'postcode': '12345',
+            'available_from': date.today(),
+            'minimum_stay': 1,
+            'bills_included': True
+        }
+
+        response = self.client.post(reverse('accounts:create_listing'), test_data)
+        self.assertEqual(response.status_code, 302)  # Redirects after successful creation
+
+        # Verify the listing was created
+        self.assertTrue(RoomListing.objects.filter(title='Test Room').exists())

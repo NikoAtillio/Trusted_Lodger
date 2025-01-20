@@ -10,5 +10,6 @@ urlpatterns = [
     path('profile/setup/', views.profile_setup, name='profile_setup'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('inbox/', views.inbox, name='inbox'),
-    path('listings/manage/', views.manage_listing, name='manage_listing'),
+    path('manage/', views.manage_listing, name='manage_listing'),
+    path('create-listing/', views.create_listing, name='create_listing'),
 ]

@@ -99,6 +99,11 @@ class RoomListing(models.Model):
         help_text="Minimum stay in months"
     )
     bills_included = models.BooleanField(default=False)
+    amenities = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Comma-separated list of amenities (e.g., 'WiFi, Parking, Pool')"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -113,6 +118,12 @@ class RoomListing(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('room_listing_detail', args=[str(self.id)])
+
+    def get_amenities_list(self):
+        """Returns a list of amenities"""
+        if self.amenities:
+            return [amenity.strip() for amenity in self.amenities.split(',')]
+        return []
 
 class Message(models.Model):
     sender = models.ForeignKey(

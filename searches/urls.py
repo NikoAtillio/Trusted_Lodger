@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'searches'
@@ -11,4 +11,5 @@ urlpatterns = [
     path('saved/save/', views.save_search, name='save_search'),
     path('saved/<int:search_id>/delete/', views.delete_saved_search, name='delete_saved_search'),
     path('saved/<int:search_id>/edit/', views.edit_saved_search, name='edit_saved_search'),
+    path('send_message_ajax/<int:pk>/', views.send_message_ajax, name='send_message_ajax'),
 ]

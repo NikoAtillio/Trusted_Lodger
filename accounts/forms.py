@@ -38,6 +38,7 @@ class ProfileEditForm(forms.ModelForm):
 class RoomListingForm(forms.ModelForm):
     class Meta:
         model = RoomListing
+        fields = ['title', 'description', 'room_type', 'price', 'location', 'postcode', 'available_from', 'minimum_stay', 'bills_included']
         exclude = ['owner', 'created_at', 'updated_at']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),

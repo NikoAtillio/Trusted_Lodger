@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm
+from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
 from .models import Profile, RoomListing
 from django.shortcuts import get_object_or_404
+from django.views.generic import CreateView
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 
 def login_view(request):
     """Handle user login."""
@@ -78,3 +81,16 @@ def manage_listing(request):
     """Handle property listing management."""
     listings = request.user.listings.all()
     return render(request, 'accounts/manage_listing.html', {'listings': listings})
+
+@login_required
+def create_listing(request):
+    if request.method == 'POST':
+        form = RoomListingForm(request.POST)
+        if form.is_valid():
+            listing = form.save(commit=False)
+            listing.owner = request.user
+            listing.save()
+            return redirect('accounts:manage_listing')
+    else:
+        form = RoomListingForm()
+    return render(request, 'accounts/create_listing.html', {'form': form})

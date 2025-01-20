@@ -3,8 +3,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
+import json
 from .forms import AdvancedSearchForm
-from accounts.models import RoomListing
+from accounts.models import RoomListing, Message
 from .models import SavedSearch
 
 def search(request):
@@ -64,9 +66,20 @@ def search_results(request):
 
 @login_required
 def property_detail(request, pk):
-    """Display detailed view of a specific property"""
     listing = get_object_or_404(RoomListing, pk=pk)
-    return render(request, 'searches/property_detail.html', {'listing': listing})
+    # Use the helper method instead of direct splitting
+    amenities_list = listing.get_amenities_list()
+
+    # Add more context data that might be useful
+    context = {
+        'property': listing,
+        'amenities_list': amenities_list,
+        'has_amenities': bool(amenities_list),  # Helper for template conditions
+        'similar_properties': RoomListing.objects.filter(
+            room_type=listing.room_type
+        ).exclude(pk=listing.pk)[:3]  # Add similar properties
+    }
+    return render(request, 'searches/property_detail.html', context)
 
 @login_required
 def save_search(request):
@@ -132,4 +145,50 @@ def edit_saved_search(request, search_id):
     return render(request, 'searches/edit_saved_search.html', {
         'form': form,
         'search': search
+    })
+    
+@login_required
+def send_message_ajax(request, pk):
+    """Handle sending a message via AJAX"""
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from request body
+            data = json.loads(request.body)
+            message_content = data.get('message', '').strip()
+
+            # Get the listing
+            listing = get_object_or_404(RoomListing, pk=pk)
+
+            if message_content:
+                # Create the message
+                Message.objects.create(
+                    sender=request.user,
+                    recipient=listing.owner,
+                    subject=f"Message about {listing.title}",
+                    content=message_content
+                )
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Your message has been sent successfully!'
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Please enter a message before sending.'
+                })
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid request format.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'An error occurred: {str(e)}'
+            })
+
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method.'
     })

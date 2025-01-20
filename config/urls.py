@@ -25,7 +25,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),  # Include URLs from accounts app
     path('searches/', include('searches.urls')),  # Include URLs from searches app
     path('accounts/', include('allauth.urls')),
-path('summernote/', include('django_summernote.urls')),
+    path('summernote/', include('django_summernote.urls')),
 ]
 
 if settings.DEBUG:
