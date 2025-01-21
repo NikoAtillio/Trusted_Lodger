@@ -18,9 +18,13 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Successfully logged in!')
-            return redirect('hello_world:index')
+            # Redirect to the next parameter or the homepage
+            next_url = request.POST.get('next', 'hello_world:index')
+            return redirect(next_url)
         messages.error(request, 'Invalid credentials.')
-    return render(request, 'accounts/login.html')
+    else:
+        next_url = request.GET.get('next', '')
+    return render(request, 'accounts/login.html', {'next': next_url})
 
 def logout_view(request):
     """Handle user logout."""

@@ -1,6 +1,6 @@
 /* global.css */
 :root {
-    --primary-color: #ffffff;
+    --primary-color: #BCB88A;
     --secondary-color: #FFFFFF;
     --dark-bg: rgba(23, 38, 59, 0.95);
     --font-body: 'Playfair Display', serif;
@@ -69,11 +69,40 @@
 }
 
 .user-icon {
-    width: 80px;
-    height: 80px;
+    width: 55px;
+    height: 55px;
+    cursor: pointer;
 }
 
 .logo {
-    width: 100px;
-    height: 100px;
+    width: 40px;
+    height: 65px;
+}
+
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    z-index: 1;
+    min-width: 150px;
+}
+
+.dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
 }

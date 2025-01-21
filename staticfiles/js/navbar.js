@@ -21,5 +21,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         lastScrollTop = scrollTop;
     });
-});
 
+    const userIcon = document.getElementById('user-icon');
+    const dropdownContent = document.getElementById('dropdown-content');
+
+    userIcon.addEventListener('click', function() {
+        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function(event) {
+        if (!event.target.matches('#user-icon')) {
+            if (dropdownContent.style.display === 'block') {
+                dropdownContent.style.display = 'none';
+            }
+        }
+    });
+});
