@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="saved-ads">
+    <h1>My Saved Ads</h1>
+    <ul>
+        {% for saved_ad in saved_ads %}
+        <li>{{ saved_ad.ad.title }} - <a href="{% url 'property_detail' saved_ad.ad.pk %}">View Ad</a></li>
+        {% empty %}
+        <li>No saved ads found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

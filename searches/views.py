@@ -7,7 +7,7 @@ from django.http import JsonResponse
 import json
 from .forms import AdvancedSearchForm
 from accounts.models import RoomListing, Message
-from .models import SavedSearch
+from .models import SavedSearch, SavedAd
 
 def search(request):
     """Initial search page with basic search form"""
@@ -192,3 +192,9 @@ def send_message_ajax(request, pk):
         'success': False,
         'message': 'Invalid request method.'
     })
+
+@login_required
+def saved_ads(request):
+    """View saved ads"""
+    saved_ads = SavedAd.objects.filter(user=request.user)
+    return render(request, 'saved_ads.html', {'saved_ads': saved_ads})

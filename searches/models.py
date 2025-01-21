@@ -2,6 +2,13 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+class Ad(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
 class SavedSearch(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     search_name = models.CharField(max_length=100)
@@ -20,3 +27,16 @@ class SavedSearch(models.Model):
 
     def __str__(self):
         return f"{self.search_name} - {self.location}"
+
+class SavedAd(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-saved_at']
+        verbose_name = "Saved Ad"
+        verbose_name_plural = "Saved Ads"
+
+    def __str__(self):
+        return f'{self.user.username} - {self.ad.title}'

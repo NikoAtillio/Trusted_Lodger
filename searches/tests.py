@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from accounts.models import RoomListing
-from .models import SavedSearch
+from .models import SavedSearch, SavedAd
 
 User = get_user_model()
 
@@ -83,3 +83,20 @@ class SearchTests(TestCase):
         })
         self.assertEqual(response.status_code, 302)  # Assuming a redirect after saving
         self.assertEqual(SavedSearch.objects.count(), 1)
+
+    def test_saved_ads_view(self):
+        """Test the saved ads view"""
+        # Create a test ad
+        ad = RoomListing.objects.create(
+            owner=self.user,
+            title='Test Ad',
+            description='A test ad',
+            room_type='Single',
+            price=500,
+            location='Test Location'
+        )
+        # Save the ad for the user
+        SavedAd.objects.create(user=self.user, ad=ad)
+        response = self.client.get(reverse('saved_ads'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Test Ad')
