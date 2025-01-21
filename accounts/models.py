@@ -1,13 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, EmailValidator
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not username:
             raise ValueError('The Username field must be set')
+        if not email:
+            raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
         if password:
@@ -147,7 +149,7 @@ class Message(models.Model):
         verbose_name_plural = "Messages"
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.recipient}"
+        return f"Message from {self.sender.username} to {self.recipient.username} - {self.subject}"
 
     def mark_as_read(self):
         if not self.is_read:

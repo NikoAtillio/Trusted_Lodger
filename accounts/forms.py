@@ -17,10 +17,15 @@ class CustomSignupForm(SignupForm):
         return user
 
 class UserRegistrationForm(UserCreationForm):
+    user_type = forms.ChoiceField(
+        choices=[('tenant', 'Tenant'), ('landlord', 'Landlord')],
+        widget=forms.RadioSelect,
+        label="I am a"
+    )
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name',
-                 'password1', 'password2', 'user_type']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_type']
 
 class ProfileSetupForm(forms.ModelForm):
     class Meta:
@@ -30,10 +35,15 @@ class ProfileSetupForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 4}),
             'living_preferences': forms.Textarea(attrs={'rows': 4}),
         }
+
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['bio', 'location', 'personality_type', 'living_preferences']
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4}),
+            'living_preferences': forms.Textarea(attrs={'rows': 4}),
+        }
 
 class RoomListingForm(forms.ModelForm):
     class Meta:
