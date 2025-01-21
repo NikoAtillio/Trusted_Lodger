@@ -20,6 +20,11 @@
     z-index: 1000;
     padding: 1rem 0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.navbar.hidden {
+    transform: translateY(-100%); /* Hide the navbar by moving it up */
 }
 
 .navbar-content {
