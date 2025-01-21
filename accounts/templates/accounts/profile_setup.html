@@ -1,12 +1,65 @@
-{% extends 'base.html' %}
-
-{% block content %}
 <div class="profile-setup-form">
     <h2>Profile Setup</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data"> <!-- Add enctype for file uploads -->
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <!-- User Status -->
+        <div class="form-group">
+            <label>What do you use SpareRoom for?</label>
+            <div>
+                <label><input type="radio" name="user_status" value="looking_for_share"> I am looking for a flat or house share</label><br>
+                <label><input type="radio" name="user_status" value="have_share"> I have a flat or house share</label><br>
+                <label><input type="radio" name="user_status" value="find_people"> I'd like to find people to form a new share</label>
+            </div>
+        </div>
+
+        <!-- Profile Photo -->
+        <div class="form-group">
+            <label for="profile_photo">Your profile photo</label>
+            <input type="file" name="profile_photo" accept="image/*">
+        </div>
+
+        <!-- Gender -->
+        <div class="form-group">
+            <label>Gender</label>
+            <select name="gender">
+                <option value="unknown">Unknown</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="non_binary">Non-binary</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+        </div>
+
+        <!-- Age -->
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" name="age" min="0" max="120">
+        </div>
+
+        <!-- Occupation -->
+        <div class="form-group">
+            <label for="occupation">Occupation</label>
+            <input type="text" name="occupation" placeholder="Your occupation">
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+            <label for="bio">Tell us about yourself</label>
+            <textarea name="bio" rows="4" placeholder="A brief introduction..."></textarea>
+        </div>
+
+        <!-- Living Preferences -->
+        <div class="form-group">
+            <label>Living Preferences</label>
+            <div>
+                <label><input type="checkbox" name="preferences" value="quiet"> Quiet</label>
+                <label><input type="checkbox" name="preferences" value="social"> Social</label>
+                <label><input type="checkbox" name="preferences" value="smoker"> Smoker</label>
+                <label><input type="checkbox" name="preferences" value="pet_owner"> Pet Owner</label>
+            </div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Save Profile</button>
     </form>
 </div>
-{% endblock %}

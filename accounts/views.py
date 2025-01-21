@@ -11,6 +11,8 @@ from django.urls import reverse_lazy
 
 def login_view(request):
     """Handle user login."""
+    next_url = request.POST.get('next', '') or request.GET.get('next', '') or 'hello_world:index'
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -22,9 +24,10 @@ def login_view(request):
             next_url = request.POST.get('next', 'hello_world:index')
             return redirect(next_url)
         messages.error(request, 'Invalid credentials.')
-    else:
-        next_url = request.GET.get('next', '')
+        
     return render(request, 'accounts/login.html', {'next': next_url})
+
+
 
 def logout_view(request):
     """Handle user logout."""
@@ -49,16 +52,18 @@ def register(request):
 @login_required
 def profile_setup(request):
     """Handle initial profile setup."""
+    # Try to get the existing profile for the logged-in user
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
-        form = ProfileSetupForm(request.POST)
+        form = ProfileSetupForm(request.POST, instance=profile)  # Bind the form to the existing profile
         if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
-            messages.success(request, 'Profile created successfully!')
+            form.save()  # Save the updated profile
+            messages.success(request, 'Profile updated successfully!')
             return redirect('hello_world:index')
     else:
-        form = ProfileSetupForm()
+        form = ProfileSetupForm(instance=profile)  # Populate the form with existing profile data
+
     return render(request, 'accounts/profile_setup.html', {'form': form})
 
 @login_required
@@ -99,3 +104,40 @@ def create_listing(request):
     else:
         form = RoomListingForm()
     return render(request, 'accounts/create_listing.html', {'form': form})
+
+@login_required
+def my_profile(request):
+    """Display the user's main account page."""
+    try:
+        profile = request.user.profile  # Get the user's profile
+    except Profile.DoesNotExist:
+        return redirect('profile_setup')  # Redirect to profile setup if no profile exists
+
+    return render(request, 'accounts/my_profile.html', {'profile': profile})
+
+
+@login_required
+def delete_profile(request):
+    """Handle profile deletion."""
+    if request.method == 'POST':
+        # Delete the user's profile
+        profile = get_object_or_404(Profile, user=request.user)
+        profile.delete()  # Delete the profile
+        request.user.delete()  # Delete the user account
+        messages.success(request, 'Your profile has been deleted successfully.')
+        return redirect('hello_world:index')  # Redirect to the homepage or any other page
+
+    return render(request, 'accounts/delete_profile.html')
+
+def register_view(request):
+    days = list(range(1, 32))  # Days from 1 to 31
+    months = list(range(1, 13))  # Months from 1 to 12
+    years = list(range(1900, 2024))  # Years from 1900 to 2023
+
+    context = {
+        'days': days,
+        'months': months,
+        'years': years,
+        'form': UserRegistrationForm(),  # Replace with your actual form
+    }
+    return render(request, 'register.html', context)
