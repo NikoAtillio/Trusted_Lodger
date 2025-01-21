@@ -3,7 +3,7 @@
 /* Hero Section */
 .hero {
     width: 100%;
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
                 url('/static/images/housemates.jpg') no-repeat center center/cover;
     display: flex;
@@ -12,7 +12,6 @@
     text-align: center;
     color: var(--secondary-color);
     position: relative; /* Ensure child elements are positioned relative to this */
-    padding-top: 60px; /* Adjust padding to prevent content from hiding behind navbar */
 }
 
 .hero-content {
@@ -33,63 +32,6 @@
 .hero p {
     font-size: 1.5rem;
     margin-bottom: 2rem;
-}
-
-/* Navbar */
-.navbar {
-    position: fixed; /* Change to fixed to overlay the hero image */
-    top: 0;
-    width: 100%;
-    background-color: rgba(23, 38, 59, 0.95); /* Semi-transparent background */
-    z-index: 1000;
-    padding: 1rem 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease; /* Smooth transition */
-}
-
-.navbar.hidden {
-    transform: translateY(-100%); /* Hide the navbar by moving it up */
-}
-
-.navbar-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-}
-
-.logo-container h1 {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin: 0;
-    font-weight: 700;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
-}
-
-.nav-links a {
-    font-size: 1.1rem;
-    color: var(--secondary-color);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-    color: var(--primary-color);
-}
-
-/* Section Containers */
-.section-container {
-    max-width: 1200px;
-    margin: 0 auto; /* Center the container */
-    padding: 0 2rem; /* Add padding for spacing */
-    width: 100%;
-    text-align: center; /* Center-align text by default */
 }
 
 /* About Section */
