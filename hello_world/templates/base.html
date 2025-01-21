@@ -64,13 +64,13 @@
     </footer>
 
     <!-- Custom JavaScript -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
+    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/navbar.js' %}"></script>
-    <script src="{% static 'js/search.js' %}"></script>
+    {% comment %} <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script> {% endcomment %}
 
     <!-- Initialize Bootstrap tooltips and popovers -->
-    <script>
+    {% comment %} <script>
         document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -95,7 +95,7 @@
                 lastScrollTop = scrollTop;
             });
         });
-    </script>
+    </script> {% endcomment %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>
