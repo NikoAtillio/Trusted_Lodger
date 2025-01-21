@@ -12,9 +12,7 @@
     <header class="navbar">
         <div class="navbar-content container">
             <div class="left-column logo-container">
-                <h1>Trusted</h1>
                 <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
-                <h1>Lodger</h1>
             </div>
             <div class="center-column nav-links">
                 <a href="{% url 'hello_world:index' %}">Home</a>
@@ -25,20 +23,20 @@
             <div class="right-column">
                 {% if request.user.is_authenticated %}
                 <div class="user-menu">
-                    <img src="{% static 'images/icons/user-icon.png' %}" alt="User Icon" class="user-icon">
-                    <div class="dropdown-content">
+                    <img src="{% static 'images/icons/user-icon.png' %}" alt="User Icon" class="user-icon" id="user-icon">
+                    <div class="dropdown-content" id="dropdown-content">
                         <a href="{% url 'accounts:logout' %}">Logout</a>
                     </div>
                 </div>
                 {% else %}
                 <div class="user-menu">
-                    <img src="{% static 'images/icons/user-icon.png' %}" alt="Login Icon" class="user-icon">
-                    <div class="dropdown-content">
+                    <img src="{% static 'images/icons/user-icon.png' %}" alt="Login Icon" class="user-icon" id="user-icon">
+                    <div class="dropdown-content" id="dropdown-content">
                         <a href="{% url 'accounts:login' %}">Login</a>
                     </div>
                 </div>
                 {% endif %}
-            </div>
+            </div>            
         </div>
     </header>
 
@@ -64,38 +62,12 @@
     </footer>
 
     <!-- Custom JavaScript -->
-    {% comment %} <script src="{% static 'js/jquery.min.js' %}"></script> {% endcomment %}
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    {% comment %} <script src="{% static 'js/navbar.js' %}"></script>
-    <script src="{% static 'js/search.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    {% comment %} <script src="{% static 'js/search.js' %}"></script> {% endcomment %}
 
     <!-- Initialize Bootstrap tooltips and popovers -->
-    {% comment %} <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-
-            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            var popoverList = popoverTriggerTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
-            });
-
-            const navbar = document.querySelector('.navbar');
-            let lastScrollTop = 0;
-
-            window.addEventListener('scroll', function() {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                if (scrollTop > lastScrollTop) {
-                    navbar.classList.add('hidden');
-                } else {
-                    navbar.classList.remove('hidden');
-                }
-                lastScrollTop = scrollTop;
-            });
-        });
-    </script> {% endcomment %}
+   
     {% block extra_js %}{% endblock %}
 </body>
 </html>

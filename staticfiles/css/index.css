@@ -1,0 +1,129 @@
+/* index.css */
+
+/* Hero Section */
+.hero {
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url('static/images/housemates.jpg') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 2rem;
+    width: 100%;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* About Section */
+.about-section {
+    width: 100%;
+    padding: 6rem 0;
+    background-color: var(--secondary-color);
+    text-align: center;
+}
+
+/* Features Section */
+.features-section {
+    width: 100%;
+    padding: 6rem 0;
+    background-color: #f8f9fa;
+}
+
+.features-section .section-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.feature {
+    flex: 1;
+    min-width: 300px; /* Ensure a minimum width for smaller screens */
+    background: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Process Section */
+.process-section {
+    width: 100%;
+    padding: 6rem 0;
+    background-color: var(--secondary-color);
+}
+
+.process-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin: 4rem 0;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.step {
+    flex: 1;
+    min-width: 300px; /* Ensure a minimum width for smaller screens */
+    text-align: center;
+}
+
+.step img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #3c1181;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .features-section .section-container,
+    .process-steps {
+        flex-direction: column;
+    }
+
+    .feature,
+    .step {
+        width: 100%;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+    }
+}

@@ -26,7 +26,8 @@ print("- Secret Key exists:", bool(os.environ.get('SECRET_KEY')))
 SECRET_KEY = os.environ.get("SECRET_KEY") or 'django-insecure-l^g7)-e&8ohk%nv$o@b=&a7+u_6yymc0thh0u7=5q4q=#32_@s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True' 
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True' 
+DEBUG = True
 ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 'localhost', '.herokuapp.com', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = ['https://*.8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net']
@@ -192,10 +193,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+# Static Files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'  # URL to access static files in the browser
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Directory where static files are collected (when running collectstatic)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional directories where static files are stored
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Custom static files directory
+]
+
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
