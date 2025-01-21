@@ -27,15 +27,15 @@
                     <img src="{% static 'images/icons/user-icon.png' %}" alt="User Icon" class="user-icon" id="user-icon">
                     <div class="dropdown-content" id="dropdown-content">
                         <a href="{% url 'accounts:profile_setup' %}">My Profile</a>
-                        <a href="{% url 'messages:inbox' %}">Messages</a>
-                        <a href="{% url 'ads:saved_ads' %}">Saved Ads</a>
+                        <a href="{% url 'accounts:inbox' %}">Messages</a>
+                        <a href="{% url 'searches:saved_ads' %}">Saved Ads</a>
                         <a href="{% url 'searches:saved_searches' %}">Saved Searches</a>
                     </div>
                 </div>
                 {% else %}
                 <a href="{% url 'accounts:login' %}" class="auth-button">Login</a>
                 {% endif %}
-            </div>
+            </div>            
         </div>
     </header>
 

@@ -38,7 +38,8 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            # Specify the backend here
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')  # Use the default backend
             messages.success(request, 'Registration successful!')
             return redirect('accounts:profile_setup')
     else:
