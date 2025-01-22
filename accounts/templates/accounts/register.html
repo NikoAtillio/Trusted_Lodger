@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/register.css' %}">
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 {% endblock %}
 
 {% block content %}
@@ -31,104 +32,101 @@
 
     <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
         {% csrf_token %}
-        {{ form.non_field_errors }} <!-- Display non-field errors here -->
+        {{ form.non_field_errors }}
 
-        <div class="form-group">
-            <label for="{{ form.first_name.id_for_label }}">First Name:</label>
-            {{ form.first_name }}
-            {{ form.first_name.errors }}
-        </div>
+        <div class="form-section">
+            <h3>Register with your email</h3>
 
-        <div class="form-group">
-            <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
-            {{ form.last_name }}
-            {{ form.last_name.errors }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.email.id_for_label }}">Email:</label>
-            {{ form.email }}
-            {{ form.email.errors }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.password1.id_for_label }}">Password:</label>
-            {{ form.password1 }}
-            {{ form.password1.errors }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
-            {{ form.password2 }}
-            {{ form.password2.errors }}
-        </div>
-
-        <!-- Gender Selection -->
-        <div class="form-group">
-            <label>Gender:</label><br>
-            <label><input type="radio" name="gender" value="male" required> Male</label><br>
-            <label><input type="radio" name="gender" value="female" required> Female</label><br>
-            <label><input type="radio" name="gender" value="other" required> Other</label>
-            <input type="text" name="gender_other" id="gender_other" placeholder="Please specify" style="display:none;">
-            <br>
-            <label><input type="radio" name="gender" value="prefer_not_to_say" required> Prefer not to say</label>
-        </div>
-
-        <div class="form-group">
-            <label>Date of Birth:</label>
-            <div class="dob-container">
-                <select name="dob_day" required>
-                    <option value="" disabled selected>DD</option>
-                    {% for day in days %}
-                        <option value="{{ day }}">{{ day }}</option>
-                    {% endfor %}
-                </select>
-                <select name="dob_month" required>
-                    <option value="" disabled selected>MM</option>
-                    {% for month in months %}
-                        <option value="{{ month }}">{{ month }}</option>
-                    {% endfor %}
-                </select>
-                <select name="dob_year" required>
-                    <option value="" disabled selected>YYYY</option>
-                    {% for year in years %}
-                        <option value="{{ year }}">{{ year }}</option>
-                    {% endfor %}
-                </select>
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
             </div>
-            <p>You must be 18 or over to use Trusted Lodger</p>
+
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email:</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Password:</label>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
         </div>
 
-        <!-- User Status Checkboxes -->
-        <div class="form-group">
-            <label>Tick those which apply to you:</label><br>
-            <label><input type="checkbox" name="user_status" value="looking_for_share"> I am looking for a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="have_share"> I have a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="find_people"> I'd like to find people to form a new share</label>
-            <div class="error" id="status-error" style="display:none;">Please select at least one option.</div>
+        <div class="form-section">
+            <div class="form-group radio-group">
+                <div class="label-text">Gender:</div>
+                <div class="input-container">
+                    <label><input type="radio" name="gender" value="male" required> Male</label>
+                    <label><input type="radio" name="gender" value="female" required> Female</label>
+                    <label><input type="radio" name="gender" value="other" required> Other</label>
+                    <input type="text" name="gender_other" id="gender_other" placeholder="Please specify" style="display:none;">
+                    <label><input type="radio" name="gender" value="prefer_not_to_say" required> Prefer not to say</label>
+                </div>
+            </div>
         </div>
 
-        <!-- Profile Picture Upload -->
-        <div class="form-group">
-            <label for="profile_picture">Upload a Profile Picture (optional):</label>
-            <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+        <div class="form-section">
+            <div class="form-group">
+                <label>Date of Birth:</label>
+                <div class="dob-container">
+                    <input type="text" name="dob_day" placeholder="DD" maxlength="2" required>
+                    <input type="text" name="dob_month" placeholder="MM" maxlength="2" required>
+                    <input type="text" name="dob_year" placeholder="YYYY" maxlength="4" required>
+                </div>
+                <p>You must be 18 or over to use Trusted Lodger</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group checkbox-group">
+                <div class="label-text">Tick those which apply to you:</div>
+                <div class="input-container">
+                    <label><input type="checkbox" name="user_status" value="looking_for_share"> I am looking for a flat or house share</label>
+                    <label><input type="checkbox" name="user_status" value="have_share"> I have a flat or house share</label>
+                    <label><input type="checkbox" name="user_status" value="find_people"> I'd like to find people to form a new share</label>
+                </div>
+                <div class="error" id="status-error" style="display:none;">Please select at least one option.</div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="profile_picture">Upload a Profile Picture (optional):</label>
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+            </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Register now</button>
         <p>* By clicking Register now you agree to Trusted Lodger's terms and privacy policy. We will send you emails as part of the services we provide to you. You can unsubscribe at any time via the website or the link in the emails.</p>
 
         <!-- reCAPTCHA -->
-        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div> <!-- Replace with your reCAPTCHA site key -->
+        <div class="g-recaptcha" data-sitekey="6LezB8AqAAAAAM63Orsfx5NuHYQQ2Jr1vIPunaKs"></div> 
     </form>
 
-    <p>Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>.</p>
+    <p class="login-text">Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>.</p>
 </div>
 
 <script>
     // Facebook SDK Initialization
     window.fbAsyncInit = function() {
         FB.init({
-            appId: '2065671450512648', // Replace with your app ID
+            appId: '2065671450512648',
             cookie: true,
             xfbml: true,
             version: 'v22.0'
@@ -136,27 +134,21 @@
         FB.AppEvents.logPageView();
     };
 
-    // Check Facebook login state
     function checkLoginState() {
         FB.getLoginStatus(function(response) {
             statusChangeCallback(response);
         });
     }
 
-    // Handle Facebook login status
     function statusChangeCallback(response) {
         if (response.status === 'connected') {
-            // User is logged into Facebook and your app
             console.log('User is logged in:', response);
-            // Redirect to logged-in experience
             window.location.href = '/accounts/facebook-login-success/';
         } else {
-            // User is not logged in
             console.log('User is not logged in:', response);
         }
     }
 
-    // Show the gender input field if "Other" is selected
     document.querySelectorAll('input[name="gender"]').forEach((elem) => {
         elem.addEventListener("change", function(event) {
             const otherInput = document.getElementById('gender_other');
@@ -164,12 +156,11 @@
                 otherInput.style.display = 'inline';
             } else {
                 otherInput.style.display = 'none';
-                otherInput.value = ''; // Clear the input if not selected
+                otherInput.value = '';
             }
         });
     });
 
-    // Validate the form before submission
     function validateForm() {
         const checkboxes = document.querySelectorAll('input[name="user_status"]');
         const errorElement = document.getElementById('status-error');

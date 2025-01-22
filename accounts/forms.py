@@ -32,7 +32,7 @@ class UserRegistrationForm(UserCreationForm):
     )
     gender = forms.ChoiceField(choices=GENDER_CHOICES, widget=forms.RadioSelect, required=True)
     dob_day = forms.IntegerField(min_value=1, max_value=31, required=True)
-    dob_month = forms.IntegerField(min_value=1, max_value=12, required=True)  # Added missing month field
+    dob_month = forms.IntegerField(min_value=1, max_value=12, required=True)
     dob_year = forms.IntegerField(min_value=1900, max_value=datetime.now().year, required=True)
     user_status = forms.MultipleChoiceField(
         choices=[('looking_for_share', 'I am looking for a flat or house share'),
@@ -45,7 +45,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year', 'user_status', 'profile_picture']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year', 'user_status', 'profile_picture']
 
 class ProfileSetupForm(forms.ModelForm):
     class Meta:

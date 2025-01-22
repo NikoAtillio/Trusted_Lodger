@@ -6,19 +6,17 @@ from django.utils import timezone
 from datetime import datetime
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **extra_fields):
-        if not username:
-            raise ValueError('The Username field must be set')
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         if password:
             user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None, **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('user_type', 'landlord')
@@ -28,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(username, email, password, **extra_fields)
+        return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
     USER_TYPES = (
@@ -42,6 +40,9 @@ class User(AbstractUser):
         ('prefer_not_to_say', 'Prefer not to say'),
     ]
 
+    username = None  # Remove username field
+    email = models.EmailField(unique=True, validators=[EmailValidator()])  # Set email as unique and required
+
     user_type = models.CharField(max_length=10, choices=USER_TYPES, null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
     dob_day = models.IntegerField(null=True, blank=True)
@@ -52,6 +53,9 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
+    USERNAME_FIELD = 'email'  # Set email as the USERNAME_FIELD
+    REQUIRED_FIELDS = []  # Remove required username
+
     @property
     def is_landlord(self):
         return self.user_type == 'landlord'
@@ -61,7 +65,7 @@ class User(AbstractUser):
         return self.user_type == 'tenant'
 
     def __str__(self):
-        return f"{self.username} ({self.get_user_type_display()})"
+        return f"{self.email} ({self.get_user_type_display()})"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -78,7 +82,7 @@ class Profile(models.Model):
         verbose_name_plural = "User Profiles"
 
     def __str__(self):
-        return f"{self.user.username}'s profile"
+        return f"{self.user.email}'s profile"
 
 class RoomListing(models.Model):
     ROOM_TYPES = [
@@ -163,12 +167,9 @@ class Message(models.Model):
         verbose_name_plural = "Messages"
 
     def __str__(self):
-        return
+        return self.subject
 
     def mark_as_read(self):
         if not self.is_read:
             self.is_read = True
             self.save()
-            
-            
-    
