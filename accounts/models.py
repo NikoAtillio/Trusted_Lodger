@@ -155,3 +155,6 @@ class Message(models.Model):
         if not self.is_read:
             self.is_read = True
             self.save()
+            
+            
+    
