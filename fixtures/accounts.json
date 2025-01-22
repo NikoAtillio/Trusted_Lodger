@@ -1,0 +1,79 @@
+[{
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$9JPJQYDjLkQE8j5HtJmqP8$5ya0fWRyi66N0a1IgUVZMhUz8jL0lokvNc+MYLCOEDk=",
+        "last_login": "2025-01-21T20:16:53Z",
+        "is_superuser": true,
+        "username": "nikos",
+        "first_name": "",
+        "last_name": "",
+        "email": "nikos_norman87@hotmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-21T20:15:34Z",
+        "user_type": "landlord",
+        "groups": [],
+        "user_permissions": []
+    }
+}, {
+    "model": "accounts.user",
+    "pk": 6,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$5d4SenDQcQ6pNYE3RoHEg3$KSxByw4AguNf+4kbTa1/Hks4/fp3OM2YD5kUDShTPf0=",
+        "last_login": "2025-01-22T10:24:54.647Z",
+        "is_superuser": false,
+        "username": "nikosatillio",
+        "first_name": "Nikos",
+        "last_name": "Norman",
+        "email": "nikos_norman87@hotmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-21T20:33:23.841Z",
+        "user_type": null,
+        "groups": [],
+        "user_permissions": []
+    }
+}, {
+    "model": "accounts.user",
+    "pk": 7,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$Cv90ixdHJ3y9jpgA0EAPQT$mtWlgHGRD+yMj+ge+CaMFYwsJPkSC4s7QxVQVQ7xJPs=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "john",
+        "first_name": "",
+        "last_name": "",
+        "email": "joh@john.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-22T10:28:53.086Z",
+        "user_type": "landlord",
+        "groups": [],
+        "user_permissions": []
+    }
+}, {
+    "model": "accounts.profile",
+    "pk": 5,
+    "fields": {
+        "user": 5,
+        "bio": "",
+        "location": "",
+        "personality_type": "",
+        "living_preferences": "",
+        "created_at": "2025-01-21T20:15:35.039Z",
+        "updated_at": "2025-01-21T20:18:15.579Z"
+    }
+}, {
+    "model": "accounts.profile",
+    "pk": 6,
+    "fields": {
+        "user": 6,
+        "bio": "",
+        "location": "",
+        "personality_type": "",
+        "living_preferences": "",
+        "created_at": "2025-01-21T20:33:24.104Z",
+        "updated_at": "2025-01-22T10:24:54.649Z"
+    }
+}]

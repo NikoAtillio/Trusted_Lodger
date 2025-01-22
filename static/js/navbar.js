@@ -25,9 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const userIcon = document.getElementById('user-icon');
     const dropdownContent = document.getElementById('dropdown-content');
 
-    userIcon.addEventListener('click', function() {
-        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-    });
+    if (userIcon && dropdownContent) {
+        userIcon.addEventListener('click', function() {
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+    }
 
     // Close the dropdown if the user clicks outside of it
     window.addEventListener('click', function(event) {
