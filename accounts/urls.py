@@ -15,4 +15,5 @@ urlpatterns = [
     path('create-listing/', views.create_listing, name='create_listing'),
     path('profile/', my_profile, name='my_profile'),
     path('profile/delete/', views.delete_profile, name='delete_profile'),
+    path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
 ]

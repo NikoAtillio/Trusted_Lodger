@@ -1,0 +1,11 @@
+.dob-container {
+    display: flex;
+    gap: 10px;
+}
+
+.dob-container select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

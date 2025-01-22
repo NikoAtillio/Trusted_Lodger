@@ -117,6 +117,7 @@ def delete_profile(request):
 
 def register_view(request):
     """Display the registration form with date options."""
+    print("Register view called")  # Debug statement
     days = list(range(1, 32))  # Days from 1 to 31
     months = list(range(1, 13))  # Months from 1 to 12
     years = list(range(1900, 2024))  # Years from 1900 to 2023

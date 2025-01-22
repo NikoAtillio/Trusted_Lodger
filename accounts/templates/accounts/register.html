@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
 {% block content %}
+
 <div class="register-form">
     <h2>Register</h2>
     
@@ -79,6 +85,12 @@
                 </select>
             </div>
             <p>You must be 18 or over to use SpareRoom</p>
+            <div>
+                <h3>Debug Info:</h3>
+                <p>Days: {{ days }}</p>
+                <p>Months: {{ months }}</p>
+                <p>Years: {{ years }}</p>
+            </div>
         </div>
 
         <!-- User Status Checkboxes -->
@@ -97,7 +109,7 @@
 
         <button type="submit" class="btn btn-primary">Register now</button>
 
-        <p>* By clicking Register now you agree to SpareRoom's terms and privacy policy. We will send you emails as part of the services we provide to you. You can unsubscribe at any time via the website or the link in the emails.</p>
+        <p>* By clicking Register now you agree to Trusted Lodger's terms and privacy policy. We will send you emails as part of the services we provide to you. You can unsubscribe at any time via the website or the link in the emails.</p>
 
         <!-- reCAPTCHA -->
         <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div> <!-- Replace with your reCAPTCHA site key -->
