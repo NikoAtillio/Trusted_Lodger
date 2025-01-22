@@ -18,7 +18,7 @@
         </div>
         <div class="center-column nav-links">
           <a href="{% url 'hello_world:index' %}">Home</a>
-          <a href="{% url 'accounts:my_profile' %}">My Profile</a>
+          <a href="{% url 'accounts:my_profile' %}">Account</a>
           <a href="{% url 'searches:search' %}">Search</a>
           <a href="{% url 'hello_world:about' %}">About Us</a>
         </div>
@@ -27,13 +27,13 @@
           <a href="{% url 'accounts:logout' %}" class="auth-button">Logout</a>
           <div class="user-menu">
             <img
-              src="{% static 'images/icons/user-icon.png' %}"
+              src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
               alt="User Icon"
               class="user-icon"
               id="user-icon"
             />
             <div class="dropdown-content" id="dropdown-content">
-              <a href="{% url 'accounts:profile_setup' %}">My Profile</a>
+              <a href="{% url 'accounts:profile_setup' %}">Edit Profile</a>
               <a href="{% url 'accounts:inbox' %}">Messages</a>
               <a href="{% url 'searches:saved_ads' %}">Saved Ads</a>
               <a href="{% url 'searches:saved_searches' %}">Saved Searches</a>
@@ -50,22 +50,14 @@
     <main class="main-content">
       {% if messages %}
       <div class="messages-container">
-        {% for message in messages %}
-        <div
-          class="alert alert-{{ message.tags }} alert-dismissible fade show"
-          role="alert"
-        >
-          {{ message }}
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
-        </div>
-        {% endfor %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
       </div>
-      {% endif %} {% block content %} {% endblock %}
+      {% endif %}
+      {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
@@ -84,16 +76,10 @@
             <img src="{% static 'images/icons/twitter.png' %}" alt="Twitter" />
           </a>
           <a href="https://facebook.com/trustedlodger" target="_blank">
-            <img
-              src="{% static 'images/icons/facebook.png' %}"
-              alt="Facebook"
-            />
+            <img src="{% static 'images/icons/facebook.png' %}" alt="Facebook" />
           </a>
           <a href="https://instagram.com/trustedlodger" target="_blank">
-            <img
-              src="{% static 'images/icons/instagram.png' %}"
-              alt="Instagram"
-            />
+            <img src="{% static 'images/icons/instagram.png' %}" alt="Instagram" />
           </a>
         </div>
         <p>&copy; 2025 Trusted Lodger</p>
@@ -107,6 +93,21 @@
     {% comment %}
     <script src="{% static 'js/search.js' %}"></script>
     {% endcomment %}
+
+    <!-- Message timeout script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(function() {
+              const messages = document.querySelectorAll('.messages li');
+              messages.forEach(function(message) {
+                  message.style.opacity = '0';
+                  setTimeout(function() {
+                      message.remove();
+                  }, 300);
+              });
+          }, 3000);
+      });
+    </script>
 
     <!-- Initialize Bootstrap tooltips and popovers -->
     {% block extra_js %}{% endblock %}

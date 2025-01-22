@@ -87,7 +87,7 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # or 'optional' or 'none'
-LOGIN_REDIRECT_URL = '/accounts/profile_setup/'  # Redirect to profile setup after registration
+LOGIN_REDIRECT_URL = '/accounts/profile_setup/'  # Redirect to profile setup after log in
 ACCOUNT_SIGNUP_REDIRECT_URL = '/accounts/profile_setup/'
 LOGIN_URL = '/accounts/login/'
 

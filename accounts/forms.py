@@ -24,7 +24,7 @@ class UserRegistrationForm(UserCreationForm):
         ('other', 'Other'),
         ('prefer_not_to_say', 'Prefer not to say'),
     ]
-    
+
     user_type = forms.ChoiceField(
         choices=[('tenant', 'Tenant'), ('landlord', 'Landlord')],
         widget=forms.RadioSelect,
@@ -46,6 +46,33 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year', 'user_status', 'profile_picture']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        dob_day = cleaned_data.get('dob_day')
+        dob_month = cleaned_data.get('dob_month')
+        dob_year = cleaned_data.get('dob_year')
+
+        if dob_day and dob_month and dob_year:
+            dob = datetime(dob_year, dob_month, dob_day)
+            if (datetime.now() - dob).days < 6570:  # 18 years in days
+                raise forms.ValidationError("You must be at least 18 years old.")
+
+        user_status = cleaned_data.get('user_status')
+        if not user_status:
+            raise forms.ValidationError("Please select at least one status option.")
+
+def clean_profile_picture(self):
+    picture = self.cleaned_data.get('profile_picture')
+    if picture:
+        if picture.size > 5 * 1024 * 1024:  # 5 MB limit
+            raise forms.ValidationError("The file is too large. Maximum size is 5 MB.")
+
+        # Convert filename to lowercase for checking extensions
+        file_name = picture.name.lower()
+        if not file_name.endswith(('.png', '.jpg', '.jpeg')):
+            raise forms.ValidationError("File type not supported. Please upload a PNG or JPG image.")
+    return picture
 
 class ProfileSetupForm(forms.ModelForm):
     class Meta:

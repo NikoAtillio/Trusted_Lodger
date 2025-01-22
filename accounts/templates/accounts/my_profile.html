@@ -1,128 +1,143 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <div class="profile-page">
-    <h2>Welcome, {{ user.first_name }}!</h2>
-    <div class="profile-icon">
-        <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}" alt="Profile Picture" />
-    </div>
+  <h2>Welcome, {{ user.first_name }}!</h2>
+  <div class="profile-icon">
+    <img
+      src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
+      alt="Profile Picture"
+    />
+  </div>
 
-    <div class="flex-container">
-        <div class="flex-item">
-            <a href="{% url 'accounts:inbox' %}">Messages</a>
-        </div>
-        <div class="flex-item">
-            <a href="{% url 'accounts:manage_listing' %}">My Ads</a>
-        </div>
-        <div class="flex-item">
-            <a href="{% url 'accounts:edit_profile' %}">Edit Profile</a>
-        </div>
-        <div class="flex-item">
-            <a href="{% url 'searches:saved_ads' %}">Saved Ads</a>
-        </div>
-        <div class="flex-item">
-            <a href="{% url 'searches:saved_searches' %}">Saved Searches</a>
-        </div>
-        <div class="flex-item">
-            <a href="{% url 'accounts:delete_profile' %}">Delete Profile</a>
-        </div>
+  <div class="flex-container">
+    <div class="flex-item">
+      <a href="{% url 'accounts:inbox' %}">Messages</a>
     </div>
+    <div class="flex-item">
+      <a href="{% url 'accounts:manage_listing' %}">My Ads</a>
+    </div>
+    <div class="flex-item">
+      <a href="{% url 'accounts:edit_profile' %}">Edit Profile</a>
+    </div>
+    <div class="flex-item">
+      <a href="{% url 'searches:saved_ads' %}">Saved Ads</a>
+    </div>
+    <div class="flex-item">
+      <a href="{% url 'searches:saved_searches' %}">Saved Searches</a>
+    </div>
+    <div class="flex-item">
+      <a href="{% url 'accounts:delete_profile' %}">Delete Profile</a>
+    </div>
+  </div>
 
-    <div class="quick-search">
-        <h3>Quick Search</h3>
-        <form id="search-form" action="{% url 'searches:search' %}" method="get">
-            <input type="text" id="location" name="location" placeholder="Enter postcode" required>
-            <button type="button" id="get-location">Use My Location</button>
-            <div class="search-options">
-                <label><input type="radio" name="search_type" value="rooms_match" checked> Rooms Match</label>
-                <label><input type="radio" name="search_type" value="tenant_match"> Tenant Match</label>
-                <label><input type="radio" name="search_type" value="coliving_match"> CoLiving Match</label>
-            </div>
-            <button type="submit">Search</button>
-        </form>
-    </div>
+  <div class="quick-search">
+    <h3>Quick Search</h3>
+    <form id="search-form" action="{% url 'searches:search' %}" method="get">
+      <input
+        type="text"
+        id="location"
+        name="location"
+        placeholder="Enter postcode"
+        required
+      />
+      <button type="button" id="get-location">Use My Location</button>
+      <div class="search-options">
+        <label
+          ><input type="radio" name="search_type" value="rooms_match" checked />
+          Rooms Match</label
+        >
+        <label
+          ><input type="radio" name="search_type" value="tenant_match" /> Tenant
+          Match</label
+        >
+        <label
+          ><input type="radio" name="search_type" value="coliving_match" />
+          CoLiving Match</label
+        >
+      </div>
+      <button type="submit">Search</button>
+    </form>
+  </div>
 </div>
 
 <style>
-    .profile-page {
-        text-align: center;
-        margin: 50px auto;
-        max-width: 950px; /* Limit the width of the profile page */
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+  .profile-page {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 950px; /* Limit the width of the profile page */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
 
-    .profile-icon {
-        margin-bottom: 20px;
-    }
+  .profile-icon {
+    margin-bottom: 20px;
+  }
 
-    .profile-icon img {
-        width: 150px; /* Set a fixed width for the profile picture */
-        height: 150px; /* Set a fixed height for the profile picture */
-        border-radius: 50%; /* Make the image circular */
-        border: 2px solid #007bff; /* Add a border around the image */
-    }
+  .profile-icon img {
+    width: 150px; /* Set a fixed width for the profile picture */
+    height: 150px; /* Set a fixed height for the profile picture */
+    border-radius: 50%; /* Make the image circular */
+    border: 2px solid #007bff; /* Add a border around the image */
+  }
 
-    .flex-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around; /* Space items evenly */
-        margin: 20px 0;
-    }
+  .flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Space items evenly */
+    margin: 20px 0;
+  }
 
-    .flex-item {
-        flex: 1 1 30%; /* Adjusts to three columns */
-        margin: 10px;
-        padding: 20px;
-        background-color: #ffffff;
-        text-align: center;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s; /* Add a hover effect */
-    }
+  .flex-item {
+    flex: 1 1 30%; /* Adjusts to three columns */
+    margin: 10px;
+    padding: 20px;
+    background-color: #ffffff;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s; /* Add a hover effect */
+  }
 
-    .flex-item:hover {
-        transform: translateY(-5px); /* Lift the item on hover */
-    }
+  .flex-item:hover {
+    transform: translateY(-5px); /* Lift the item on hover */
+  }
 
-    .quick-search {
-        margin-top: 30px;
-        padding: 20px;
-        background-color: #e9ecef;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+  .quick-search {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 
-    .quick-search h3 {
-        margin-bottom: 15px;
-    }
+  .quick-search h3 {
+    margin-bottom: 15px;
+  }
 
-    .quick-search input[type="text"] {
-        width: 80%; /* Make the input wider */
-        padding: 10px;
-        border: 1px solid #ced4da;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
+  .quick-search input[type="text"] {
+    width: 80%; /* Make the input wider */
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
 
-    .quick-search .search-options {
-        margin-bottom: 10px;
-    }
+  .quick-search .search-options {
+    margin-bottom: 10px;
+  }
 
-    .quick-search button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+  .quick-search button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 
-    .quick-search button:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-    }
+  .quick-search button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
 </style>
 {% endblock %}

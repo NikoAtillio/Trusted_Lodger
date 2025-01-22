@@ -5,23 +5,26 @@ from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
 from datetime import datetime
 from .models import Profile, RoomListing
+from django.contrib.auth.backends import ModelBackend
 
 def login_view(request):
     """Handle user login."""
     next_url = request.POST.get('next', '') or request.GET.get('next', '') or 'hello_world:index'
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
+
         if user is not None:
             login(request, user)
             messages.success(request, 'Successfully logged in!')
             return redirect(next_url)
-        messages.error(request, 'Invalid credentials.')
+        else:
+            messages.error(request, 'Invalid email or password.')
+            print(f"Login failed for email: {email}")  # Debug print
 
     return render(request, 'accounts/login.html', {'next': next_url})
-
 def logout_view(request):
     """Handle user logout."""
     logout(request)
@@ -29,29 +32,66 @@ def logout_view(request):
     return redirect('hello_world:index')
 
 def register(request):
-    """Handle user registration."""
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST, request.FILES)
+        print("Files in request:", request.FILES)  # You already have this
+
+        if form.is_valid():
+            try:
+                user = form.save()
+                user = authenticate(
+                    email=user.email,
+                    password=request.POST['password1'],
+                    backend='django.contrib.auth.backends.ModelBackend'
+                )
+                if user:
+                    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                    messages.success(request, 'Registration successful!')
+                    return redirect('accounts:profile_setup')
+                else:
+                    messages.error(request, 'Authentication failed after registration.')
+            except Exception as e:
+                print(f"Error saving form: {e}")
+                form.add_error(None, str(e))
+        else:
+            # Add these debug prints
+            print("Form is not valid")
+            print("Form errors:", form.errors)
+            print("Form cleaned data:", form.cleaned_data)
+    else:
+        form = UserRegistrationForm()
+
+    context = {
+        'form': form,
+        'days': range(1, 32),
+        'months': range(1, 13),
+        'years': range(datetime.now().year - 100, datetime.now().year - 17),
+    }
+    return render(request, 'accounts/register.html', context)
+
+    """
+    # Original register function kept for reference
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')  # Use the default backend
+            login(request, user)
             messages.success(request, 'Registration successful!')
             return redirect('accounts:profile_setup')
+        else:
+            # Errors will automatically be bound to their respective fields
+            print("Form errors:", form.errors)
     else:
         form = UserRegistrationForm()
-    
-    days = list(range(1, 32))
-    months = list(range(1, 13))
-    current_year = datetime.now().year
-    years = list(range(current_year - 100, current_year + 1))
 
     context = {
         'form': form,
-        'days': days,
-        'months': months,
-        'years': years,
+        'days': range(1, 32),
+        'months': range(1, 13),
+        'years': range(datetime.now().year - 100, datetime.now().year - 17),
     }
     return render(request, 'accounts/register.html', context)
+    """
 
 @login_required
 def profile_setup(request):
@@ -78,7 +118,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully!')
-            return redirect('accounts:my_profile')  # Redirect to the profile page after editing
+            return redirect('accounts:my_profile')
     else:
         form = ProfileEditForm(instance=profile)
     return render(request, 'accounts/edit_profile.html', {'form': form})
@@ -92,7 +132,7 @@ def inbox(request):
 @login_required
 def manage_listing(request):
     """Handle property listing management."""
-    listings = request.user.room_listings.all()  # Ensure this matches the related_name in RoomListing
+    listings = request.user.room_listings.all()
     return render(request, 'accounts/manage_listing.html', {'listings': listings})
 
 @login_required
