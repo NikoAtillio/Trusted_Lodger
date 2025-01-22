@@ -7,7 +7,6 @@ from datetime import date
 class UserModelTest(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username='testuser',
             email='test@example.com',
             password='testpass123',
             user_type='tenant'
@@ -15,7 +14,7 @@ class UserModelTest(TestCase):
 
     def test_user_creation(self):
         self.assertTrue(isinstance(self.user, get_user_model()))
-        self.assertEqual(self.user.username, 'testuser')
+        self.assertEqual(self.user.email, 'test@example.com')
         self.assertTrue(self.user.is_tenant)
         self.assertFalse(self.user.is_landlord)
 
@@ -26,7 +25,6 @@ class UserModelTest(TestCase):
 class ProfileModelTest(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username='testuser',
             email='test@example.com',
             password='testpass123'
         )
@@ -42,7 +40,6 @@ class ProfileModelTest(TestCase):
 class RoomListingModelTest(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username='landlord',
             email='landlord@example.com',
             password='testpass123',
             user_type='landlord'
@@ -59,17 +56,15 @@ class RoomListingModelTest(TestCase):
         self.assertEqual(self.listing.title, "Test Room")
         self.assertEqual(self.listing.owner, self.user)
 
-
 class RoomListingViewTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            username='testuser',
             email='test@example.com',
             password='password',
             user_type='landlord'
         )
         self.client = Client()
-        self.client.login(username='testuser', password='password')
+        self.client.login(email='test@example.com', password='password')
 
     def test_create_listing_view(self):
         # Test GET request

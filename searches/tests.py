@@ -2,14 +2,13 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from accounts.models import RoomListing
-from .models import SavedSearch, SavedAd
+from searches.models import SavedSearch, SavedAd
 
 User = get_user_model()
 
 class RoomListingModelTest(TestCase):
     def setUp(self):
         self.landlord = User.objects.create_user(
-            username='landlord',
             email='landlord@example.com',
             password='password',
             user_type='landlord'
@@ -34,12 +33,11 @@ class RoomListingModelTest(TestCase):
 class RoomListingViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username='testuser',
             email='test@example.com',
             password='password'
         )
         self.client = Client()
-        self.client.login(username='testuser', password='password')
+        self.client.login(email='test@example.com', password='password')
 
     def test_property_detail_view(self):
         """Test the property detail view"""
@@ -62,11 +60,10 @@ class SearchTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username='testuser',
             email='test@example.com',
             password='testpass123'
         )
-        self.client.login(username='testuser', password='testpass123')
+        self.client.login(email='test@example.com', password='testpass123')
 
     def test_search_results_view(self):
         """Test the search results view"""

@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="profile-page">
-    <h2>Welcome, {{ user.username }}!</h2>
+    <h2>Welcome, {{ user.first_name }}!</h2>
     <div class="profile-icon">
         <img src="{% if user.profile.picture %}{{ user.profile.picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}" alt="Profile Picture" />
     </div>

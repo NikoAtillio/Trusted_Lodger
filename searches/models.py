@@ -39,4 +39,4 @@ class SavedAd(models.Model):
         verbose_name_plural = "Saved Ads"
 
     def __str__(self):
-        return f'{self.user.username} - {self.ad.title}'
+        return f'{self.user.email} - {self.ad.title}'
