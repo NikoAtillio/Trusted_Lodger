@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+from datetime import datetime
 from .forms import HomeSearchForm, ContactForm
 
 def index(request):
@@ -48,6 +49,20 @@ def about(request):
     else:
         form = ContactForm()
     return render(request, 'hello_world/about.html', {'form': form})
+
+def register(request):
+    """Handle registration page with date of birth fields"""
+    days = list(range(1, 32))
+    months = list(range(1, 13))
+    current_year = datetime.now().year
+    years = list(range(current_year - 100, current_year + 1))
+
+    context = {
+        'days': days,
+        'months': months,
+        'years': years,
+    }
+    return render(request, 'accounts/register.html', context)
 
 # Error handlers
 def custom_404(request, exception):

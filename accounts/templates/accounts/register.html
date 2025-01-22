@@ -16,7 +16,7 @@
         <p>(We'll never post on your timeline without your permission)</p>
     </div>
 
-    <form method="post">
+    <form method="post" onsubmit="return validateForm()">
         {% csrf_token %}
         
         {{ form.non_field_errors }}  <!-- Display non-field errors here -->
@@ -48,7 +48,7 @@
         <div class="form-group">
             <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
             {{ form.password2 }}  <!-- Render the confirm password field -->
-            {{ form.password2.errors }}  <!-- Display password2 errors here -->
+            {{ form.password2.errors }}  <!-- Display confirm password errors here -->
         </div>
 
         <!-- Gender Selection -->
@@ -85,20 +85,14 @@
                 </select>
             </div>
             <p>You must be 18 or over to use SpareRoom</p>
-            <div>
-                <h3>Debug Info:</h3>
-                <p>Days: {{ days }}</p>
-                <p>Months: {{ months }}</p>
-                <p>Years: {{ years }}</p>
-            </div>
         </div>
 
         <!-- User Status Checkboxes -->
         <div class="form-group">
             <label>Tick those which apply to you:</label><br>
-            <label><input type="checkbox" name="user_status" value="looking_for_share"> I am looking for a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="have_share"> I have a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="find_people"> I'd like to find people to form a new share</label>
+            <label><input type="checkbox" name="user_status" value="looking_for_share" required> I am looking for a flat or house share</label><br>
+            <label><input type="checkbox" name="user_status" value="have_share" required> I have a flat or house share</label><br>
+            <label><input type="checkbox" name="user_status" value="find_people" required> I'd like to find people to form a new share</label>
         </div>
 
         <!-- Referral Source -->
