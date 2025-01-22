@@ -12,11 +12,11 @@
     
     <!-- Facebook Registration Option -->
     <div class="form-group">
-        <button type="button" class="btn btn-facebook">Register using Facebook</button>
+        <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-facebook">Register using Facebook</a>
         <p>(We'll never post on your timeline without your permission)</p>
     </div>
 
-    <form method="post" onsubmit="return validateForm()">
+    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
         {% csrf_token %}
         
         {{ form.non_field_errors }}  <!-- Display non-field errors here -->
@@ -90,15 +90,16 @@
         <!-- User Status Checkboxes -->
         <div class="form-group">
             <label>Tick those which apply to you:</label><br>
-            <label><input type="checkbox" name="user_status" value="looking_for_share" required> I am looking for a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="have_share" required> I have a flat or house share</label><br>
-            <label><input type="checkbox" name="user_status" value="find_people" required> I'd like to find people to form a new share</label>
+            <label><input type="checkbox" name="user_status" value="looking_for_share"> I am looking for a flat or house share</label><br>
+            <label><input type="checkbox" name="user_status" value="have_share"> I have a flat or house share</label><br>
+            <label><input type="checkbox" name="user_status" value="find_people"> I'd like to find people to form a new share</label>
+            <div class="error" id="status-error" style="display:none;">Please select at least one option.</div>
         </div>
 
-        <!-- Referral Source -->
+        <!-- Profile Picture Upload -->
         <div class="form-group">
-            <label for="referral_source">Where did you hear about us?</label>
-            <input type="text" name="referral_source" id="referral_source" placeholder="e.g., Google, Friend, etc.">
+            <label for="profile_picture">Upload a Profile Picture (optional):</label>
+            <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
         </div>
 
         <button type="submit" class="btn btn-primary">Register now</button>
@@ -128,5 +129,25 @@
             }
         });
     });
+
+    // Validate the form before submission
+    function validateForm() {
+        const checkboxes = document.querySelectorAll('input[name="user_status"]');
+        const errorElement = document.getElementById('status-error');
+        let isChecked = false;
+        
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                isChecked = true;
+            }
+        });
+
+        if (!isChecked) {
+            errorElement.style.display = 'block';
+            return false;
+        }
+
+        return true;
+    }
 </script>
 {% endblock %}

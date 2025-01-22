@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 from django.core.validators import MinValueValidator, EmailValidator
 from django.utils import timezone
+from datetime import datetime
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
@@ -34,7 +35,20 @@ class User(AbstractUser):
         ('tenant', 'Tenant'),
         ('landlord', 'Landlord'),
     )
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ]
+
     user_type = models.CharField(max_length=10, choices=USER_TYPES, null=True, blank=True)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
+    dob_day = models.IntegerField(null=True, blank=True)
+    dob_month = models.IntegerField(null=True, blank=True)
+    dob_year = models.IntegerField(null=True, blank=True)
+    user_status = models.CharField(max_length=255, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     objects = CustomUserManager()
 
@@ -149,7 +163,7 @@ class Message(models.Model):
         verbose_name_plural = "Messages"
 
     def __str__(self):
-        return f"Message from {self.sender.username} to {self.recipient.username} - {self.subject}"
+        return
 
     def mark_as_read(self):
         if not self.is_read:

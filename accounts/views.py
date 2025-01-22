@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
+from datetime import datetime
 from .models import Profile, RoomListing
 
 def login_view(request):
@@ -30,7 +31,7 @@ def logout_view(request):
 def register(request):
     """Handle user registration."""
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')  # Use the default backend
@@ -38,7 +39,19 @@ def register(request):
             return redirect('accounts:profile_setup')
     else:
         form = UserRegistrationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+    
+    days = list(range(1, 32))
+    months = list(range(1, 13))
+    current_year = datetime.now().year
+    years = list(range(current_year - 100, current_year + 1))
+
+    context = {
+        'form': form,
+        'days': days,
+        'months': months,
+        'years': years,
+    }
+    return render(request, 'accounts/register.html', context)
 
 @login_required
 def profile_setup(request):
@@ -61,7 +74,7 @@ def edit_profile(request):
     """Handle profile editing."""
     profile = request.user.profile
     if request.method == 'POST':
-        form = ProfileEditForm(request.POST, instance=profile)
+        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully!')
@@ -120,7 +133,7 @@ def register_view(request):
     print("Register view called")  # Debug statement
     days = list(range(1, 32))  # Days from 1 to 31
     months = list(range(1, 13))  # Months from 1 to 12
-    years = list(range(1900, 2024))  # Years from 1900 to 2023
+    years = list(range(1900, 2025))  # Years from 1900 to 2023
 
     context = {
         'days': days,
@@ -128,4 +141,4 @@ def register_view(request):
         'years': years,
         'form': UserRegistrationForm(),
     }
-    return render(request, 'register.html', context)
+    return render(request, 'accounts/register.html', context)
