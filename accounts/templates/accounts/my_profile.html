@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} 
+{% load static %} 
+
+{% block content %}
 <div class="profile-page">
   <h2>Welcome, {{ user.first_name }}!</h2>
   <div class="profile-icon">
@@ -75,10 +78,13 @@
   }
 
   .profile-icon img {
-    width: 150px; /* Set a fixed width for the profile picture */
-    height: 150px; /* Set a fixed height for the profile picture */
-    border-radius: 50%; /* Make the image circular */
-    border: 2px solid #007bff; /* Add a border around the image */
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid #17263bf2;
+    transition: border-color 0.3s ease;
   }
 
   .flex-container {

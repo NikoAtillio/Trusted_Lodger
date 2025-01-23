@@ -24,7 +24,6 @@
         </div>
         <div class="right-column">
           {% if request.user.is_authenticated %}
-          <a href="{% url 'accounts:logout' %}" class="auth-button">Logout</a>
           <div class="user-menu">
             <img
               src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
@@ -32,6 +31,7 @@
               class="user-icon"
               id="user-icon"
             />
+            <a href="{% url 'accounts:logout' %}" class="auth-button logout-button">Logout</a>
             <div class="dropdown-content" id="dropdown-content">
               <a href="{% url 'accounts:profile_setup' %}">Edit Profile</a>
               <a href="{% url 'accounts:inbox' %}">Messages</a>
