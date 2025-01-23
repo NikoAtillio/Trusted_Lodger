@@ -3,6 +3,7 @@
     --secondary-color: #f8f9fa;
     --border-color: #dee2e6;
 }
+
 .container {
     max-width: 1400px;
     margin: 2rem auto;
@@ -16,6 +17,35 @@
     margin-bottom: 2rem;
 }
 
+/* Navigation Styles */
+.nav-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: var(--secondary-color);
+}
+
+.nav-link i {
+    margin-right: 1rem;
+    width: 20px;
+}
+
+/* Profile Content Styles */
 .profile-content {
     background: white;
     border-radius: 8px;
@@ -60,25 +90,16 @@
     display: inline-block;
 }
 
-.info-section {
-    margin-bottom: 2rem;
-}
-
-.info-section h3 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--border-color);
-}
-
+/* Form Styles */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     color: #495057;
+    font-weight: 500;
 }
 
 .form-control {
@@ -87,6 +108,17 @@
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1rem;
+}
+
+.info-section {
+    margin-bottom: 2rem;
+}
+
+.info-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .gender-options {
@@ -103,6 +135,7 @@
     flex: 1;
 }
 
+/* Button Styles */
 .button-group {
     display: flex;
     gap: 1rem;
@@ -128,9 +161,17 @@
     color: white;
 }
 
+.save-button:hover {
+    opacity: 0.9;
+}
+
 .cancel-button {
     background-color: #dc3545;
     color: white;
+}
+
+.cancel-button:hover {
+    opacity: 0.9;
 }
 
 @media (max-width: 768px) {

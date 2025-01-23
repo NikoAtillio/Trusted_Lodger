@@ -5,6 +5,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/myprofile.css' %}">
 {% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="profile-grid">
@@ -74,13 +75,7 @@
     <div class="quick-search">
         <h3>Quick Search</h3>
         <form id="search-form" action="{% url 'searches:search' %}" method="get">
-            <input
-                type="text"
-                id="location"
-                name="location"
-                placeholder="Enter postcode"
-                required
-            />
+            <input type="text" id="location" name="location" placeholder="Enter postcode" required />
             <button type="button" id="get-location">Use My Location</button>
             <div class="search-options">
                 <label>
@@ -100,4 +95,27 @@
         </form>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Geolocation functionality for the search
+    document.getElementById('get-location').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                // You can add functionality here to convert coordinates to postcode
+                console.log(position.coords.latitude, position.coords.longitude);
+            }, function(error) {
+                console.error("Error getting location:", error);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    });
+
+    // Search form handling
+    document.getElementById('search-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your search form submission logic here
+    });
+</script>
 {% endblock %}
