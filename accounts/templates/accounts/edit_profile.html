@@ -1,122 +1,210 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/edit_profile.css' %}" />
+{% endblock %}
 
 {% block content %}
+<div class="edit-profile-container">
+    <h2 class="text-2xl font-bold mb-6">Edit Profile - {{ user.first_name }} {{ user.last_name }}</h2>
 
-<div class="profile-setup-form">
-    <h2>Edit Profile</h2>
-    <form method="post" enctype="multipart/form-data"> <!-- Add enctype for file uploads -->
+    {% if form.non_field_errors %}
+    <div class="error-messages">
+        {% for error in form.non_field_errors %}
+            <div class="field-error">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        
-        <!-- User Status -->
-        <div class="form-group">
-            <label>What do you use SpareRoom for?</label>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="radio" name="user_status" value="looking_for_share" class="form-check-input" {% if profile.user_status == 'looking_for_share' %}checked{% endif %}> 
-                    I am looking for a flat or house share
-                </label>
+
+        <div class="profile-grid">
+            <!-- Basic Information Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    <h3>Basic Information</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="field-error">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="field-error">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="field-error">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="radio" name="user_status" value="have_share" class="form-check-input" {% if profile.user_status == 'have_share' %}checked{% endif %}> 
-                    I have a flat or house share
-                </label>
+
+            <!-- Profile Photo Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-camera"></i>
+                    <h3>Profile Photo</h3>
+                </div>
+
+                <div class="profile-photo-container">
+                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
+                         alt="Profile Picture">
+                    <label class="photo-upload-btn">
+                        <i class="fas fa-upload"></i> Change Photo
+                        <input type="file" name="profile_picture" accept="image/*">
+                    </label>
+                </div>
             </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input type="radio" name="user_status" value="find_people" class="form-check-input" {% if profile.user_status == 'find_people' %}checked{% endif %}> 
-                    I'd like to find people to form a new share
-                </label>
+
+            <!-- User Type Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-user-tag"></i>
+                    <h3>User Type</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="label-text">I am a:</label>
+                    <div class="user-type-group">
+                        <label>
+                            <input type="radio" name="user_type" value="tenant" {% if profile.user_type == 'tenant' %}checked{% endif %}>
+                            Tenant
+                        </label>
+                        <label>
+                            <input type="radio" name="user_type" value="landlord" {% if profile.user_type == 'landlord' %}checked{% endif %}>
+                            Landlord
+                        </label>
+                    </div>
+                    {% if form.user_type.errors %}
+                        <div class="field-error">{{ form.user_type.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Gender Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-venus-mars"></i>
+                    <h3>Gender</h3>
+                </div>
+
+                <div class="form-group radio-group">
+                    <div class="label-text">Gender:</div>
+                    <div class="input-container">
+                        <label><input type="radio" name="gender" value="male" {% if profile.gender == 'male' %}checked{% endif %}/> Male</label>
+                        <label><input type="radio" name="gender" value="female" {% if profile.gender == 'female' %}checked{% endif %}/> Female</label>
+                        <label><input type="radio" name="gender" value="other" {% if profile.gender == 'other' %}checked{% endif %}/> Other</label>
+                        <input type="text" name="gender_other" id="gender_other" placeholder="Please specify" 
+                               style="display: {% if profile.gender == 'other' %}block{% else %}none{% endif %}"
+                               value="{{ profile.gender_other }}"/>
+                        <label><input type="radio" name="gender" value="prefer_not_to_say" {% if profile.gender == 'prefer_not_to_say' %}checked{% endif %}/> Prefer not to say</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date of Birth Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-calendar"></i>
+                    <h3>Date of Birth</h3>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-text">Date of Birth:</div>
+                    <div class="dob-container">
+                        <input type="text" name="dob_day" placeholder="DD" maxlength="2" value="{{ profile.dob_day }}" />
+                        <input type="text" name="dob_month" placeholder="MM" maxlength="2" value="{{ profile.dob_month }}" />
+                        <input type="text" name="dob_year" placeholder="YYYY" maxlength="4" value="{{ profile.dob_year }}" />
+                    </div>
+                    <p>You must be 18 or over to use Trusted Lodger</p>
+                </div>
+            </div>
+
+            <!-- User Status Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-home"></i>
+                    <h3>Housing Status</h3>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="label-text">Tick those which apply to you:</div>
+                    <div class="input-container">
+                        <label><input type="checkbox" name="user_status" value="looking_for_share" {% if 'looking_for_share' in profile.user_status %}checked{% endif %}/> I am looking for a flat or house share</label>
+                        <label><input type="checkbox" name="user_status" value="have_share" {% if 'have_share' in profile.user_status %}checked{% endif %}/> I have a flat or house share</label>
+                        <label><input type="checkbox" name="user_status" value="find_people" {% if 'find_people' in profile.user_status %}checked{% endif %}/> I'd like to find people to form a new share</label>
+                    </div>
+                    <div class="error" id="status-error" style="display: none">Please select at least one option.</div>
+                </div>
+            </div>
+
+            <!-- Additional Information Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Additional Information</h3>
+                </div>
+
+                <div class="form-group">
+                    <label>Occupation</label>
+                    <input type="text" name="occupation" class="form-control" value="{{ profile.occupation }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea name="bio" class="form-control" rows="4">{{ profile.bio }}</textarea>
+                </div>
             </div>
         </div>
 
-        <!-- Profile Photo -->
-        <div class="form-group">
-            <label for="profile_photo">Your profile photo</label>
-            <input type="file" name="profile_photo" accept="image/*" class="form-control-file">
-            {% if profile.picture %}
-                <p>Current photo:</p>
-                <img src="{{ profile.picture.url }}" alt="Current Profile Photo" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
-            {% else %}
-                <p>No current photo uploaded.</p>
-            {% endif %}
-        </div>
-
-        <!-- Gender -->
-        <div class="form-group">
-            <label>Gender</label>
-            <select name="gender" class="form-control">
-                <option value="unknown" {% if profile.gender == 'unknown' %}selected{% endif %}>Unknown</option>
-                <option value="male" {% if profile.gender == 'male' %}selected{% endif %}>Male</option>
-                <option value="female" {% if profile.gender == 'female' %}selected{% endif %}>Female</option>
-                <option value="non_binary" {% if profile.gender == 'non_binary' %}selected{% endif %}>Non-binary</option>
-                <option value="prefer_not_to_say" {% if profile.gender == 'prefer_not_to_say' %}selected{% endif %}>Prefer not to say</option>
-            </select>
-        </div>
-
-        <!-- Age -->
-        <div class="form-group">
-            <label for="age">Age</label>
-            <input type="number" name="age" min="0" max="120" value="{{ profile.age }}" class="form-control">
-        </div>
-
-        <!-- Occupation -->
-        <div class="form-group">
-            <label for="occupation">Occupation</label>
-            <input type="text" name="occupation" placeholder="Your occupation" value="{{ profile.occupation }}" class="form-control">
-        </div>
-
-        <!-- Bio -->
-        <div class="form-group">
-            <label for="bio">Tell us about yourself</label>
-            <textarea name="bio" rows="4" placeholder="A brief introduction..." class="form-control">{{ profile.bio }}</textarea>
-        </div>
-
-        <!-- Living Preferences -->
-        <div class="form-group">
-            <label>Living Preferences</label>
-            <div>
-                <label class="form-check">
-                    <input type="checkbox" name="preferences" value="quiet" class="form-check-input" {% if 'quiet' in profile.living_preferences %}checked{% endif %}> 
-                    Quiet
-                </label>
-                <label class="form-check">
-                    <input type="checkbox" name="preferences" value="social" class="form-check-input" {% if 'social' in profile.living_preferences %}checked{% endif %}> 
-                    Social
-                </label>
-                <label class="form-check">
-                    <input type="checkbox" name="preferences" value="smoker" class="form-check-input" {% if 'smoker' in profile.living_preferences %}checked{% endif %}> 
-                    Smoker
-                </label>
-                <label class="form-check">
-                    <input type="checkbox" name="preferences" value="pet_owner" class="form-check-input" {% if 'pet_owner' in profile.living_preferences %}checked{% endif %}> 
-                    Pet Owner
-                </label>
-            </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Save Profile</button>
+        <button type="submit" class="save-button">
+            <i class="fas fa-save"></i> Save Changes
+        </button>
     </form>
 </div>
 
-<style>
-    .profile-setup-form {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-check {
-        margin-bottom: 10px;
-    }
-    .btn {
-        width: 100%;
-    }
-</style>
+<script>
+    document.querySelectorAll('input[name="gender"]').forEach((elem) => {
+        elem.addEventListener("change", function(event) {
+            const otherInput = document.getElementById("gender_other");
+            if (event.target.value === "other") {
+                otherInput.style.display = "block";
+            } else {
+                otherInput.style.display = "none";
+                otherInput.value = "";
+            }
+        });
+    });
 
+    function validateForm() {
+        const checkboxes = document.querySelectorAll('input[name="user_status"]');
+        const errorElement = document.getElementById("status-error");
+        let isChecked = false;
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                isChecked = true;
+            }
+        });
+        if (!isChecked) {
+            errorElement.style.display = "block";
+            return false;
+        }
+        errorElement.style.display = "none";
+        return true;
+    }
+</script>
 {% endblock %}
