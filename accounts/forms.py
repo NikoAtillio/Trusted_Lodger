@@ -42,10 +42,15 @@ class UserRegistrationForm(UserCreationForm):
         required=True
     )
     profile_picture = forms.ImageField(required=False)
+    occupation = forms.CharField(required=False, max_length=100)
+    availability = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    budget = forms.DecimalField(required=False, max_digits=10, decimal_places=2)
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year', 'user_status', 'profile_picture']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2',
+                 'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year',
+                 'user_status', 'profile_picture', 'occupation', 'availability', 'budget']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -68,7 +73,6 @@ class UserRegistrationForm(UserCreationForm):
             if picture.size > 5 * 1024 * 1024:  # 5 MB limit
                 raise forms.ValidationError("The file is too large. Maximum size is 5 MB.")
 
-            # Convert filename to lowercase for checking extensions
             file_name = picture.name.lower()
             if not file_name.endswith(('.png', '.jpg', '.jpeg')):
                 raise forms.ValidationError("File type not supported. Please upload a PNG or JPG image.")

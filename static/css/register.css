@@ -1,4 +1,4 @@
-/* Form container */
+/* Base Form Container */
 .register-form {
     max-width: 600px;
     margin: 0 auto;
@@ -8,7 +8,7 @@
     border-radius: 8px;
 }
 
-/* Headers */
+/* Typography */
 .register-form h2 {
     margin-bottom: 1rem;
     color: var(--primary-color);
@@ -21,12 +21,35 @@
     margin-bottom: 1rem;
 }
 
-/* Standard form groups */
+.register-form p {
+    font-size: 0.9rem;
+    color: #17263bf2;
+}
+
+.login-text {
+    font-size: 1.1rem;
+    color: #17263bf2;
+}
+
+.label-text {
+    font-weight: bold;
+    font-size: 1.08rem;
+    color: #17263bf2;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Form Structure */
 .form-group {
-    margin-bottom: 1.5rem;  /* Increased to accommodate error messages */
+    margin-bottom: 1.5rem;
     position: relative;
 }
 
+.form-section {
+    margin-bottom: 2rem;
+}
+
+/* Input Styling */
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
@@ -35,7 +58,6 @@
     color: #17263bf2;
 }
 
-/* Standard inputs */
 .form-group input:not([type="radio"]):not([type="checkbox"]),
 .form-group select {
     width: 100%;
@@ -45,20 +67,12 @@
     box-sizing: border-box;
 }
 
-/* Radio and Checkbox groups */
+/* Radio and Checkbox Styling */
 .radio-group,
 .checkbox-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.radio-group .label-text,
-.checkbox-group .label-text {
-    font-weight: bold;
-    font-size: 1.08rem;
-    color: #17263bf2;
-    margin-bottom: 0.5rem;
 }
 
 .radio-group .input-container,
@@ -70,12 +84,12 @@
 }
 
 .radio-group .input-container label,
-.checkbox-group .input-container label {
+.checkbox-group .input-container label,
+.radio-option,
+.checkbox-option {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    width: 100%;
-    margin: 0;
+    margin: 0.5rem 0;
     font-weight: normal;
 }
 
@@ -85,27 +99,25 @@
     margin-right: 8px;
 }
 
-/* Date of Birth container */
-.dob-container {
+/* Date of Birth Styling */
+.dob-container,
+.dob-inputs {
     display: flex;
     gap: 10px;
 }
 
-.dob-container input {
+.dob-container input,
+.dob-inputs input {
     flex: 1;
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
     text-align: center;
+    width: 80px;
 }
 
-/* Form sections */
-.form-section {
-    margin-bottom: 2rem;
-}
-
-/* Button styling */
+/* Button Styling */
 .btn {
     background-color: var(--primary-color);
     color: var(--secondary-color);
@@ -118,21 +130,9 @@
 
 .btn:hover {
     background-color: #17263bf2;
-    color: var(--secondary-color);
 }
 
-/* Text styles */
-.register-form p {
-    font-size: 0.9rem;
-    color: #17263bf2;
-}
-
-.login-text {
-    font-size: 1.1rem;
-    color: #17263bf2;
-}
-
-/* Enhanced Error Styling */
+/* Error Styling */
 .error-messages {
     margin-bottom: 20px;
     padding: 12px;
@@ -142,58 +142,22 @@
     color: #dc3545;
 }
 
-.field-error {
+.error-message,
+.field-error,
+#status-error {
     color: #dc3545;
     font-size: 0.875rem;
-    margin-top: 5px;
-    padding: 3px 0;
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    width: 100%;
+    margin-top: 0.25rem;
+    display: block;
 }
 
-/* User type group */
-.user-type-group {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    margin: 10px 0;
-}
-
-.user-type-group label {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    font-weight: normal;
-}
-
-.user-type-group input[type="radio"] {
-    margin-right: 8px;
-}
-
-/* Label text */
-.label-text {
-    font-weight: bold;
-    font-size: 1.08rem;
-    color: #17263bf2;
-    margin-right: 5px;
-}
-
-/* Error field highlighting */
 .form-group input.error:not([type="radio"]):not([type="checkbox"]),
 .form-group select.error {
     border-color: #dc3545;
     background-color: #fff;
 }
 
-/* Remove conflicting error styles */
+/* Remove generic error class */
 .error {
     display: none;
-}
-
-#status-error {
-    display: block;
-    color: #dc3545;
-    margin-top: 5px;
 }

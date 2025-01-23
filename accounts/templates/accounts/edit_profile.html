@@ -46,7 +46,7 @@
                     <h3>Account Details</h3>
                 </div>
                 <div class="info-group">
-                    <p><strong>Monthly Budget:</strong> {{ profile.budget|default:"Not specified" }}</p>
+                    <p><strong>Monthly Budget:</strong> £{{ profile.budget|default:"Not specified" }}</p>
                     <p><strong>Occupation:</strong> {{ profile.occupation|default:"Not specified" }}</p>
                 </div>
             </div>
@@ -69,9 +69,11 @@
                     <h3>Housing Status</h3>
                 </div>
                 <div class="info-group">
-                    {% for status in user.user_status.split %}
-                        <p>✓ {{ status|replace:"_":" "|title }}</p>
-                    {% endfor %}
+                    {% if user.user_status %}
+                        <p>✓ {{ user.user_status|title }}</p>
+                    {% else %}
+                        <p>No status specified</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -86,8 +88,81 @@
         <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             {% csrf_token %}
             
-            <!-- Your existing form content here -->
-            [Previous form sections remain the same]
+            <!-- Profile Photo Edit Section -->
+            <div class="form-section">
+                <h3>Profile Photo</h3>
+                <div class="profile-photo-edit">
+                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
+                         alt="Current Profile Picture" class="current-photo">
+                    <input type="file" name="profile_picture" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Basic Information Edit Section -->
+            <div class="form-section">
+                <h3>Basic Information</h3>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="radio-group">
+                        {{ form.gender }}
+                    </div>
+                    <input type="text" id="gender_other" name="gender_other" 
+                           style="display: none;" placeholder="Please specify">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <div class="dob-inputs">
+                        {{ form.dob_day }}
+                        {{ form.dob_month }}
+                        {{ form.dob_year }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Management Edit Section -->
+            <div class="form-section">
+                <h3>Account Details</h3>
+                <div class="form-group">
+                    <label for="budget">Monthly Budget (£)</label>
+                    {{ form.budget }}
+                </div>
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    {{ form.occupation }}
+                </div>
+            </div>
+
+            <!-- Availability Edit Section -->
+            <div class="form-section">
+                <h3>Availability</h3>
+                <div class="form-group">
+                    <label for="availability">Available From</label>
+                    {{ form.availability }}
+                </div>
+            </div>
+
+            <!-- Housing Status Edit Section -->
+            <div class="form-section">
+                <h3>Housing Status</h3>
+                <div class="checkbox-group">
+                    {{ form.user_status }}
+                </div>
+                <div id="status-error" class="error-message" style="display: none;">
+                    Please select at least one status option.
+                </div>
+            </div>
 
             <div class="button-group">
                 <button type="submit" class="save-button">
@@ -113,8 +188,7 @@
         document.getElementById('view-mode').style.display = 'block';
     });
 
-    // Your existing JavaScript for gender and form validation
-
+    // Gender other field toggle
     document.querySelectorAll('input[name="gender"]').forEach((elem) => {
         elem.addEventListener("change", function(event) {
             const otherInput = document.getElementById("gender_other");
@@ -127,21 +201,26 @@
         });
     });
 
+    // Form validation
     function validateForm() {
-        const checkboxes = document.querySelectorAll('input[name="user_status"]');
+        const statusField = document.querySelector('input[name="user_status"]');
         const errorElement = document.getElementById("status-error");
-        let isChecked = false;
-        checkboxes.forEach((checkbox) => {
-            if (checkbox.checked) {
-                isChecked = true;
-            }
-        });
-        if (!isChecked) {
+        
+        if (!statusField || !statusField.value.trim()) {
             errorElement.style.display = "block";
             return false;
         }
+        
         errorElement.style.display = "none";
         return true;
     }
+
+    // Set initial gender other field visibility
+    window.addEventListener('load', function() {
+        const selectedGender = document.querySelector('input[name="gender"]:checked');
+        if (selectedGender && selectedGender.value === "other") {
+            document.getElementById("gender_other").style.display = "block";
+        }
+    });
 </script>
 {% endblock %}

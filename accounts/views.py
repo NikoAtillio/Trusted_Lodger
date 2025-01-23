@@ -3,8 +3,10 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
+from django.db import transaction, IntegrityError
 from datetime import datetime
 from .models import Profile, RoomListing
+from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
 from django.views.generic import DetailView
 
@@ -35,40 +37,71 @@ def logout_view(request):
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
-        print("Files in request:", request.FILES)  # You already have this
+        print("Form Data:", request.POST)  # Debug print
 
         if form.is_valid():
             try:
-                user = form.save()
-                user = authenticate(
-                    email=user.email,
-                    password=request.POST['password1'],
-                    backend='django.contrib.auth.backends.ModelBackend'
-                )
-                if user:
-                    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-                    messages.success(request, 'Registration successful!')
-                    return redirect('accounts:profile_setup')
-                else:
-                    messages.error(request, 'Authentication failed after registration.')
+                # Start transaction
+                with transaction.atomic():
+                    # Check if user with this email already exists
+                    email = form.cleaned_data.get('email')
+                    if User.objects.filter(email=email).exists():
+                        messages.error(request, 'A user with this email already exists.')
+                        return render(request, 'accounts/register.html', {'form': form})
+
+                    # Create user
+                    user = form.save()
+                    print(f"User created: {user.email}")  # Debug print
+
+                    # Delete any existing profile for this user (shouldn't happen, but just in case)
+                    Profile.objects.filter(user=user).delete()
+
+                    # Create new profile
+                    profile = Profile.objects.create(
+                        user=user,
+                        gender=form.cleaned_data.get('gender'),
+                        dob_day=form.cleaned_data.get('dob_day'),
+                        dob_month=form.cleaned_data.get('dob_month'),
+                        dob_year=form.cleaned_data.get('dob_year'),
+                        user_status=', '.join(form.cleaned_data.get('user_status', [])),
+                        occupation=form.cleaned_data.get('occupation', ''),
+                        availability=form.cleaned_data.get('availability'),
+                        budget=form.cleaned_data.get('budget')
+                    )
+                    print(f"Profile created for user: {user.email}")  # Debug print
+
+                    # Handle profile picture
+                    if 'profile_picture' in request.FILES:
+                        profile.profile_picture = request.FILES['profile_picture']
+                        profile.save()
+
+                    # Authenticate and login
+                    user = authenticate(
+                        email=email,
+                        password=form.cleaned_data['password1'],
+                        backend='django.contrib.auth.backends.ModelBackend'
+                    )
+                    if user:
+                        login(request, user)
+                        messages.success(request, 'Registration successful!')
+                        return redirect('accounts:edit_profile')
+
+            except IntegrityError as e:
+                print(f"IntegrityError: {str(e)}")  # Debug print
+                messages.error(request, 'Registration failed due to a database error. Please try again.')
             except Exception as e:
-                print(f"Error saving form: {e}")
-                form.add_error(None, str(e))
+                print(f"Other error: {str(e)}")  # Debug print
+                messages.error(request, f'Registration failed: {str(e)}')
         else:
-            # Add these debug prints
-            print("Form is not valid")
-            print("Form errors:", form.errors)
-            print("Form cleaned data:", form.cleaned_data)
+            print("Form Errors:", form.errors)  # Debug print
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
+
     else:
         form = UserRegistrationForm()
 
-    context = {
-        'form': form,
-        'days': range(1, 32),
-        'months': range(1, 13),
-        'years': range(datetime.now().year - 100, datetime.now().year - 17),
-    }
-    return render(request, 'accounts/register.html', context)
+    return render(request, 'accounts/register.html', {'form': form})
 
     """
     # Original register function kept for reference
@@ -94,21 +127,6 @@ def register(request):
     return render(request, 'accounts/register.html', context)
     """
 
-@login_required
-def profile_setup(request):
-    """Handle initial profile setup."""
-    profile, created = Profile.objects.get_or_create(user=request.user)
-
-    if request.method == 'POST':
-        form = ProfileSetupForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('hello_world:index')
-    else:
-        form = ProfileSetupForm(instance=profile)
-
-    return render(request, 'accounts/profile_setup.html', {'form': form})
 
 @login_required
 def edit_profile(request):
