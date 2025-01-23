@@ -75,6 +75,9 @@ class Profile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     personality_type = models.CharField(max_length=100, blank=True)
     living_preferences = models.TextField(blank=True)
+    occupation = models.CharField(max_length=100, blank=True)
+    availability = models.DateField(null=True, blank=True)
+    budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

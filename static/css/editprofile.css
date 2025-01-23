@@ -78,6 +78,38 @@
     opacity: 0.9;
 }
 
+/* View Mode Styles */
+.info-group {
+    margin-bottom: 1rem;
+}
+
+.info-group p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.info-group strong {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+}
+
+.edit-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #17263bf2;
+}
+
+/* Edit Mode Styles */
 .gender-options {
     display: flex;
     gap: 1rem;
@@ -90,7 +122,10 @@
 }
 
 .dob-input {
-    width: 60px; /* Adjust width as needed */
+    width: 60px;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
 }
 
 .checkbox-group {
@@ -98,20 +133,41 @@
     flex-direction: column;
 }
 
-.save-button {
-    background-color: var(--primary-color);
-    color: white;
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.save-button, .cancel-button {
+    flex: 1;
     padding: 1rem 2rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    width: 100%;
-    margin-top: 2rem;
     transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.save-button {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .save-button:hover {
     background-color: #17263bf2;
+}
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #bb2d3b;
 }
 
 /* Form Controls */
@@ -126,4 +182,44 @@
 .form-control:focus {
     border-color: var(--primary-color);
     outline: none;
+}
+
+/* Error Messages */
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Delete Account Button */
+.delete-profile-btn {
+    display: inline-block;
+    background-color: #dc3545;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.delete-profile-btn:hover {
+    background-color: #bb2d3b;
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .gender-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

@@ -112,16 +112,22 @@ def profile_setup(request):
 
 @login_required
 def edit_profile(request):
-    profile = request.user.profile
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             # Save profile data
             profile = form.save(commit=False)
+
+            # Update additional profile fields
+            profile.occupation = form.cleaned_data.get('occupation', '')
+            profile.availability = form.cleaned_data.get('availability')
+            profile.budget = form.cleaned_data.get('budget')
             profile.save()
 
             # Update user data
-            user = request.user
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.email = form.cleaned_data['email']
@@ -138,14 +144,27 @@ def edit_profile(request):
 
             messages.success(request, 'Profile updated successfully!')
             return redirect('accounts:my_profile')
-        else:
-            messages.error(request, 'Please correct the errors below.')
     else:
-        form = ProfileEditForm(instance=profile)
+        # Pre-populate form with existing data
+        initial_data = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'gender': user.gender,
+            'dob_day': user.dob_day,
+            'dob_month': user.dob_month,
+            'dob_year': user.dob_year,
+            'user_status': user.user_status.split(',') if user.user_status else [],
+            'occupation': profile.occupation,
+            'availability': profile.availability,
+            'budget': profile.budget,
+        }
+        form = ProfileEditForm(instance=profile, initial=initial_data)
 
     return render(request, 'accounts/edit_profile.html', {
         'form': form,
-        'profile': profile
+        'profile': profile,
+        'user': user
     })
 
 @login_required
