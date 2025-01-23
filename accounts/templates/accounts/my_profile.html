@@ -1,149 +1,103 @@
-{% extends 'base.html' %} 
-{% load static %} 
+{% extends 'base.html' %}
+{% load static %}
 
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/myprofile.css' %}">
+{% endblock %}
 {% block content %}
-<div class="profile-page">
-  <h2>Welcome, {{ user.first_name }}!</h2>
-  <div class="profile-icon">
-    <img
-      src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
-      alt="Profile Picture"
-    />
-  </div>
+<div class="container">
+    <div class="profile-grid">
+        <!-- Left Navigation -->
+        <div class="nav-section">
+            <a href="{% url 'accounts:inbox' %}" class="nav-link">
+                <i class="fas fa-envelope"></i>
+                Messages
+            </a>
+            <a href="{% url 'accounts:manage_listing' %}" class="nav-link">
+                <i class="fas fa-ad"></i>
+                My Ads
+            </a>
+            <a href="#saved" class="nav-link">
+                <i class="fas fa-heart"></i>
+                Saved Ads
+            </a>
+            <a href="#searches" class="nav-link">
+                <i class="fas fa-search"></i>
+                Saved Searches
+            </a>
+            <a href="{% url 'accounts:edit_profile' %}" class="nav-link">
+                <i class="fas fa-edit"></i>
+                Edit Profile
+            </a>
+            <a href="{% url 'accounts:delete_profile' %}" class="nav-link">
+                <i class="fas fa-trash"></i>
+                Delete Profile
+            </a>
+        </div>
 
-  <div class="flex-container">
-    <div class="flex-item">
-      <a href="{% url 'accounts:inbox' %}">Messages</a>
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <div class="profile-header">
+                <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}" 
+                     alt="Profile Picture" 
+                     class="profile-picture">
+                <h2>{{ user.get_full_name }}</h2>
+            </div>
+            <div class="profile-info">
+                <div class="info-section">
+                    <h3>Personal Information</h3>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Gender:</strong> {{ user.profile.gender }}</p>
+                    <p><strong>Date of Birth:</strong> {{ user.profile.dob_day }}/{{ user.profile.dob_month }}/{{ user.profile.dob_year }}</p>
+                </div>
+                <div class="info-section">
+                    <h3>Contact Details</h3>
+                    <p><strong>Location:</strong> {{ user.profile.location }}</p>
+                    <p><strong>Occupation:</strong> {{ user.profile.occupation }}</p>
+                </div>
+                <div class="info-section">
+                    <h3>Preferences</h3>
+                    <p><strong>Budget:</strong> £{{ user.profile.budget }}/month</p>
+                    <p><strong>Availability:</strong> {{ user.profile.availability }}</p>
+                </div>
+                <div class="info-section">
+                    <h3>Status</h3>
+                    <p><strong>Account Type:</strong> {{ user.profile.user_type }}</p>
+                    <p><strong>Member Since:</strong> {{ user.date_joined|date:"F Y" }}</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="flex-item">
-      <a href="{% url 'accounts:manage_listing' %}">My Ads</a>
-    </div>
-    <div class="flex-item">
-      <a href="{% url 'accounts:edit_profile' %}">Edit Profile</a>
-    </div>
-    <div class="flex-item">
-      <a href="{% url 'searches:saved_ads' %}">Saved Ads</a>
-    </div>
-    <div class="flex-item">
-      <a href="{% url 'searches:saved_searches' %}">Saved Searches</a>
-    </div>
-    <div class="flex-item">
-      <a href="{% url 'accounts:delete_profile' %}">Delete Profile</a>
-    </div>
-  </div>
 
-  <div class="quick-search">
-    <h3>Quick Search</h3>
-    <form id="search-form" action="{% url 'searches:search' %}" method="get">
-      <input
-        type="text"
-        id="location"
-        name="location"
-        placeholder="Enter postcode"
-        required
-      />
-      <button type="button" id="get-location">Use My Location</button>
-      <div class="search-options">
-        <label
-          ><input type="radio" name="search_type" value="rooms_match" checked />
-          Rooms Match</label
-        >
-        <label
-          ><input type="radio" name="search_type" value="tenant_match" /> Tenant
-          Match</label
-        >
-        <label
-          ><input type="radio" name="search_type" value="coliving_match" />
-          CoLiving Match</label
-        >
-      </div>
-      <button type="submit">Search</button>
-    </form>
-  </div>
+    <!-- Search Section -->
+    <div class="quick-search">
+        <h3>Quick Search</h3>
+        <form id="search-form" action="{% url 'searches:search' %}" method="get">
+            <input
+                type="text"
+                id="location"
+                name="location"
+                placeholder="Enter postcode"
+                required
+            />
+            <button type="button" id="get-location">Use My Location</button>
+            <div class="search-options">
+                <label>
+                    <input type="radio" name="search_type" value="rooms_match" checked />
+                    Rooms Match
+                </label>
+                <label>
+                    <input type="radio" name="search_type" value="tenant_match" />
+                    Tenant Match
+                </label>
+                <label>
+                    <input type="radio" name="search_type" value="coliving_match" />
+                    CoLiving Match
+                </label>
+            </div>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 </div>
-
-<style>
-  .profile-page {
-    text-align: center;
-    margin: 50px auto;
-    max-width: 950px; /* Limit the width of the profile page */
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .profile-icon {
-    margin-bottom: 20px;
-  }
-
-  .profile-icon img {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid #17263bf2;
-    transition: border-color 0.3s ease;
-  }
-
-  .flex-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around; /* Space items evenly */
-    margin: 20px 0;
-  }
-
-  .flex-item {
-    flex: 1 1 30%; /* Adjusts to three columns */
-    margin: 10px;
-    padding: 20px;
-    background-color: #ffffff;
-    text-align: center;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s; /* Add a hover effect */
-  }
-
-  .flex-item:hover {
-    transform: translateY(-5px); /* Lift the item on hover */
-  }
-
-  .quick-search {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .quick-search h3 {
-    margin-bottom: 15px;
-  }
-
-  .quick-search input[type="text"] {
-    width: 80%; /* Make the input wider */
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-
-  .quick-search .search-options {
-    margin-bottom: 10px;
-  }
-
-  .quick-search button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .quick-search button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-  }
-</style>
 {% endblock %}

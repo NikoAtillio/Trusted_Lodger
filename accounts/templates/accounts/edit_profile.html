@@ -2,225 +2,185 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/editprofile.css' %}" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/editprofile.css' %}">
 {% endblock %}
-
 {% block content %}
-<div class="edit-profile-container">
-    <h2 class="text-2xl font-bold mb-6">Profile - {{ user.first_name }} {{ user.last_name }}</h2>
-
-    <!-- View Mode -->
-    <div id="view-mode">
-        <div class="profile-grid">
-            <!-- Profile Photo Section -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <i class="fas fa-camera"></i>
-                    <h3>Profile Photo</h3>
-                </div>
-                <div class="profile-photo-container">
-                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
-                         alt="Profile Picture" class="profile-photo">
-                </div>
-            </div>
-
-            <!-- Basic Information Section -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <i class="fas fa-user"></i>
-                    <h3>Basic Information</h3>
-                </div>
-                <div class="info-group">
-                    <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Gender:</strong> {{ user.get_gender_display }}</p>
-                    <p><strong>Date of Birth:</strong> {{ user.dob_day }}/{{ user.dob_month }}/{{ user.dob_year }}</p>
-                </div>
-            </div>
-
-            <!-- Account Management Section -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <i class="fas fa-dollar-sign"></i>
-                    <h3>Account Details</h3>
-                </div>
-                <div class="info-group">
-                    <p><strong>Monthly Budget:</strong> £{{ profile.budget|default:"Not specified" }}</p>
-                    <p><strong>Occupation:</strong> {{ profile.occupation|default:"Not specified" }}</p>
-                </div>
-            </div>
-
-            <!-- Availability Section -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Availability</h3>
-                </div>
-                <div class="info-group">
-                    <p><strong>Available From:</strong> {{ profile.availability|date:"d/m/Y"|default:"Not specified" }}</p>
-                </div>
-            </div>
-
-            <!-- Housing Status Section -->
-            <div class="profile-section">
-                <div class="section-header">
-                    <i class="fas fa-home"></i>
-                    <h3>Housing Status</h3>
-                </div>
-                <div class="info-group">
-                    {% if user.user_status %}
-                        <p>✓ {{ user.user_status|title }}</p>
-                    {% else %}
-                        <p>No status specified</p>
-                    {% endif %}
-                </div>
-            </div>
+<div class="container">
+    <div class="profile-grid">
+        <!-- Left Navigation -->
+        <div class="nav-section">
+            <a href="{% url 'accounts:inbox' %}" class="nav-link">
+                <i class="fas fa-envelope"></i>
+                Messages
+            </a>
+            <a href="{% url 'accounts:manage_listing' %}" class="nav-link">
+                <i class="fas fa-ad"></i>
+                My Ads
+            </a>
+            <a href="#saved" class="nav-link">
+                <i class="fas fa-heart"></i>
+                Saved Ads
+            </a>
+            <a href="#searches" class="nav-link">
+                <i class="fas fa-search"></i>
+                Saved Searches
+            </a>
+            <a href="{% url 'accounts:my_profile' %}" class="nav-link">
+                <i class="fas fa-user"></i>
+                View Profile
+            </a>
+            <a href="{% url 'accounts:delete_profile' %}" class="nav-link">
+                <i class="fas fa-trash"></i>
+                Delete Profile
+            </a>
         </div>
 
-        <button id="enable-edit" class="edit-button">
-            <i class="fas fa-edit"></i> Edit Profile
-        </button>
-    </div>
-
-    <!-- Edit Mode -->
-    <div id="edit-mode" style="display: none;">
-        <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-            {% csrf_token %}
-            
-            <!-- Profile Photo Edit Section -->
-            <div class="form-section">
-                <h3>Profile Photo</h3>
-                <div class="profile-photo-edit">
-                    <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
-                         alt="Current Profile Picture" class="current-photo">
-                    <input type="file" name="profile_picture" accept="image/*">
-                </div>
-            </div>
-
-            <!-- Basic Information Edit Section -->
-            <div class="form-section">
-                <h3>Basic Information</h3>
-                <div class="form-group">
-                    <label for="first_name">First Name</label>
-                    {{ form.first_name }}
-                </div>
-                <div class="form-group">
-                    <label for="last_name">Last Name</label>
-                    {{ form.last_name }}
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    {{ form.email }}
-                </div>
-                <div class="form-group">
-                    <label>Gender</label>
-                    <div class="radio-group">
-                        {{ form.gender }}
-                    </div>
-                    <input type="text" id="gender_other" name="gender_other" 
-                           style="display: none;" placeholder="Please specify">
-                </div>
-                <div class="form-group">
-                    <label>Date of Birth</label>
-                    <div class="dob-inputs">
-                        {{ form.dob_day }}
-                        {{ form.dob_month }}
-                        {{ form.dob_year }}
+        <!-- Edit Profile Form -->
+        <div class="profile-content">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-header">
+                    <div class="profile-picture-container">
+                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
+                             alt="Profile Picture"
+                             class="profile-picture">
+                        <div class="photo-upload">
+                            <label for="id_profile_picture" class="photo-upload-btn">
+                                <i class="fas fa-camera"></i> Change Photo
+                            </label>
+                            <input type="file" id="id_profile_picture" name="profile_picture" hidden>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Account Management Edit Section -->
-            <div class="form-section">
-                <h3>Account Details</h3>
-                <div class="form-group">
-                    <label for="budget">Monthly Budget (£)</label>
-                    {{ form.budget }}
-                </div>
-                <div class="form-group">
-                    <label for="occupation">Occupation</label>
-                    {{ form.occupation }}
-                </div>
-            </div>
+                <div class="profile-info">
+                    <div class="info-section">
+                        <h3>Personal Information</h3>
+                        <div class="form-group">
+                            <label for="id_first_name">First Name</label>
+                            <input type="text" id="id_first_name" name="first_name" value="{{ user.first_name }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_last_name">Last Name</label>
+                            <input type="text" id="id_last_name" name="last_name" value="{{ user.last_name }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Email</label>
+                            <input type="email" id="id_email" name="email" value="{{ user.email }}" class="form-control">
+                        </div>
+                    </div>
 
-            <!-- Availability Edit Section -->
-            <div class="form-section">
-                <h3>Availability</h3>
-                <div class="form-group">
-                    <label for="availability">Available From</label>
-                    {{ form.availability }}
-                </div>
-            </div>
+                    <div class="info-section">
+                        <h3>Profile Details</h3>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="gender-options">
+                                {{ form.gender }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <div class="dob-inputs">
+                                <select name="dob_day" class="form-control">
+                                    {% for day in days %}
+                                    <option value="{{ day }}" {% if user.profile.dob_day == day %}selected{% endif %}>{{ day }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="dob_month" class="form-control">
+                                    {% for month in months %}
+                                    <option value="{{ month }}" {% if user.profile.dob_month == month %}selected{% endif %}>{{ month }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="dob_year" class="form-control">
+                                    {% for year in years %}
+                                    <option value="{{ year }}" {% if user.profile.dob_year == year %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Housing Status Edit Section -->
-            <div class="form-section">
-                <h3>Housing Status</h3>
-                <div class="checkbox-group">
-                    {{ form.user_status }}
+                    <div class="info-section">
+                        <h3>Additional Information</h3>
+                        <div class="form-group">
+                            <label for="id_occupation">Occupation</label>
+                            <input type="text" id="id_occupation" name="occupation" value="{{ user.profile.occupation }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_availability">Available From</label>
+                            <input type="date" id="id_availability" name="availability" value="{{ user.profile.availability|date:'Y-m-d' }}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_budget">Budget (£/month)</label>
+                            <input type="number" id="id_budget" name="budget" value="{{ user.profile.budget }}" class="form-control">
+                        </div>
+                    </div>
                 </div>
-                <div id="status-error" class="error-message" style="display: none;">
-                    Please select at least one status option.
-                </div>
-            </div>
 
-            <div class="button-group">
-                <button type="submit" class="save-button">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <button type="button" class="cancel-button" id="cancel-edit">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-            </div>
-        </form>
+                <div class="button-group">
+                    <button type="submit" class="save-button">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'accounts:my_profile' %}" class="cancel-button">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
 
 <script>
-    // Toggle edit mode
-    document.getElementById('enable-edit').addEventListener('click', function() {
-        document.getElementById('view-mode').style.display = 'none';
-        document.getElementById('edit-mode').style.display = 'block';
-    });
+  // Toggle edit mode
+  document.getElementById("enable-edit").addEventListener("click", function () {
+    document.getElementById("view-mode").style.display = "none";
+    document.getElementById("edit-mode").style.display = "block";
+  });
 
-    document.getElementById('cancel-edit').addEventListener('click', function() {
-        document.getElementById('edit-mode').style.display = 'none';
-        document.getElementById('view-mode').style.display = 'block';
-    });
+  document.getElementById("cancel-edit").addEventListener("click", function () {
+    document.getElementById("edit-mode").style.display = "none";
+    document.getElementById("view-mode").style.display = "block";
+  });
 
-    // Gender other field toggle
-    document.querySelectorAll('input[name="gender"]').forEach((elem) => {
-        elem.addEventListener("change", function(event) {
-            const otherInput = document.getElementById("gender_other");
-            if (event.target.value === "other") {
-                otherInput.style.display = "block";
-            } else {
-                otherInput.style.display = "none";
-                otherInput.value = "";
-            }
-        });
+  // Gender other field toggle
+  document.querySelectorAll('input[name="gender"]').forEach((elem) => {
+    elem.addEventListener("change", function (event) {
+      const otherInput = document.getElementById("gender_other");
+      if (event.target.value === "other") {
+        otherInput.style.display = "block";
+      } else {
+        otherInput.style.display = "none";
+        otherInput.value = "";
+      }
     });
+  });
 
-    // Form validation
-    function validateForm() {
-        const statusField = document.querySelector('input[name="user_status"]');
-        const errorElement = document.getElementById("status-error");
-        
-        if (!statusField || !statusField.value.trim()) {
-            errorElement.style.display = "block";
-            return false;
-        }
-        
-        errorElement.style.display = "none";
-        return true;
+  // Form validation
+  function validateForm() {
+    const statusField = document.querySelector('input[name="user_status"]');
+    const errorElement = document.getElementById("status-error");
+
+    if (!statusField || !statusField.value.trim()) {
+      errorElement.style.display = "block";
+      return false;
     }
 
-    // Set initial gender other field visibility
-    window.addEventListener('load', function() {
-        const selectedGender = document.querySelector('input[name="gender"]:checked');
-        if (selectedGender && selectedGender.value === "other") {
-            document.getElementById("gender_other").style.display = "block";
-        }
-    });
+    errorElement.style.display = "none";
+    return true;
+  }
+
+  // Set initial gender other field visibility
+  window.addEventListener("load", function () {
+    const selectedGender = document.querySelector(
+      'input[name="gender"]:checked'
+    );
+    if (selectedGender && selectedGender.value === "other") {
+      document.getElementById("gender_other").style.display = "block";
+    }
+  });
 </script>
 {% endblock %}

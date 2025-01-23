@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
 from django.db import transaction, IntegrityError
 from datetime import datetime
 from .models import Profile, RoomListing
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.views.generic import DetailView
+from django.contrib.auth.forms import PasswordChangeForm
 
 def login_view(request):
     """Handle user login."""
@@ -34,75 +35,69 @@ def logout_view(request):
     messages.success(request, 'Successfully logged out!')
     return redirect('hello_world:index')
 
+User = get_user_model()
+
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
-        print("Form Data:", request.POST)  # Debug print
-
         if form.is_valid():
             try:
-                # Start transaction
                 with transaction.atomic():
-                    # Check if user with this email already exists
-                    email = form.cleaned_data.get('email')
-                    if User.objects.filter(email=email).exists():
-                        messages.error(request, 'A user with this email already exists.')
-                        return render(request, 'accounts/register.html', {'form': form})
+                    # Create and save the user
+                    user = form.save(commit=False)
+                    user.set_password(form.cleaned_data['password1'])
+                    user.save()
 
-                    # Create user
-                    user = form.save()
-                    print(f"User created: {user.email}")  # Debug print
+                    # The profile is automatically created by the signal
+                    # Just update the profile with form data
+                    user.profile.gender = form.cleaned_data['gender']
+                    user.profile.dob_day = form.cleaned_data['dob_day']
+                    user.profile.dob_month = form.cleaned_data['dob_month']
+                    user.profile.dob_year = form.cleaned_data['dob_year']
 
-                    # Delete any existing profile for this user (shouldn't happen, but just in case)
-                    Profile.objects.filter(user=user).delete()
+                    # Handle optional fields
+                    if form.cleaned_data.get('occupation'):
+                        user.profile.occupation = form.cleaned_data['occupation']
+                    if form.cleaned_data.get('availability'):
+                        user.profile.availability = form.cleaned_data['availability']
+                    if form.cleaned_data.get('budget'):
+                        user.profile.budget = form.cleaned_data['budget']
 
-                    # Create new profile
-                    profile = Profile.objects.create(
-                        user=user,
-                        gender=form.cleaned_data.get('gender'),
-                        dob_day=form.cleaned_data.get('dob_day'),
-                        dob_month=form.cleaned_data.get('dob_month'),
-                        dob_year=form.cleaned_data.get('dob_year'),
-                        user_status=', '.join(form.cleaned_data.get('user_status', [])),
-                        occupation=form.cleaned_data.get('occupation', ''),
-                        availability=form.cleaned_data.get('availability'),
-                        budget=form.cleaned_data.get('budget')
-                    )
-                    print(f"Profile created for user: {user.email}")  # Debug print
-
-                    # Handle profile picture
+                    # Handle profile picture if provided
                     if 'profile_picture' in request.FILES:
-                        profile.profile_picture = request.FILES['profile_picture']
-                        profile.save()
+                        user.profile.profile_picture = request.FILES['profile_picture']
 
-                    # Authenticate and login
+                    user.profile.save()
+
+                    # Log the user in
                     user = authenticate(
-                        email=email,
-                        password=form.cleaned_data['password1'],
-                        backend='django.contrib.auth.backends.ModelBackend'
+                        request,
+                        email=form.cleaned_data['email'],
+                        password=form.cleaned_data['password1']
                     )
-                    if user:
+                    if user is not None:
                         login(request, user)
                         messages.success(request, 'Registration successful!')
                         return redirect('accounts:edit_profile')
+                    else:
+                        messages.error(request, 'Authentication failed after registration.')
 
-            except IntegrityError as e:
-                print(f"IntegrityError: {str(e)}")  # Debug print
-                messages.error(request, 'Registration failed due to a database error. Please try again.')
             except Exception as e:
-                print(f"Other error: {str(e)}")  # Debug print
-                messages.error(request, f'Registration failed: {str(e)}')
+                print(f"Registration error: {str(e)}")
+                messages.error(request, 'Registration failed. Please try again.')
         else:
-            print("Form Errors:", form.errors)  # Debug print
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
-
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'accounts/register.html', {'form': form})
-
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'days': range(1, 32),
+        'months': range(1, 13),
+        'years': range(datetime.now().year - 100, datetime.now().year - 17)
+    })
     """
     # Original register function kept for reference
     if request.method == 'POST':
