@@ -61,7 +61,7 @@
 }
 
 .photo-upload-btn {
-    position: absolute;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
@@ -70,33 +70,32 @@
     padding: 0.5rem;
     cursor: pointer;
     transition: opacity 0.3s ease;
+    margin-top: 1rem;
+    display: inline-block;
 }
 
 .photo-upload-btn:hover {
     opacity: 0.9;
 }
 
-.preferences-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.preference-item {
+.gender-options {
     display: flex;
+    gap: 1rem;
     align-items: center;
-    padding: 0.5rem;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
 }
 
-.preference-item:hover {
-    background-color: #e9ecef;
+.dob-inputs {
+    display: flex;
+    gap: 0.5rem;
 }
 
-.preference-item input[type="checkbox"] {
-    margin-right: 0.5rem;
+.dob-input {
+    width: 60px; /* Adjust width as needed */
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
 }
 
 .save-button {
@@ -127,26 +126,4 @@
 .form-control:focus {
     border-color: var(--primary-color);
     outline: none;
-}
-
-/* Additional Sections */
-.availability-section {
-    margin-top: 1rem;
-}
-
-.date-picker {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-}
-
-.budget-range {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.budget-input {
-    flex: 1;
 }

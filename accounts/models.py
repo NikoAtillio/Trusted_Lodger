@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 from django.core.validators import MinValueValidator, EmailValidator
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from datetime import datetime
 
 class CustomUserManager(BaseUserManager):
@@ -173,3 +175,12 @@ class Message(models.Model):
         if not self.is_read:
             self.is_read = True
             self.save()
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

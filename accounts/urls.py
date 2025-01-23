@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import my_profile
+from .views import my_profile, AccountDetailView
 
 app_name = 'accounts'
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('profile/', my_profile, name='my_profile'),
     path('profile/delete/', views.delete_profile, name='delete_profile'),
     path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
+    path('myaccount/<slug:pk>/', views.AccountDetailView.as_view(), name="myaccount")
 ]

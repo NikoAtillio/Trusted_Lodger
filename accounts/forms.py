@@ -62,17 +62,17 @@ class UserRegistrationForm(UserCreationForm):
         if not user_status:
             raise forms.ValidationError("Please select at least one status option.")
 
-def clean_profile_picture(self):
-    picture = self.cleaned_data.get('profile_picture')
-    if picture:
-        if picture.size > 5 * 1024 * 1024:  # 5 MB limit
-            raise forms.ValidationError("The file is too large. Maximum size is 5 MB.")
+    def clean_profile_picture(self):
+        picture = self.cleaned_data.get('profile_picture')
+        if picture:
+            if picture.size > 5 * 1024 * 1024:  # 5 MB limit
+                raise forms.ValidationError("The file is too large. Maximum size is 5 MB.")
 
-        # Convert filename to lowercase for checking extensions
-        file_name = picture.name.lower()
-        if not file_name.endswith(('.png', '.jpg', '.jpeg')):
-            raise forms.ValidationError("File type not supported. Please upload a PNG or JPG image.")
-    return picture
+            # Convert filename to lowercase for checking extensions
+            file_name = picture.name.lower()
+            if not file_name.endswith(('.png', '.jpg', '.jpeg')):
+                raise forms.ValidationError("File type not supported. Please upload a PNG or JPG image.")
+        return picture
 
 class ProfileSetupForm(forms.ModelForm):
     class Meta:
@@ -84,13 +84,40 @@ class ProfileSetupForm(forms.ModelForm):
         }
 
 class ProfileEditForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField()
+    gender = forms.ChoiceField(choices=User.GENDER_CHOICES)
+    dob_day = forms.IntegerField(min_value=1, max_value=31)
+    dob_month = forms.IntegerField(min_value=1, max_value=12)
+    dob_year = forms.IntegerField(min_value=1900, max_value=datetime.now().year)
+    user_status = forms.MultipleChoiceField(
+        choices=[
+            ('looking_for_share', 'I am looking for a flat or house share'),
+            ('have_share', 'I have a flat or house share'),
+            ('find_people', 'I\'d like to find people to form a new share')
+        ],
+        widget=forms.CheckboxSelectMultiple,
+    )
+    budget = forms.DecimalField(required=False)
+    occupation = forms.CharField(required=False)
+    availability = forms.DateField(required=False)
+
     class Meta:
         model = Profile
         fields = ['bio', 'location', 'personality_type', 'living_preferences']
-        widgets = {
-            'bio': forms.Textarea(attrs={'rows': 4}),
-            'living_preferences': forms.Textarea(attrs={'rows': 4}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+            self.fields['gender'].initial = self.instance.user.gender
+            self.fields['dob_day'].initial = self.instance.user.dob_day
+            self.fields['dob_month'].initial = self.instance.user.dob_month
+            self.fields['dob_year'].initial = self.instance.user.dob_year
+            self.fields['user_status'].initial = self.instance.user.user_status.split(',') if self.instance.user.user_status else []
 
 class RoomListingForm(forms.ModelForm):
     class Meta:

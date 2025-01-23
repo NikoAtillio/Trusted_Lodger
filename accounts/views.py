@@ -6,6 +6,7 @@ from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, Room
 from datetime import datetime
 from .models import Profile, RoomListing
 from django.contrib.auth.backends import ModelBackend
+from django.views.generic import DetailView
 
 def login_view(request):
     """Handle user login."""
@@ -111,17 +112,41 @@ def profile_setup(request):
 
 @login_required
 def edit_profile(request):
-    """Handle profile editing."""
     profile = request.user.profile
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            form.save()
+            # Save profile data
+            profile = form.save(commit=False)
+            profile.save()
+
+            # Update user data
+            user = request.user
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.gender = form.cleaned_data['gender']
+            user.dob_day = form.cleaned_data['dob_day']
+            user.dob_month = form.cleaned_data['dob_month']
+            user.dob_year = form.cleaned_data['dob_year']
+            user.user_status = ','.join(form.cleaned_data['user_status'])
+
+            if 'profile_picture' in request.FILES:
+                user.profile_picture = request.FILES['profile_picture']
+
+            user.save()
+
             messages.success(request, 'Profile updated successfully!')
             return redirect('accounts:my_profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = ProfileEditForm(instance=profile)
-    return render(request, 'accounts/edit_profile.html', {'form': form})
+
+    return render(request, 'accounts/edit_profile.html', {
+        'form': form,
+        'profile': profile
+    })
 
 @login_required
 def inbox(request):
@@ -182,3 +207,12 @@ def register_view(request):
         'form': UserRegistrationForm(),
     }
     return render(request, 'accounts/register.html', context)
+
+
+# https://ccbv.co.uk/projects/Django/5.0/django.views.generic.detail/DetailView/
+
+class AccountDetailView(DetailView):
+    model = Profile
+    template_name = 'accounts/account.html'
+    context_object_name = 'profile'
+
