@@ -4,6 +4,7 @@ from allauth.account.forms import SignupForm
 from .models import User, Profile, RoomListing, Message
 from datetime import datetime
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 class CustomSignupForm(SignupForm):
     user_type = forms.ChoiceField(
@@ -31,27 +32,45 @@ class UserRegistrationForm(UserCreationForm):
     user_type = forms.ChoiceField(
         choices=[('tenant', 'Tenant'), ('landlord', 'Landlord')],
         widget=forms.RadioSelect,
-        label="I am a"
+        label="I am a",
+        required=True,
+        error_messages={'required': 'Please select whether you are a tenant or landlord'}
     )
     gender = forms.ChoiceField(
         choices=GENDER_CHOICES,
         widget=forms.RadioSelect,
-        required=True
+        required=True,
+        error_messages={'required': 'Please select your gender'}
     )
     dob_day = forms.IntegerField(
         min_value=1,
         max_value=31,
-        required=True
+        required=True,
+        error_messages={
+            'required': 'Please enter a valid day',
+            'min_value': 'Day must be between 1 and 31',
+            'max_value': 'Day must be between 1 and 31'
+        }
     )
     dob_month = forms.IntegerField(
         min_value=1,
         max_value=12,
-        required=True
+        required=True,
+        error_messages={
+            'required': 'Please enter a valid month',
+            'min_value': 'Month must be between 1 and 12',
+            'max_value': 'Month must be between 1 and 12'
+        }
     )
     dob_year = forms.IntegerField(
         min_value=1900,
-        max_value=datetime.now().year,
-        required=True
+        max_value=datetime.now().year - 17,  # Must be at least 17 years old
+        required=True,
+        error_messages={
+            'required': 'Please enter a valid year',
+            'min_value': 'Year must be 1900 or later',
+            'max_value': 'You must be at least 17 years old'
+        }
     )
     user_status = forms.MultipleChoiceField(
         choices=[
@@ -60,28 +79,9 @@ class UserRegistrationForm(UserCreationForm):
             ('find_people', 'I\'d like to find people to form a new share')
         ],
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        error_messages={'required': 'Please select at least one option'}
     )
-    profile_picture = forms.ImageField(required=False)
-    occupation = forms.CharField(required=False, max_length=100)
-    availability = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'type': 'date'})
-    )
-    budget = forms.DecimalField(
-        required=False,
-        max_digits=10,
-        decimal_places=2
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            'email', 'first_name', 'last_name', 'password1', 'password2',
-            'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year',
-            'user_status', 'profile_picture', 'occupation', 'availability', 'budget'
-        ]
-
 
     def clean(self):
         cleaned_data = super().clean()
@@ -92,16 +92,27 @@ class UserRegistrationForm(UserCreationForm):
         if dob_day and dob_month and dob_year:
             try:
                 dob = datetime(dob_year, dob_month, dob_day)
-                if (datetime.now() - dob).days < 6570:  # 18 years in days
-                    raise forms.ValidationError("You must be at least 18 years old.")
-            except ValueError:
-                raise forms.ValidationError("Please enter a valid date.")
+                today = datetime.now()
+                age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
+                if age < 17:
+                    raise ValidationError('You must be at least 17 years old to register.')
+
+            except ValueError:
+                raise ValidationError('Please enter a valid date of birth.')
+
+        # Validate user status (at least one option must be selected)
         user_status = cleaned_data.get('user_status')
         if not user_status:
-            raise forms.ValidationError("Please select at least one status option.")
+            raise ValidationError('Please select at least one status option.')
 
-        return cleaned_data  # This returns the cleaned data, preserving user input
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
 
     def clean_profile_picture(self):
         picture = self.cleaned_data.get('profile_picture')
