@@ -1,4 +1,4 @@
-/* global.css */
+/* Root Variables */
 :root {
     --primary-color: #BCB88A;
     --secondary-color: #FFFFFF;
@@ -6,18 +6,26 @@
     --font-body: 'Playfair Display', serif;
 }
 
+/* Main Layout */
 .main-content {
     width: 100%;
-    position: absolute;
-    top: 0;
 }
 
 .homepage-wrapper {
     width: 100%;
-    margin-top: -50px;
+    margin-top: -106px;
 }
 
-/* Navbar */
+/* Section Containers */
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* Navbar Styles */
 .navbar {
     position: sticky;
     top: 0;
@@ -26,11 +34,11 @@
     z-index: 1000;
     padding: 1rem 0;
     box-shadow: 0 2px 5px #0000001a;
-    transition: transform 0.3s ease; /* Smooth transition */
+    transition: transform 0.3s ease;
 }
 
 .navbar.hidden {
-    transform: translateY(-100%); /* Hide the navbar by moving it up */
+    transform: translateY(-100%);
 }
 
 .navbar-content {
@@ -49,13 +57,19 @@
     font-weight: 700;
 }
 
+.logo {
+    width: 50px;
+    height: 70px;
+}
+
+/* Navigation Links */
 .nav-links {
     display: flex;
     gap: 2rem;
 }
 
 .nav-links a {
-    font-size: 1.5rem; /* Updated font size to match footer links */
+    font-size: 1.5rem;
     color: var(--secondary-color);
     text-decoration: none;
     transition: color 0.3s ease;
@@ -67,10 +81,11 @@
 
 /* Auth Button */
 .auth-button {
-    font-size: 1.5rem; /* Match font size with navbar and footer links */
+    font-size: 0.9rem; /* Smaller font size for buttons */
+    padding: 0.3rem 0.5rem; /* Smaller padding for buttons */
+    margin-left: 10px; /* Space between the icon and button */
     color: var(--secondary-color);
     text-decoration: none;
-    padding: 0.5rem 1rem;
     background-color: var(--primary-color);
     border: none;
     border-radius: 5px;
@@ -82,39 +97,37 @@
     color: var(--secondary-color);
 }
 
-/* Section Containers */
-.section-container {
-    max-width: 1200px;
-    margin: 0 auto; /* Center the container */
-    padding: 0 2rem; /* Add padding for spacing */
-    width: 100%;
-    text-align: center; /* Center-align text by default */
+/* User Menu and Profile Picture */
+.user-menu {
+    position: relative; /* Ensure the dropdown is positioned relative to the user menu */
+    display: flex;
+    align-items: center; /* Align items vertically */
 }
 
 .user-icon {
-    width: 65px;
-    height: 65px;
+    width: 60px; /* Increased size for the profile picture */
+    height: 60px; /* Increased size for the profile picture */
+    border-radius: 50%;
+    object-fit: cover;
     cursor: pointer;
+    border: 2px solid #ddd;
+    transition: border-color 0.3s ease;
 }
 
-.logo {
-    width: 50px;
-    height: 70px;
+.user-icon:hover {
+    border-color: #007bff;
 }
 
-.user-menu {
-    position: relative;
-    display: inline-block;
-}
-
+/* Dropdown Menu */
 .dropdown-content {
     display: none;
-    position: absolute;
-    right: 0;
+    position: absolute; /* Position it absolutely */
+    top: 100%; /* Position it below the user icon */
+    left: 0; /* Align it to the left of the user icon */
     background-color: #fff;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     padding: 1rem;
-    z-index: 1;
+    z-index: 1; /* Ensure it appears above other elements */
     min-width: 200px;
 }
 
@@ -132,6 +145,32 @@
 
 .user-menu:hover .dropdown-content {
     display: block; /* Show dropdown on hover */
+}
+
+/* Messages */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.messages li {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 /* Footer */
@@ -155,9 +194,9 @@
 
 .footer-links {
     display: flex;
-    gap: 5rem; /* Increased gap for spreading links further across the footer */
+    gap: 5rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem; /* Larger font size for the links */
+    font-size: 1.5rem;
 }
 
 .footer-links a {

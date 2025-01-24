@@ -1,0 +1,163 @@
+/* Base Form Container */
+.register-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Typography */
+.register-form h2 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+.form-group h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.register-form p {
+    font-size: 0.9rem;
+    color: #17263bf2;
+}
+
+.login-text {
+    font-size: 1.1rem;
+    color: #17263bf2;
+}
+
+.label-text {
+    font-weight: bold;
+    font-size: 1.08rem;
+    color: #17263bf2;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Form Structure */
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+/* Input Styling */
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1.08rem;
+    color: #17263bf2;
+}
+
+.form-group input:not([type="radio"]):not([type="checkbox"]),
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Radio and Checkbox Styling */
+.radio-group,
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-group .input-container,
+.checkbox-group .input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.radio-group .input-container label,
+.checkbox-group .input-container label,
+.radio-option,
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+    font-weight: normal;
+}
+
+.radio-group .input-container input[type="radio"],
+.checkbox-group .input-container input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* Date of Birth Styling */
+.dob-container,
+.dob-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.dob-container input,
+.dob-inputs input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: center;
+    width: 80px;
+}
+
+/* Button Styling */
+.btn {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #17263bf2;
+}
+
+/* Error Styling */
+.error-messages {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+.error-message,
+.field-error,
+#status-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.form-group input.error:not([type="radio"]):not([type="checkbox"]),
+.form-group select.error {
+    border-color: #dc3545;
+    background-color: #fff;
+}
+
+/* Remove generic error class */
+.error {
+    display: none;
+}

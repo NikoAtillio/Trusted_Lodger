@@ -1,4 +1,10 @@
 /* index.css */
+:root {
+    --primary-color: #BCB88A;
+    --secondary-color: #FFFFFF;
+    --dark-bg: #17263bf2;
+    --font-body: 'Playfair Display', serif;
+}
 
 /* Hero Section */
 .hero {
@@ -59,12 +65,48 @@
 .feature {
     flex: 1;
     min-width: 300px; /* Ensure a minimum width for smaller screens */
-    background: var(--secondary-color);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    color: #fff; /* Adjust text color for visibility */
 }
+
+.feature::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Add a dark overlay for better text visibility */
+    z-index: 0;
+}
+
+.feature h3,
+.feature p,
+.feature .cta-button {
+    position: relative;
+    z-index: 1;
+}
+
+.feature img {
+    display: none; /* Hide the original img element */
+}
+
+/* Specific Background Images */
+.features-section .feature:nth-child(1) {
+    background-image: url("{% static 'images/tenant.png' %}");
+}
+
+.features-section .feature:nth-child(2) {
+    background-image: url("{% static 'images/landlord.png' %}");
+}
+
 
 /* Process Section */
 .process-section {
@@ -107,7 +149,7 @@
 }
 
 .cta-button:hover {
-    background-color: #3c1181;
+    background-color: var(--dark-bg);
 }
 
 /* Responsive Design */
