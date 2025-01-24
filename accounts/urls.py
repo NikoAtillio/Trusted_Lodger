@@ -17,5 +17,4 @@ urlpatterns = [
     path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
     path('myaccount/<slug:pk>/', views.AccountDetailView.as_view(), name="myaccount"),
     path('my-viewings/', views.my_viewings, name='my_viewings'),
-
 ]

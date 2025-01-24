@@ -224,3 +224,6 @@ class AccountDetailView(DetailView):
     template_name = 'accounts/account.html'
     context_object_name = 'profile'
 
+# My Viewings
+def my_viewings(request):
+    return render(request, 'path/to/template.html')
