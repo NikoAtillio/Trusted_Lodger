@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 
-    'trusted-lodger-07c367c9020d.herokuapp.com',
+    'https://trusted-lodger-07c367c9020d.herokuapp.com',
     ]
 
 # Application definition
