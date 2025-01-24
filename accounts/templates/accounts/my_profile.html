@@ -19,11 +19,15 @@
                 <i class="fas fa-ad"></i>
                 My Ads
             </a>
-            <a href="#saved" class="nav-link">
+            <a href="{% url 'accounts:edit_profile' %}" class="nav-link">
+                <i class="fas fa-edit"></i>
+                Edit Profile
+            </a>
+            <a href="{% url 'searches:saved_ads' %}" class="nav-link">
                 <i class="fas fa-heart"></i>
                 Saved Ads
             </a>
-            <a href="#searches" class="nav-link">
+            <a href="{% url 'searches:saved_searches' %}" class="nav-link">
                 <i class="fas fa-search"></i>
                 Saved Searches
             </a>

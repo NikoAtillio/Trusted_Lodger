@@ -197,4 +197,4 @@ def send_message_ajax(request, pk):
 def saved_ads(request):
     """View saved ads"""
     saved_ads = SavedAd.objects.filter(user=request.user)
-    return render(request, 'saved_ads.html', {'saved_ads': saved_ads})
+    return render(request, 'searches/saved_ads.html', {'saved_ads': saved_ads})
