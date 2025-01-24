@@ -6,8 +6,8 @@
 }
 
 .container {
-    max-width: 1400px;
-    margin: 2rem auto;
+    max-width: 1200px;
+    margin: auto;
     padding: 0 1rem;
 }
 
@@ -29,7 +29,7 @@
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: 2rem;
     margin: 0.5rem 0;
     color: var(--primary-color);
     text-decoration: none;
