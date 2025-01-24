@@ -145,15 +145,14 @@ class ProfileEditForm(forms.ModelForm):
             ('find_people', 'I\'d like to find people to form a new share')
         ],
         widget=forms.CheckboxSelectMultiple,
+        required=False  # Make this field optional
     )
-    budget = forms.DecimalField(required=False)
-    occupation = forms.CharField(required=False)
-    availability = forms.DateField(required=False)
-    profile_picture = forms.ImageField(required=False)
+    profile_picture = forms.ImageField(required=False)  # Make sure this is optional
 
     class Meta:
         model = Profile
-        fields = ['bio', 'location', 'personality_type', 'living_preferences']
+        fields = ['bio', 'location', 'personality_type', 'living_preferences',
+                 'occupation', 'availability', 'budget']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -165,34 +164,8 @@ class ProfileEditForm(forms.ModelForm):
             self.fields['dob_day'].initial = self.instance.user.dob_day
             self.fields['dob_month'].initial = self.instance.user.dob_month
             self.fields['dob_year'].initial = self.instance.user.dob_year
-            self.fields['user_status'].initial = self.instance.user.user_status.split(',') if self.instance.user.user_status else []
-
-    def clean(self):
-        cleaned_data = super().clean()
-        dob_day = cleaned_data.get('dob_day')
-        dob_month = cleaned_data.get('dob_month')
-        dob_year = cleaned_data.get('dob_year')
-
-        if all([dob_day, dob_month, dob_year]):
-            try:
-                dob = datetime(dob_year, dob_month, dob_day)
-                if (datetime.now() - dob).days < 6570:  # 18 years in days
-                    raise forms.ValidationError("You must be at least 18 years old.")
-            except ValueError:
-                raise forms.ValidationError("Please enter a valid date.")
-
-        return cleaned_data
-
-    def clean_profile_picture(self):
-        picture = self.cleaned_data.get('profile_picture')
-        if picture:
-            if picture.size > 5 * 1024 * 1024:  # 5 MB limit
-                raise forms.ValidationError("The file is too large. Maximum size is 5 MB.")
-
-            file_name = picture.name.lower()
-            if not file_name.endswith(('.png', '.jpg', '.jpeg')):
-                raise forms.ValidationError("File type not supported. Please upload a PNG or JPG image.")
-        return picture
+            if self.instance.user.user_status:
+                self.fields['user_status'].initial = self.instance.user.user_status.split(',')
 
     def save(self, commit=True):
         profile = super().save(commit=False)
@@ -206,7 +179,14 @@ class ProfileEditForm(forms.ModelForm):
         user.dob_day = self.cleaned_data['dob_day']
         user.dob_month = self.cleaned_data['dob_month']
         user.dob_year = self.cleaned_data['dob_year']
-        user.user_status = ','.join(self.cleaned_data['user_status'])
+
+        # Only update user_status if it's in cleaned_data
+        if 'user_status' in self.cleaned_data and self.cleaned_data['user_status']:
+            user.user_status = ','.join(self.cleaned_data['user_status'])
+
+        # Only update profile picture if a new one is uploaded
+        if self.cleaned_data.get('profile_picture'):
+            user.profile_picture = self.cleaned_data['profile_picture']
 
         if commit:
             user.save()

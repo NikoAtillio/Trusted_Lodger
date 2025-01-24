@@ -126,59 +126,34 @@ def register(request):
 @login_required
 def edit_profile(request):
     user = request.user
-    profile, created = Profile.objects.get_or_create(user=user)
+    profile = get_object_or_404(Profile, user=user)
 
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            # Save profile data
-            profile = form.save(commit=False)
-
-            # Update additional profile fields
-            profile.occupation = form.cleaned_data.get('occupation', '')
-            profile.availability = form.cleaned_data.get('availability')
-            profile.budget = form.cleaned_data.get('budget')
-            profile.save()
-
-            # Update user data
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.email = form.cleaned_data['email']
-            user.gender = form.cleaned_data['gender']
-            user.dob_day = form.cleaned_data['dob_day']
-            user.dob_month = form.cleaned_data['dob_month']
-            user.dob_year = form.cleaned_data['dob_year']
-            user.user_status = ','.join(form.cleaned_data['user_status'])
-
-            if 'profile_picture' in request.FILES:
-                user.profile_picture = request.FILES['profile_picture']
-
-            user.save()
-
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('accounts:my_profile')
+            try:
+                with transaction.atomic():
+                    form.save()
+                    messages.success(request, 'Profile updated successfully!')
+                    return redirect('accounts:my_profile')
+            except Exception as e:
+                messages.error(request, f'Error updating profile: {str(e)}')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+            print("Form errors:", form.errors)  # For debugging
     else:
-        # Pre-populate form with existing data
-        initial_data = {
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email,
-            'gender': user.gender,
-            'dob_day': user.dob_day,
-            'dob_month': user.dob_month,
-            'dob_year': user.dob_year,
-            'user_status': user.user_status.split(',') if user.user_status else [],
-            'occupation': profile.occupation,
-            'availability': profile.availability,
-            'budget': profile.budget,
-        }
-        form = ProfileEditForm(instance=profile, initial=initial_data)
+        form = ProfileEditForm(instance=profile)
 
-    return render(request, 'accounts/edit_profile.html', {
+    context = {
         'form': form,
         'profile': profile,
-        'user': user
-    })
+        'user': user,
+        'days': range(1, 32),
+        'months': range(1, 13),
+        'years': range(datetime.now().year - 100, datetime.now().year - 17)
+    }
+
+    return render(request, 'accounts/edit_profile.html', context)
 
 @login_required
 def inbox(request):
