@@ -129,6 +129,7 @@ def edit_profile(request):
     profile = get_object_or_404(Profile, user=user)
 
     if request.method == 'POST':
+        print('POST:', request.POST)
         form = ProfileEditForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             try:

@@ -40,21 +40,22 @@
         <!-- Edit Profile Form -->
         <div class="profile-content">
             <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="profile-header">
-                    <div class="profile-picture-container">
-                        <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/icons/user-icon.png' %}{% endif %}"
-                             alt="Profile Picture"
-                             class="profile-picture"
-                             id="profile-preview">
-                        <div class="photo-upload">
-                            <label for="{{ form.profile_picture.id_for_label }}" class="photo-upload-btn">
-                                <i class="fas fa-camera"></i> Change Photo
-                            </label>
-                            {{ form.profile_picture }}
-                        </div>
-                    </div>
+            {% csrf_token %}
+            <div class="profile-header">
+                <div class="profile-picture-container">
+                <div class="current-picture">
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Current Profile Picture" class="profile-preview">
+                    {% else %}
+                    <img src="{% static 'images/icons/user-icon.png' %}" alt="Default Profile Picture" class="profile-preview">
+                    {% endif %}
                 </div>
+                <div class="upload-section">
+                    <input type="file" id="fileInput" name="profile_picture" accept="image/*" class="file-input">
+                    <img id="preview" alt="New Picture Preview" class="profile-preview">
+                </div>
+                </div>
+            </div>
                 <div class="form-group">
                     <label>User Status:</label>
                     {% for value, text in form.user_status.field.choices %}
@@ -145,6 +146,23 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            const preview = document.getElementById('preview');
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 <script>
   // Toggle edit mode
