@@ -10,151 +10,146 @@
 {% block content %}
 {% if messages %}
 <div class="messages">
-    {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-        {{ message }}
-    </div>
-    {% endfor %}
+  {% for message in messages %}
+  <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
 </div>
 {% endif %}
 
 {% if form.non_field_errors %}
 <div class="error-messages">
-    {% for error in form.non_field_errors %}
-        <div class="field-error">{{ error }}</div>
-    {% endfor %}
+  {% for error in form.non_field_errors %}
+  <div class="field-error">{{ error }}</div>
+  {% endfor %}
 </div>
 {% endif %}
 
 <div class="register-form">
   <h2>Register</h2>
-
   <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()" id="registration-form">
-    {% csrf_token %}    
+    {% csrf_token %}
+    
     <!-- First Name -->
     <div class="form-group">
-        <label for="first_name">First Name:</label>
-        <input type="text" name="first_name" id="first_name" required value="{{ form.first_name.value|default:'' }}">
-        {% if form.first_name.errors %}
-            <div class="error-message">{{ form.first_name.errors.0 }}</div>
-        {% endif %}
+      <label for="first_name">First Name:</label>
+      <input type="text" name="first_name" id="first_name" required value="{{ form.first_name.value|default:'' }}" />
+      {% if form.first_name.errors %}
+      <div class="error-message">{{ form.first_name.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Last Name -->
     <div class="form-group">
-        <label for="last_name">Last Name:</label>
-        <input type="text" name="last_name" id="last_name" required value="{{ form.last_name.value|default:'' }}">
-        {% if form.last_name.errors %}
-            <div class="error-message">{{ form.last_name.errors.0 }}</div>
-        {% endif %}
+      <label for="last_name">Last Name:</label>
+      <input type="text" name="last_name" id="last_name" required value="{{ form.last_name.value|default:'' }}" />
+      {% if form.last_name.errors %}
+      <div class="error-message">{{ form.last_name.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Email -->
     <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required value="{{ form.email.value|default:'' }}">
-        {% if form.email.errors %}
-            <div class="error-message">{{ form.email.errors.0 }}</div>
-        {% endif %}
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required value="{{ form.email.value|default:'' }}" />
+      {% if form.email.errors %}
+      <div class="error-message">{{ form.email.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Password -->
     <div class="form-group">
-        <label for="password1">Password:</label>
-        <input type="password" name="password1" id="password1" required>
-        {% if form.password1.errors %}
-            <div class="error-message">{{ form.password1.errors.0 }}</div>
-        {% endif %}
+      <label for="password1">Password:</label>
+      <input type="password" name="password1" id="password1" required />
+      {% if form.password1.errors %}
+      <div class="error-message">{{ form.password1.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Confirm Password -->
     <div class="form-group">
-        <label for="password2">Confirm Password:</label>
-        <input type="password" name="password2" id="password2" required>
-        {% if form.password2.errors %}
-            <div class="error-message">{{ form.password2.errors.0 }}</div>
-        {% endif %}
+      <label for="password2">Confirm Password:</label>
+      <input type="password" name="password2" id="password2" required />
+      {% if form.password2.errors %}
+      <div class="error-message">{{ form.password2.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- User Type -->
     <div class="form-group">
-        <label>I am a:</label>
-        {% for choice in form.user_type %}
-            <div class="radio-option">
-                {{ choice }}
-            </div>
-        {% endfor %}
-        {% if form.user_type.errors %}
-            <div class="error-message">{{ form.user_type.errors.0 }}</div>
-        {% endif %}
+      <label>I am a:</label>
+      {% for choice in form.user_type %}
+      <div class="radio-option">{{ choice }}</div>
+      {% endfor %}
+      {% if form.user_type.errors %}
+      <div class="error-message">{{ form.user_type.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Gender -->
     <div class="form-group">
-        <label>Gender:</label>
-        {% for choice in form.gender %}
-            <div class="radio-option">
-                {{ choice }}
-            </div>
-        {% endfor %}
-        {% if form.gender.errors %}
-            <div class="error-message">{{ form.gender.errors.0 }}</div>
-        {% endif %}
+      <label>Gender:</label>
+      {% for choice in form.gender %}
+      <div class="radio-option">{{ choice }}</div>
+      {% endfor %}
+      {% if form.gender.errors %}
+      <div class="error-message">{{ form.gender.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Date of Birth -->
     <div class="form-group">
-        <label>Date of Birth:</label>
-        <div class="dob-inputs">
-            <input type="number" name="dob_day" placeholder="DD" min="1" max="31" required value="{{ form.dob_day.value|default:'' }}">
-            <input type="number" name="dob_month" placeholder="MM" min="1" max="12" required value="{{ form.dob_month.value|default:'' }}">
-            <input type="number" name="dob_year" placeholder="YYYY" min="1900" required value="{{ form.dob_year.value|default:'' }}">
-        </div>
-        {% if form.dob_day.errors or form.dob_month.errors or form.dob_year.errors %}
-            <div class="error-message">Please enter a valid date of birth</div>
-        {% endif %}
+      <label>Date of Birth:</label>
+      <div class="dob-inputs">
+        <input type="number" name="dob_day" id="dob_day" placeholder="DD" min="1" max="31" required value="{{ form.dob_day.value|default:'' }}" />
+        <input type="number" name="dob_month" id="dob_month" placeholder="MM" min="1" max="12" required value="{{ form.dob_month.value|default:'' }}" />
+        <input type="number" name="dob_year" id="dob_year" placeholder="YYYY" min="1900" required value="{{ form.dob_year.value|default:'' }}" />
+      </div>
+      {% if form.dob_day.errors or form.dob_month.errors or form.dob_year.errors %}
+      <div class="error-message">Please enter a valid date of birth</div>
+      {% endif %}
     </div>
 
     <!-- User Status -->
     <div class="form-group">
-        <label>Tick those which apply to you:</label>
-        {% for choice in form.user_status %}
-            <div class="checkbox-option">
-                {{ choice }}
-            </div>
-        {% endfor %}
-        {% if form.user_status.errors %}
-            <div class="error-message">{{ form.user_status.errors.0 }}</div>
-        {% endif %}
+      <label>Tick those which apply to you:</label>
+      {% for choice in form.user_status %}
+      <div class="checkbox-option">{{ choice }}</div>
+      {% endfor %}
+      {% if form.user_status.errors %}
+      <div class="error-message">{{ form.user_status.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <!-- Profile Picture -->
     <div class="form-group">
-        <label for="profile_picture">Upload a Profile Picture (optional):</label>
-        <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
-        {% if form.profile_picture.errors %}
-            <div class="error-message">{{ form.profile_picture.errors.0 }}</div>
-        {% endif %}
+      <label for="profile_picture">Upload a Profile Picture (optional):</label>
+      <input type="file" name="profile_picture" id="profile_picture" accept="image/*" />
+      {% if form.profile_picture.errors %}
+      <div class="error-message">{{ form.profile_picture.errors.0 }}</div>
+      {% endif %}
     </div>
 
     <button type="submit" class="btn btn-primary" id="register-button">Register now</button>
 
     <p>
-        * By clicking Register now you agree to Trusted Lodger's terms and privacy policy. We will send you emails as part of the services we provide to you. You can unsubscribe at any time via the website or the link in the emails.
+      * By clicking Register now you agree to Trusted Lodger's terms and privacy policy. We will send you emails as part of the services we provide to you. You can unsubscribe at any time via the website or the link in the emails.
     </p>
 
     <!-- reCAPTCHA -->
-    <!--  <div class="g-recaptcha" data-sitekey="6LezB8AqAAAAAM63Orsfx5NuHYQQ2Jr1vIPunaKs"></div> -->
+    <!-- <div class="g-recaptcha" data-sitekey="6LezB8AqAAAAAM63Orsfx5NuHYQQ2Jr1vIPunaKs"></div> -->
   </form>
 
   <p class="login-text">
-    Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>.
+    Already have an account?
+    <a href="{% url 'accounts:login' %}">Login here</a>.
   </p>
 </div>
 
 <script>
-    // Facebook SDK Initialization
-  /*  window.fbAsyncInit = function () {
+  // Facebook SDK Initialization
+  /* window.fbAsyncInit = function () {
     FB.init({
       appId: "2065671450512648",
       cookie: true,
@@ -177,26 +172,6 @@
     } else {
       console.log("User is not logged in:", response);
     }
-  }
-    */
-
+  } */
 </script>
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<div class="register-form">
-    <h2>Register</h2>
-    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()" id="registration-form">
-        {% csrf_token %}
-        <!-- Your form fields here -->
-        <!-- ... -->
-    </form>
-</div>
 {% endblock %}
