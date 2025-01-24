@@ -100,11 +100,11 @@
 
 /* Specific Background Images */
 .features-section .feature:nth-child(1) {
-    background-image: url("{% static 'images/tenant.png' %}");
+    background-image: url('/static/images/tenant.jpg')
 }
 
 .features-section .feature:nth-child(2) {
-    background-image: url("{% static 'images/landlord.png' %}");
+    background-image:  url('/static/images/landlord.jpg')
 }
 
 

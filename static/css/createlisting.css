@@ -1,0 +1,58 @@
+:root {
+    --primary-color: #BCB88A;
+    --secondary-color: #FFFFFF;
+    --dark-bg: #17263bf2;
+    --font-body: 'Playfair Display', serif;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--dark-bg);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #a89f6d; /* Darker shade for hover effect */
+}

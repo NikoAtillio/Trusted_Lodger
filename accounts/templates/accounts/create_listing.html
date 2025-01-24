@@ -1,10 +1,184 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Create New Listing</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Listing</button>
-</form>
+<div class="container">
+    <h1>Create Room Listing</h1>
+    <form id="listingForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="images">Room Images:</label>
+            <input type="file" id="images" name="images" multiple accept="image/*">
+            <div id="carousel" class="carousel"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+            <div id="map" style="height: 300px;"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price (£/monthly):</label>
+            <input type="number" id="price" name="price" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Bio Description:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+        </div>
+
+        <h2>House Share Details</h2>
+        <div class="form-group">
+            <label for="size">Size:</label>
+            <input type="text" id="size" name="size" required>
+        </div>
+        <div class="form-group">
+            <label for="availability">Availability:</label>
+            <input type="text" id="availability" name="availability" required>
+        </div>
+        <div class="form-group">
+            <label for="minTerm">Minimum Term:</label>
+            <input type="text" id="minTerm" name="minTerm" required>
+        </div>
+        <div class="form-group">
+            <label for="maxTerm">Maximum Term:</label>
+            <input type="text" id="maxTerm" name="maxTerm">
+        </div>
+        <div class="form-group">
+            <label for="deposit">Extra Cost (Deposit):</label>
+            <input type="number" id="deposit" name="deposit" required>
+        </div>
+        <div class="form-group">
+            <label for="billsIncluded">Bills Included?</label>
+            <select id="billsIncluded" name="billsIncluded">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="furnishings">Furnishings:</label>
+            <input type="text" id="furnishings" name="furnishings" required>
+        </div>
+        <div class="form-group">
+            <label for="parking">Parking:</label>
+            <select id="parking" name="parking">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="garden">Garden/Patio:</label>
+            <select id="garden" name="garden">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="balcony">Balcony/Roof Terrace:</label>
+            <select id="balcony" name="balcony">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="disabledAccess">Disabled Access:</label>
+            <select id="disabledAccess" name="disabledAccess">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="livingRoom">Living Room:</label>
+            <select id="livingRoom" name="livingRoom">
+                <option value="shared">Shared</option>
+                <option value="private">Private</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="broadband">Broadband Included:</label>
+            <select id="broadband" name="broadband">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="currentHousehold">Current Household:</label>
+            <input type="number" id="currentHousehold" name="currentHousehold" required>
+        </div>
+        <div class="form-group">
+            <label for="totalRooms">Total # Rooms:</label>
+            <input type="number" id="totalRooms" name="totalRooms" required>
+        </div>
+        <div class="form-group">
+            <label for="ages">Ages:</label>
+            <input type="text" id="ages" name="ages" required>
+        </div>
+        <div class="form-group">
+            <label for="smoker">Smoker?</label>
+            <select id="smoker" name="smoker">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="pets">Any Pets?</label>
+            <select id="pets" name="pets">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" name="occupation" required>
+        </div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender" required>
+        </div>
+
+        <h2>New Housemate Preferences</h2>
+        <div class="form-group">
+            <label for="couplesOk">Couples OK?</label>
+            <select id="couplesOk" name="couplesOk">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="smokingOk">Smoking OK?</label>
+            <select id="smokingOk" name="smokingOk">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="petsOk">Pets OK?</label>
+            <select id="petsOk" name="petsOk">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="occupationPref">Occupation:</label>
+            <input type="text" id="occupationPref" name="occupationPref" required>
+        </div>
+        <div class="form-group">
+            <label for="references">References?</label>
+            <select id="references" name="references">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="minAge">Min Age:</label>
+            <input type="number" id="minAge" name="minAge" required>
+        </div>
+        <div class="form-group">
+            <label for="maxAge">Max Age:</label>
+            <input type="number" id="maxAge" name="maxAge" required>
+        </div>
+
+        <button type="submit">Post Now</button>
+    </form>
+</div>
 {% endblock %}
