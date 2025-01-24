@@ -3,7 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/register.css' %}" />
-<script src="{% static 'js/register.js' %}"></script>
+<script src="{% static 'js/register.js' %}" defer></script>
 <!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
 {% endblock %}
 
@@ -180,51 +180,23 @@
   }
     */
 
-  document.querySelectorAll('input[name="gender"]').forEach((elem) => {
-    elem.addEventListener("change", function (event) {
-      const otherInput = document.getElementById("gender_other");
-      if (event.target.value === "other") {
-        otherInput.style.display = "inline";
-      } else {
-        otherInput.style.display = "none";
-        otherInput.value = "";
-      }
-    });
-  });
-
-  function validateForm() {
-    const checkboxes = document.querySelectorAll('input[name="user_status"]');
-    const errorElement = document.getElementById("status-error");
-    let isChecked = false;
-    checkboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        isChecked = true;
-      }
-    });
-    if (!isChecked) {
-      errorElement.style.display = "block";
-      return false; // Prevent form submission
-    }
-    errorElement.style.display = "none"; // Hide error if checked
-    return true; // Allow form submission
-  } */
-
-  // Add form debugging
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registration-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            console.log('Form submission attempted');
-            
-            // Log form data (excluding passwords)
-            const formData = new FormData(form);
-            for (let pair of formData.entries()) {
-                if (!pair[0].includes('password')) {
-                    console.log(pair[0] + ': ' + pair[1]);
-                }
-            }
-        });
-    }
-  });
 </script>
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="register-form">
+    <h2>Register</h2>
+    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()" id="registration-form">
+        {% csrf_token %}
+        <!-- Your form fields here -->
+        <!-- ... -->
+    </form>
+</div>
 {% endblock %}
