@@ -3,8 +3,26 @@
 {% block content %}
 <div class="container">
     <h1>Create Room Listing</h1>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form id="listingForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        
+        <!-- Add title field which was missing -->
+        <div class="form-group">
+            <label for="title">Listing Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+
         <div class="form-group">
             <label for="images">Room Images:</label>
             <input type="file" id="images" name="images" multiple accept="image/*">
@@ -17,13 +35,19 @@
             <div id="map" style="height: 300px;"></div>
         </div>
 
+        <!-- Add postcode field which was missing -->
+        <div class="form-group">
+            <label for="postcode">Postcode:</label>
+            <input type="text" id="postcode" name="postcode" required>
+        </div>
+
         <div class="form-group">
             <label for="price">Price (£/monthly):</label>
             <input type="number" id="price" name="price" required>
         </div>
 
         <div class="form-group">
-            <label for="description">Bio Description:</label>
+            <label for="description">Description:</label>
             <textarea id="description" name="description" rows="4" required></textarea>
         </div>
 
@@ -34,23 +58,23 @@
         </div>
         <div class="form-group">
             <label for="availability">Availability:</label>
-            <input type="text" id="availability" name="availability" required>
+            <input type="date" id="availability" name="availability" required>
         </div>
         <div class="form-group">
-            <label for="minTerm">Minimum Term:</label>
-            <input type="text" id="minTerm" name="minTerm" required>
+            <label for="minimum_term">Minimum Term (months):</label>
+            <input type="number" id="minimum_term" name="minimum_term" required min="1">
         </div>
         <div class="form-group">
-            <label for="maxTerm">Maximum Term:</label>
-            <input type="text" id="maxTerm" name="maxTerm">
+            <label for="maximum_term">Maximum Term (months):</label>
+            <input type="number" id="maximum_term" name="maximum_term" min="1">
         </div>
         <div class="form-group">
-            <label for="deposit">Extra Cost (Deposit):</label>
+            <label for="deposit">Deposit (£):</label>
             <input type="number" id="deposit" name="deposit" required>
         </div>
         <div class="form-group">
-            <label for="billsIncluded">Bills Included?</label>
-            <select id="billsIncluded" name="billsIncluded">
+            <label for="bills_included">Bills Included?</label>
+            <select id="bills_included" name="bills_included">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
@@ -81,15 +105,15 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="disabledAccess">Disabled Access:</label>
-            <select id="disabledAccess" name="disabledAccess">
+            <label for="disabled_access">Disabled Access:</label>
+            <select id="disabled_access" name="disabled_access">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="livingRoom">Living Room:</label>
-            <select id="livingRoom" name="livingRoom">
+            <label for="living_room">Living Room:</label>
+            <select id="living_room" name="living_room">
                 <option value="shared">Shared</option>
                 <option value="private">Private</option>
             </select>
@@ -102,12 +126,12 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="currentHousehold">Current Household:</label>
-            <input type="number" id="currentHousehold" name="currentHousehold" required>
+            <label for="current_household">Current Household:</label>
+            <input type="number" id="current_household" name="current_household" required>
         </div>
         <div class="form-group">
-            <label for="totalRooms">Total # Rooms:</label>
-            <input type="number" id="totalRooms" name="totalRooms" required>
+            <label for="total_rooms">Total # Rooms:</label>
+            <input type="number" id="total_rooms" name="total_rooms" required>
         </div>
         <div class="form-group">
             <label for="ages">Ages:</label>
@@ -138,47 +162,51 @@
 
         <h2>New Housemate Preferences</h2>
         <div class="form-group">
-            <label for="couplesOk">Couples OK?</label>
-            <select id="couplesOk" name="couplesOk">
+            <label for="couples_ok">Couples OK?</label>
+            <select id="couples_ok" name="couples_ok">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="smokingOk">Smoking OK?</label>
-            <select id="smokingOk" name="smokingOk">
+            <label for="smoking_ok">Smoking OK?</label>
+            <select id="smoking_ok" name="smoking_ok">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="petsOk">Pets OK?</label>
-            <select id="petsOk" name="petsOk">
+            <label for="pets_ok">Pets OK?</label>
+            <select id="pets_ok" name="pets_ok">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="occupationPref">Occupation:</label>
-            <input type="text" id="occupationPref" name="occupationPref" required>
+            <label for="occupation_preference">Preferred Occupation:</label>
+            <input type="text" id="occupation_preference" name="occupation_preference" required>
         </div>
         <div class="form-group">
-            <label for="references">References?</label>
-            <select id="references" name="references">
+            <label for="references_required">References Required?</label>
+            <select id="references_required" name="references_required">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="minAge">Min Age:</label>
-            <input type="number" id="minAge" name="minAge" required>
+            <label for="min_age">Min Age:</label>
+            <input type="number" id="min_age" name="min_age" required min="18">
         </div>
         <div class="form-group">
-            <label for="maxAge">Max Age:</label>
-            <input type="number" id="maxAge" name="maxAge" required>
+            <label for="max_age">Max Age:</label>
+            <input type="number" id="max_age" name="max_age" required min="18">
         </div>
 
         <button type="submit">Post Now</button>
     </form>
 </div>
+
+{% block extra_js %}
+<script src="{% static 'js/create_listing.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

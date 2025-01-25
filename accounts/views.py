@@ -5,7 +5,7 @@ from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileSetupForm, ProfileEditForm, RoomListingForm
 from django.db import transaction, IntegrityError
 from datetime import datetime
-from .models import Profile, RoomListing
+from .models import Profile, RoomListing, RoomImage
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.views.generic import DetailView
@@ -170,17 +170,30 @@ def manage_listing(request):
 
 @login_required
 def create_listing(request):
-    """Handle creating a new room listing."""
     if request.method == 'POST':
-        form = RoomListingForm(request.POST)
+        form = RoomListingForm(request.POST, request.FILES)
         if form.is_valid():
-            listing = form.save(commit=False)
-            listing.owner = request.user
-            listing.save()
-            messages.success(request, 'Room listing created successfully!')
-            return redirect('accounts:manage_listing')
+            try:
+                # Create listing
+                listing = form.save(commit=False)
+                listing.owner = request.user
+                listing.save()
+
+                # Handle multiple image uploads
+                images = request.FILES.getlist('images')
+                for image in images:
+                    room_image = RoomImage.objects.create(image=image)
+                    listing.images.add(room_image)
+
+                messages.success(request, 'Room listing created successfully!')
+                return redirect('accounts:manage_listing')
+            except Exception as e:
+                messages.error(request, f'Error creating listing: {str(e)}')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = RoomListingForm()
+
     return render(request, 'accounts/create_listing.html', {'form': form})
 
 @login_required

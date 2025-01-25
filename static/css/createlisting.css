@@ -32,14 +32,40 @@ h1, h2 {
 label {
     display: block;
     margin-bottom: 5px;
+    color: var(--primary-color);
 }
 
 input[type="text"],
 input[type="number"],
+input[type="date"],
 textarea,
 select {
     width: 100%;
     padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: var(--font-body);
+}
+
+input[type="file"] {
+    padding: 10px 0;
+}
+
+.image-preview {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.image-preview img {
+    max-width: 150px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.map-container {
+    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -47,12 +73,37 @@ select {
 button {
     background-color: var(--primary-color);
     color: var(--secondary-color);
-    padding: 10px 15px;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #a89f6d; /* Darker shade for hover effect */
+    background-color: #a89f6d;
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }

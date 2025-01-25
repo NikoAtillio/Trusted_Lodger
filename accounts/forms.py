@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from allauth.account.forms import SignupForm
 from django.core.exceptions import ValidationError
 from datetime import datetime
-from .models import User, Profile, RoomListing, Message
+from .models import User, Profile, RoomListing, RoomImage, Message
 
 class CustomSignupForm(SignupForm):
     user_type = forms.ChoiceField(
@@ -264,37 +264,36 @@ class ProfileEditForm(forms.ModelForm):
 
         return profile
 
+from django import forms
+from .models import RoomListing, RoomImage
+
 class RoomListingForm(forms.ModelForm):
+    images = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        required=False
+    )
+
     class Meta:
         model = RoomListing
-        fields = [
-            'title',
-            'description',
-            'room_type',
-            'price',
-            'location',
-            'postcode',
-            'available_from',
-            'minimum_stay',
-            'bills_included'
-        ]
         exclude = ['owner', 'created_at', 'updated_at']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'available_from': forms.DateInput(attrs={'type': 'date'}),
+            'availability': forms.DateInput(attrs={'type': 'date'}),
+            'minimum_term': forms.NumberInput(attrs={'min': '1'}),
+            'maximum_term': forms.NumberInput(attrs={'min': '1'}),
+            'min_age': forms.NumberInput(attrs={'min': '18'}),
+            'max_age': forms.NumberInput(attrs={'min': '18'}),
         }
-        error_messages = {
-            'price': {
-                'required': 'Please enter a price',
-                'invalid': 'Please enter a valid price'
-            },
-            'location': {
-                'required': 'Please enter a location'
-            },
-            'postcode': {
-                'required': 'Please enter a postcode'
-            }
-        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        min_age = cleaned_data.get('min_age')
+        max_age = cleaned_data.get('max_age')
+
+        if min_age and max_age and min_age > max_age:
+            raise forms.ValidationError("Minimum age cannot be greater than maximum age")
+
+        return cleaned_data
 
 class MessageForm(forms.ModelForm):
     class Meta:

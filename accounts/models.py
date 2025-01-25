@@ -97,58 +97,78 @@ class RoomListing(models.Model):
         ('Studio', 'Studio'),
     ]
 
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='room_listings'
-    )
+    YES_NO_CHOICES = [
+        ('yes', 'Yes'),
+        ('no', 'No'),
+    ]
+
+    LIVING_ROOM_CHOICES = [
+        ('shared', 'Shared'),
+        ('private', 'Private'),
+    ]
+
+    # Basic Information
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='room_listings')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    room_type = models.CharField(
-        max_length=20,
-        choices=ROOM_TYPES,
-        default='Single'
-    )
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(0)]
-    )
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     location = models.CharField(max_length=255)
-    postcode = models.CharField(max_length=10, blank=True)
-    available = models.BooleanField(default=True)
-    available_from = models.DateField(null=True, blank=True)
-    minimum_stay = models.IntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
-        help_text="Minimum stay in months"
-    )
-    bills_included = models.BooleanField(default=False)
-    amenities = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Comma-separated list of amenities (e.g., 'WiFi, Parking, Pool')"
-    )
+    postcode = models.CharField(max_length=10)
+
+    # Room Details
+    size = models.CharField(max_length=100)
+    availability = models.CharField(max_length=100)
+    minimum_term = models.IntegerField(validators=[MinValueValidator(1)])
+    maximum_term = models.IntegerField(null=True, blank=True)
+    deposit = models.DecimalField(max_digits=10, decimal_places=2)
+    bills_included = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    furnishings = models.CharField(max_length=255)
+
+    # Property Features
+    parking = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    garden = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    balcony = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    disabled_access = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    living_room = models.CharField(max_length=7, choices=LIVING_ROOM_CHOICES)
+    broadband = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+
+    # Household Details
+    current_household = models.IntegerField()
+    total_rooms = models.IntegerField()
+    ages = models.CharField(max_length=100)
+    smoker = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    pets = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    occupation = models.CharField(max_length=100)
+    gender = models.CharField(max_length=50)
+
+    # Preferences
+    couples_ok = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    smoking_ok = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    pets_ok = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    occupation_preference = models.CharField(max_length=100)
+    references_required = models.CharField(max_length=3, choices=YES_NO_CHOICES)
+    min_age = models.IntegerField()
+    max_age = models.IntegerField()
+
+    # Images
+    images = models.ManyToManyField('RoomImage', related_name='room_listings', blank=True)
+
+    # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = "Room Listing"
-        verbose_name_plural = "Room Listings"
 
     def __str__(self):
         return f"{self.title} - {self.location}"
 
-    def get_absolute_url(self):
-        from django.urls import reverse
-        return reverse('room_listing_detail', args=[str(self.id)])
+class RoomImage(models.Model):
+    image = models.ImageField(upload_to='room_images/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
-    def get_amenities_list(self):
-        """Returns a list of amenities"""
-        if self.amenities:
-            return [amenity.strip() for amenity in self.amenities.split(',')]
-        return []
+    def __str__(self):
+        return f"Image uploaded at {self.uploaded_at}"
 
 class Message(models.Model):
     sender = models.ForeignKey(
