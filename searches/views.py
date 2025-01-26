@@ -15,12 +15,15 @@ def search(request):
     return render(request, 'searches/search.html', {'form': form})
 
 def search_results(request):
-    """Handle both initial and advanced search"""
-    listings = RoomListing.objects.filter(available=True)
+    """Handle search results with filters, sorting, and pagination."""
+    listings = RoomListing.objects.all()
 
     # Get search parameters
     location = request.GET.get('location', '')
-    room_type = request.GET.get('room_type', '')
+    room_size = request.GET.get('room_size', '')
+    min_rent = request.GET.get('min_rent', '')
+    max_rent = request.GET.get('max_rent', '')
+    sort_by = request.GET.get('sort_by', '')
 
     # Apply filters
     if location:
@@ -28,38 +31,35 @@ def search_results(request):
             Q(location__icontains=location) |
             Q(postcode__icontains=location)
         )
+    if room_size and room_size != 'any':
+        listings = listings.filter(size=room_size)
+    if min_rent:
+        listings = listings.filter(price__gte=min_rent)
+    if max_rent:
+        listings = listings.filter(price__lte=max_rent)
 
-    if room_type and room_type != 'any':
-        listings = listings.filter(room_type=room_type)
-
-    # Handle advanced search form
-    if request.method == 'POST':
-        form = AdvancedSearchForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-
-            if data.get('min_rent'):
-                listings = listings.filter(price__gte=data['min_rent'])
-            if data.get('max_rent'):
-                listings = listings.filter(price__lte=data['max_rent'])
-            if data.get('bills_included'):
-                listings = listings.filter(bills_included=True)
-            if data.get('available_from'):
-                listings = listings.filter(available_from__lte=data['available_from'])
-    else:
-        form = AdvancedSearchForm()
+    # Apply sorting
+    if sort_by == 'price_low_to_high':
+        listings = listings.order_by('price')
+    elif sort_by == 'price_high_to_low':
+        listings = listings.order_by('-price')
+    elif sort_by == 'newest':
+        listings = listings.order_by('-created_at')
+    elif sort_by == 'location':
+        listings = listings.order_by('location')
 
     # Pagination
-    paginator = Paginator(listings, 12)  # 12 listings per page
+    paginator = Paginator(listings, 10)  # 10 results per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # Context for the template
     context = {
-        'form': form,
+        'form': AdvancedSearchForm(request.GET),  # Pre-fill the form with current filters
         'listings': page_obj,
         'total_results': listings.count(),
         'search_location': location,
-        'search_type': room_type,
+        'search_type': room_size,
     }
 
     return render(request, 'searches/search_results.html', context)
@@ -146,7 +146,7 @@ def edit_saved_search(request, search_id):
         'form': form,
         'search': search
     })
-    
+
 @login_required
 def send_message_ajax(request, pk):
     """Handle sending a message via AJAX"""

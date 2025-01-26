@@ -4,11 +4,14 @@ from allauth.account.forms import SignupForm
 from django.core.exceptions import ValidationError
 from datetime import datetime, date
 from .models import User, Profile, RoomListing, RoomImage, Message
-from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import RegexValidator
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomSignupForm(SignupForm):
@@ -23,6 +26,7 @@ class CustomSignupForm(SignupForm):
         user.user_type = self.cleaned_data['user_type']
         user.save()
         return user
+
 
 class UserRegistrationForm(UserCreationForm):
     class Meta:
@@ -158,6 +162,7 @@ class UserRegistrationForm(UserCreationForm):
             user.save()
         return user
 
+
 class ProfileSetupForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -166,6 +171,7 @@ class ProfileSetupForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 4}),
             'living_preferences': forms.Textarea(attrs={'rows': 4}),
         }
+
 
 class ProfileEditForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30)
@@ -252,6 +258,7 @@ class ProfileEditForm(forms.ModelForm):
 
         return profile
 
+
 class RoomListingForm(forms.ModelForm):
     uk_postcode_validator = RegexValidator(
         regex=r'^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$',
@@ -314,6 +321,7 @@ class RoomListingForm(forms.ModelForm):
         }
 
     def clean_images(self):
+        """Handle image validation and processing"""
         images = self.files.getlist('images')
         if not images:
             return []
@@ -322,59 +330,91 @@ class RoomListingForm(forms.ModelForm):
             raise forms.ValidationError('Maximum 10 images allowed')
 
         max_size = 5 * 1024 * 1024  # 5MB
-        allowed_types = ['image/jpeg', 'image/png', 'image/jpg']
+        allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif']
         processed_images = []
 
         for image in images:
+            # Check file type
             if image.content_type not in allowed_types:
                 raise forms.ValidationError(
-                    f'Image {image.name} is not a valid image type. Use JPEG or PNG'
+                    f'Image {image.name} must be JPEG, JPG, PNG, or GIF'
                 )
 
-            if image.size > max_size:
-                processed_image = self.compress_image(image)
-                processed_images.append(processed_image)
-            else:
-                processed_images.append(image)
+            try:
+                # Process image if it's too large
+                if image.size > max_size:
+                    processed_image = self.compress_image(image)
+                    processed_images.append(processed_image)
+                else:
+                    processed_images.append(image)
+            except Exception as e:
+                raise forms.ValidationError(f'Error processing image {image.name}: {str(e)}')
 
         return processed_images
 
     def compress_image(self, image):
-        img = Image.open(image)
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+        """Compress and resize image while maintaining quality"""
+        try:
+            img = Image.open(image)
 
-        max_dimension = 1920
-        ratio = min(max_dimension/float(img.size[0]), max_dimension/float(img.size[1]))
-        new_size = tuple([int(x*ratio) for x in img.size])
+            # Convert RGBA to RGB if necessary
+            if img.mode in ('RGBA', 'P'):
+                img = img.convert('RGB')
 
-        img = img.resize(new_size, Image.Resampling.LANCZOS)
+            # Calculate new dimensions while maintaining aspect ratio
+            max_dimension = 1920
+            width, height = img.size
+            if width > max_dimension or height > max_dimension:
+                ratio = min(max_dimension/width, max_dimension/height)
+                new_size = (int(width * ratio), int(height * ratio))
+                img = img.resize(new_size, Image.Resampling.LANCZOS)
 
-        output = BytesIO()
-        img.save(output, format='JPEG', quality=85, optimize=True)
-        output.seek(0)
+            # Save with optimal settings
+            output = BytesIO()
+            img.save(
+                output,
+                format='JPEG',
+                quality=85,
+                optimize=True,
+                progressive=True
+            )
+            output.seek(0)
 
-        return InMemoryUploadedFile(
-            output,
-            'ImageField',
-            f"{image.name.split('.')[0]}_compressed.jpg",
-            'image/jpeg',
-            sys.getsizeof(output),
-            None
-        )
+            # Preserve original filename but indicate compression
+            original_name = image.name.rsplit('.', 1)[0]
+            return InMemoryUploadedFile(
+                output,
+                'ImageField',
+                f"{original_name}_optimized.jpg",
+                'image/jpeg',
+                output.tell(),
+                None
+            )
+        except Exception as e:
+            raise forms.ValidationError(f'Error compressing image: {str(e)}')
 
     def save(self, commit=True):
+        """Save the listing and associated images"""
         instance = super().save(commit=False)
         if commit:
             instance.save()
+
+            # Handle image uploads
             if self.cleaned_data.get('images'):
-                for image in self.cleaned_data['images']:
-                    RoomImage.objects.create(
-                        room_listing=instance,
-                        image=image,
-                        order=0
-                    )
+                for index, image in enumerate(self.cleaned_data['images']):
+                    try:
+                        RoomImage.objects.create(
+                            room_listing=instance,
+                            image=image,
+                            order=index
+                        )
+                    except Exception as e:
+                        # Log the error but continue with other images
+                        logger.error(f'Error saving image {index}: {str(e)}')
+                        continue
+
         return instance
+
 
 class MessageForm(forms.ModelForm):
     class Meta:

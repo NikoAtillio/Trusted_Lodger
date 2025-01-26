@@ -3,4 +3,52 @@
 {% block content %}
 <h2>Find Your Perfect Roommate!</h2>
 <p>Use our platform to connect with potential roommates.</p>
+
+ <!-- Search Section -->
+ <div class="quick-search">
+    <h3>Quick Search</h3>
+    <form id="search-form" action="{% url 'searches:search' %}" method="get">
+        <input type="text" id="location" name="location" placeholder="Enter postcode" required />
+        <button type="button" id="get-location">Use My Location</button>
+        <div class="search-options">
+            <label>
+                <input type="radio" name="search_type" value="rooms_match" checked />
+                Rooms Match
+            </label>
+            <label>
+                <input type="radio" name="search_type" value="tenant_match" />
+                Tenant Match
+            </label>
+            <label>
+                <input type="radio" name="search_type" value="coliving_match" />
+                CoLiving Match
+            </label>
+        </div>
+        <button type="submit">Search</button>
+    </form>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+// Geolocation functionality for the search
+document.getElementById('get-location').addEventListener('click', function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // You can add functionality here to convert coordinates to postcode
+            console.log(position.coords.latitude, position.coords.longitude);
+        }, function(error) {
+            console.error("Error getting location:", error);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+});
+
+// Search form handling
+document.getElementById('search-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Add your search form submission logic here
+});
+</script>
 {% endblock %}

@@ -3,6 +3,9 @@
     --secondary-color: #FFFFFF;
     --dark-bg: #17263bf2;
     --font-body: 'Playfair Display', serif;
+    --input-bg: #f9f9f9;
+    --input-border: #ccc;
+    --input-focus: #BCB88A;
 }
 
 body {
@@ -12,27 +15,30 @@ body {
     padding: 20px;
 }
 
-.container {
-    max-width: 800px;
+.create-listing-container {
+    max-width: 900px;
     margin: auto;
     background: var(--secondary-color);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 h1, h2 {
     color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     color: var(--primary-color);
+    font-weight: bold;
 }
 
 input[type="text"],
@@ -41,23 +47,34 @@ input[type="date"],
 textarea,
 select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
     font-family: var(--font-body);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
-input[type="file"] {
-    padding: 10px 0;
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--input-focus);
+    outline: none;
+}
+
+textarea {
+    resize: none;
 }
 
 .drop-zone {
     border: 2px dashed var(--primary-color);
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 20px;
     text-align: center;
     transition: all 0.3s ease;
     margin-bottom: 15px;
+    background-color: var(--input-bg);
 }
 
 .drop-zone.highlight {
@@ -73,78 +90,35 @@ input[type="file"] {
 .upload-btn {
     background-color: var(--primary-color);
     color: white;
-    padding: 5px 15px;
+    padding: 8px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    display: inline-block;
+    font-size: 14px;
 }
 
 .image-preview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
-}
-.upload-progress-container {
-    width: 100%;
-    height: 4px;
-    background-color: #f0f0f0;
-    margin: 10px 0;
-    display: none;
-}
-
-.upload-progress {
-    height: 100%;
-    background-color: var(--primary-color);
-    width: 0;
-    transition: width 0.3s ease;
-}
-
-.preview-item {
-    cursor: move;
-    position: relative;
-}
-
-.preview-controls {
-    position: absolute;
-    top: 5px;
-    right: 5px;
     display: flex;
-    gap: 5px;
-}
-
-.bulk-select {
-    width: 20px;
-    height: 20px;
-}
-
-.bulk-actions {
-    margin: 10px 0;
-}
-
-.bulk-remove-btn {
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.sortable-ghost {
-    opacity: 0.5;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    justify-content: center;
 }
 
 .preview-item {
     position: relative;
+    width: 120px;
+    height: 120px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .preview-item img {
     width: 100%;
-    height: 150px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 4px;
 }
 
 .remove-btn {
@@ -161,24 +135,30 @@ input[type="file"] {
     align-items: center;
     justify-content: center;
     color: #ff4444;
+    font-size: 16px;
+    font-weight: bold;
 }
 
-.map-container {
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+#map {
+    height: 200px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid var(--input-border);
+    margin-top: 10px;
 }
 
 button {
     background-color: var(--primary-color);
     color: var(--secondary-color);
-    padding: 10px 20px;
+    padding: 12px 25px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 16px;
     transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
 }
 
 button:hover {
@@ -191,8 +171,9 @@ button:hover {
 
 .alert {
     padding: 10px;
-    border-radius: 4px;
+    border-radius: 5px;
     margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .alert-success {
@@ -205,4 +186,15 @@ button:hover {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+    .create-listing-container {
+        padding: 20px;
+    }
+
+    .preview-item {
+        width: 100px;
+        height: 100px;
+    }
 }

@@ -1,6 +1,75 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/search_results.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
+<div class="search-results-container">
+    <!-- Filters Section -->
+    <aside class="filters">
+        <h2>Filters</h2>
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit" class="apply-filters-btn">Apply Filters</button>
+        </form>
+    </aside>
+
+    <!-- Results Section -->
+    <section class="results">
+        <div class="results-header">
+            <p>
+                {% if total_results > 0 %}
+                    Showing {{ listings.start_index }}-{{ listings.end_index }} of {{ total_results }} results
+                {% else %}
+                    No results found.
+                {% endif %}
+            </p>
+            <div class="sort-by">
+                <label for="sort_by">Sort by:</label>
+                <select id="sort_by" name="sort_by" onchange="this.form.submit()">
+                    <option value="">Default</option>
+                    <option value="price_low_to_high">Price (low to high)</option>
+                    <option value="price_high_to_low">Price (high to low)</option>
+                    <option value="newest">Newest</option>
+                    <option value="location">Location</option>
+                </select>
+            </div>
+        </div>
+
+        <ul class="listings">
+            {% for listing in listings %}
+            <li class="listing">
+                <div class="carousel">
+                    {% for image in listing.images.all %}
+                    <img src="{{ image.image.url }}" alt="Room Image">
+                    {% endfor %}
+                </div>
+                <div class="details">
+                    <h3>{{ listing.title }}</h3>
+                    <p>{{ listing.location }} ({{ listing.postcode }})</p>
+                    <p>£{{ listing.price }} / month</p>
+                    <p>Room Size: {{ listing.size }}</p>
+                    <p>{{ listing.description|truncatewords:20 }}</p>
+                    <p>Listed by: {{ listing.owner.first_name }}</p>
+                    <a href="{% url 'searches:property_detail' listing.pk %}" class="view-details-btn">View Details</a>
+                </div>
+                <button class="save-search-btn">♥</button>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if listings.has_previous %}
+            <a href="?page={{ listings.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span>Page {{ listings.number }} of {{ listings.paginator.num_pages }}</span>
+            {% if listings.has_next %}
+            <a href="?page={{ listings.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}

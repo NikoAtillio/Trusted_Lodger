@@ -232,7 +232,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script src="{% static 'js/create_listing.js' %}"></script>
 <script src="{% static 'js/image-upload.js' %}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ AIzaSyD0upPLEPNIeNHJjqREw6zqpbGKXxwd1jA }}&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initMap" async defer></script>
+<script>
+    function initMap() {
+        const defaultLocation = { lat: 51.5074, lng: -0.1278 }; // London
+        const mapOptions = {
+            zoom: 13,
+            center: defaultLocation,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
+            zoomControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
+        };
+
+        const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        const marker = new google.maps.Marker({
+            map: map,
+            position: defaultLocation,
+            draggable: true
+        });
+
+        // Add location search functionality
+        const input = document.getElementById('location');
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: "uk" }
+        });
+
+        autocomplete.bindTo('bounds', map);
+
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+            if (!place.geometry) return;
+
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+            marker.setPosition(place.geometry.location);
+
+            // Update postcode field if available
+            const postcode = place.address_components.find(component =>
+                component.types.includes('postal_code')
+            );
+            if (postcode) {
+                document.getElementById('postcode').value = postcode.long_name;
+            }
+        });
+    }
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         new ImageUploadHandler();

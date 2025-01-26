@@ -179,55 +179,27 @@ def create_listing(request):
         form = RoomListingForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Begin transaction
                 with transaction.atomic():
                     # Create listing
                     listing = form.save(commit=False)
                     listing.owner = request.user
                     listing.save()
 
-                    # Handle multiple image uploads
+                    # Handle images
                     images = request.FILES.getlist('images')
-
-                    # Validate number of images
-                    if len(images) > 10:
-                        raise ValidationError('Maximum 10 images allowed')
-
-                    # Process each image
                     for index, image in enumerate(images):
-                        # Validate file type
-                        if not image.content_type.startswith('image/'):
-                            raise ValidationError(f'File {image.name} is not a valid image')
-
-                        # Validate file size (5MB limit)
-                        if image.size > 5 * 1024 * 1024:
-                            raise ValidationError(f'File {image.name} is too large (max 5MB)')
-
-                        # Create RoomImage instance with order
-                        room_image = RoomImage.objects.create(
+                        RoomImage.objects.create(
                             room_listing=listing,
                             image=image,
                             order=index
                         )
 
-                messages.success(request, 'Room listing created successfully!')
+                messages.success(request, 'Listing created successfully!')
                 return redirect('accounts:manage_listing')
 
-            except ValidationError as e:
-                messages.error(request, str(e))
-                # If validation error occurs, delete the listing if it was created
-                if 'listing' in locals():
-                    listing.delete()
-
             except Exception as e:
-                messages.error(request, 'An unexpected error occurred. Please try again.')
-                logger.error(f'Error creating listing: {str(e)}')
-                # If any other error occurs, delete the listing if it was created
-                if 'listing' in locals():
-                    listing.delete()
-
+                messages.error(request, f'Error creating listing: {str(e)}')
         else:
-            # Form validation errors
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
@@ -237,9 +209,8 @@ def create_listing(request):
 
     context = {
         'form': form,
-        'page': 'create_listing'  # Add this to help with template rendering
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     }
-
     return render(request, 'accounts/create_listing.html', context)
 
 
