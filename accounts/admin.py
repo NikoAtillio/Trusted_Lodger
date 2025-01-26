@@ -31,29 +31,38 @@ class ProfileAdmin(admin.ModelAdmin):
     get_created_at.short_description = 'Created At'
 
 class RoomListingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner', 'location', 'price', 'room_type', 'available', 'created_at')
-    list_filter = ('available', 'room_type', 'bills_included', 'created_at')
+    list_display = ('title', 'owner', 'location', 'price', 'size', 'availability', 'created_at')
+    list_filter = ('availability', 'size', 'bills_included', 'created_at')
     search_fields = ('title', 'location', 'postcode')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
         ('Basic Information', {
-            'fields': ('owner', 'title', 'description', 'room_type')
+            'fields': ('owner', 'title', 'description', 'size')
         }),
         ('Location & Price', {
             'fields': ('location', 'postcode', 'price')
         }),
         ('Availability', {
-            'fields': ('available', 'available_from', 'minimum_stay')
+            'fields': ('availability', 'minimum_term', 'maximum_term')
         }),
         ('Additional Details', {
-            'fields': ('bills_included',)
+            'fields': ('bills_included', 'furnishings', 'deposit')
+        }),
+        ('Property Features', {
+            'fields': ('parking', 'garden', 'balcony', 'disabled_access', 'living_room', 'broadband')
+        }),
+        ('Household Details', {
+            'fields': ('current_household', 'total_rooms', 'ages', 'smoker', 'pets', 'occupation', 'gender')
+        }),
+        ('Preferences', {
+            'fields': ('couples_ok', 'smoking_ok', 'pets_ok', 'occupation_preference', 'references_required', 'min_age', 'max_age')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
-    )
-
+                )
+    
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'subject', 'created_at', 'is_read')
     list_filter = ('is_read', 'created_at')

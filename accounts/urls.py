@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.urls import path
 from . import views
 from .views import my_profile, AccountDetailView
+from django.conf.urls.static import static
 
 app_name = 'accounts'
 
@@ -17,4 +19,4 @@ urlpatterns = [
     path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
     path('myaccount/<slug:pk>/', views.AccountDetailView.as_view(), name="myaccount"),
     path('my-viewings/', views.my_viewings, name='my_viewings'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

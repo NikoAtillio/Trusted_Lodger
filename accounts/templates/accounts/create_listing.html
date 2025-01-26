@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_listing.css' %}">
+{% endblock %}
 {% block content %}
-<div class="container">
-    <h1>Create Room Listing</h1>
+<div class="create-listing-container">
+    <h1>Create New Listing</h1>
 
     {% if messages %}
     <div class="messages">
@@ -17,44 +21,58 @@
     <form id="listingForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <!-- Add title field which was missing -->
         <div class="form-group">
             <label for="title">Listing Title:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" required placeholder="e.g., Spacious Room in Friendly House Share">
         </div>
 
         <div class="form-group">
-            <label for="images">Room Images:</label>
-            <input type="file" id="images" name="images" multiple accept="image/*">
-            <div id="carousel" class="carousel"></div>
+            <label for="images">Room Images (Maximum 10):</label>
+            <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-text">
+                Drag & drop images here or
+                <button type="button" class="upload-btn" onclick="document.getElementById('images').click()">
+                Browse Files
+                </button>
+            </div>
+            <div class="upload-progress-container">
+                <div id="upload-progress" class="upload-progress"></div>
+            </div>
+            <input type="file" id="images" name="images" multiple accept="image/*" style="display: none">
+            </div>
+            <div class="bulk-actions">
+                <button type="button" id="bulk-remove" class="bulk-remove-btn">
+                    Remove Selected
+                </button>
+            </div>
+            <div id="image-preview" class="image-preview"></div>
         </div>
 
         <div class="form-group">
             <label for="location">Location:</label>
-            <input type="text" id="location" name="location" required>
+            <input type="text" id="location" name="location" required placeholder="Enter the property address">
             <div id="map" style="height: 300px;"></div>
         </div>
 
-        <!-- Add postcode field which was missing -->
         <div class="form-group">
             <label for="postcode">Postcode:</label>
-            <input type="text" id="postcode" name="postcode" required>
+            <input type="text" id="postcode" name="postcode" required placeholder="e.g., SW1A 1AA">
         </div>
 
         <div class="form-group">
             <label for="price">Price (£/monthly):</label>
-            <input type="number" id="price" name="price" required>
+            <input type="number" id="price" name="price" required placeholder="e.g., 800">
         </div>
 
         <div class="form-group">
             <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" required></textarea>
+            <textarea id="description" name="description" rows="4" required placeholder="Describe the room and living space..."></textarea>
         </div>
 
         <h2>House Share Details</h2>
         <div class="form-group">
             <label for="size">Size:</label>
-            <input type="text" id="size" name="size" required>
+            <input type="text" id="size" name="size" required placeholder="e.g., 12x15 ft">
         </div>
         <div class="form-group">
             <label for="availability">Availability:</label>
@@ -62,15 +80,15 @@
         </div>
         <div class="form-group">
             <label for="minimum_term">Minimum Term (months):</label>
-            <input type="number" id="minimum_term" name="minimum_term" required min="1">
+            <input type="number" id="minimum_term" name="minimum_term" required min="1" placeholder="e.g., 6">
         </div>
         <div class="form-group">
             <label for="maximum_term">Maximum Term (months):</label>
-            <input type="number" id="maximum_term" name="maximum_term" min="1">
+            <input type="number" id="maximum_term" name="maximum_term" min="1" placeholder="e.g., 12">
         </div>
         <div class="form-group">
             <label for="deposit">Deposit (£):</label>
-            <input type="number" id="deposit" name="deposit" required>
+            <input type="number" id="deposit" name="deposit" required placeholder="e.g., 800">
         </div>
         <div class="form-group">
             <label for="bills_included">Bills Included?</label>
@@ -81,7 +99,7 @@
         </div>
         <div class="form-group">
             <label for="furnishings">Furnishings:</label>
-            <input type="text" id="furnishings" name="furnishings" required>
+            <input type="text" id="furnishings" name="furnishings" required placeholder="e.g., Fully furnished">
         </div>
         <div class="form-group">
             <label for="parking">Parking:</label>
@@ -127,15 +145,15 @@
         </div>
         <div class="form-group">
             <label for="current_household">Current Household:</label>
-            <input type="number" id="current_household" name="current_household" required>
+            <input type="number" id="current_household" name="current_household" required placeholder="e.g., 3">
         </div>
         <div class="form-group">
             <label for="total_rooms">Total # Rooms:</label>
-            <input type="number" id="total_rooms" name="total_rooms" required>
+            <input type="number" id="total_rooms" name="total_rooms" required placeholder="e.g., 4">
         </div>
         <div class="form-group">
             <label for="ages">Ages:</label>
-            <input type="text" id="ages" name="ages" required>
+            <input type="text" id="ages" name="ages" required placeholder="e.g., 25-30">
         </div>
         <div class="form-group">
             <label for="smoker">Smoker?</label>
@@ -153,11 +171,11 @@
         </div>
         <div class="form-group">
             <label for="occupation">Occupation:</label>
-            <input type="text" id="occupation" name="occupation" required>
+            <input type="text" id="occupation" name="occupation" required placeholder="e.g., Professional, Student">
         </div>
         <div class="form-group">
             <label for="gender">Gender:</label>
-            <input type="text" id="gender" name="gender" required>
+            <input type="text" id="gender" name="gender" required placeholder="e.g., Mixed, Female only">
         </div>
 
         <h2>New Housemate Preferences</h2>
@@ -184,7 +202,7 @@
         </div>
         <div class="form-group">
             <label for="occupation_preference">Preferred Occupation:</label>
-            <input type="text" id="occupation_preference" name="occupation_preference" required>
+            <input type="text" id="occupation_preference" name="occupation_preference" required placeholder="e.g., Professional, Student">
         </div>
         <div class="form-group">
             <label for="references_required">References Required?</label>
@@ -195,18 +213,29 @@
         </div>
         <div class="form-group">
             <label for="min_age">Min Age:</label>
-            <input type="number" id="min_age" name="min_age" required min="18">
+            <input type="number" id="min_age" name="min_age" required min="18" placeholder="e.g., 21">
         </div>
         <div class="form-group">
             <label for="max_age">Max Age:</label>
-            <input type="number" id="max_age" name="max_age" required min="18">
+            <input type="number" id="max_age" name="max_age" required min="18" placeholder="e.g., 35">
         </div>
 
-        <button type="submit">Post Now</button>
+        <div class="form-actions">
+            <button type="submit">Create Listing</button>
+            <a href="{% url 'accounts:manage_listing' %}" class="btn-cancel">Cancel</a>
+        </div>
     </form>
 </div>
+{% endblock content %}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script src="{% static 'js/create_listing.js' %}"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
+<script src="{% static 'js/image-upload.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new ImageUploadHandler();
+    });
+</script>
 {% endblock %}

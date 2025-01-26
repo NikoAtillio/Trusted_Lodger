@@ -10,6 +10,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.views.generic import DetailView
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ValidationError
+import logging
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def login_view(request):
     """Handle user login."""
@@ -174,27 +179,69 @@ def create_listing(request):
         form = RoomListingForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Create listing
-                listing = form.save(commit=False)
-                listing.owner = request.user
-                listing.save()
+                # Begin transaction
+                with transaction.atomic():
+                    # Create listing
+                    listing = form.save(commit=False)
+                    listing.owner = request.user
+                    listing.save()
 
-                # Handle multiple image uploads
-                images = request.FILES.getlist('images')
-                for image in images:
-                    room_image = RoomImage.objects.create(image=image)
-                    listing.images.add(room_image)
+                    # Handle multiple image uploads
+                    images = request.FILES.getlist('images')
+
+                    # Validate number of images
+                    if len(images) > 10:
+                        raise ValidationError('Maximum 10 images allowed')
+
+                    # Process each image
+                    for index, image in enumerate(images):
+                        # Validate file type
+                        if not image.content_type.startswith('image/'):
+                            raise ValidationError(f'File {image.name} is not a valid image')
+
+                        # Validate file size (5MB limit)
+                        if image.size > 5 * 1024 * 1024:
+                            raise ValidationError(f'File {image.name} is too large (max 5MB)')
+
+                        # Create RoomImage instance with order
+                        room_image = RoomImage.objects.create(
+                            room_listing=listing,
+                            image=image,
+                            order=index
+                        )
 
                 messages.success(request, 'Room listing created successfully!')
                 return redirect('accounts:manage_listing')
+
+            except ValidationError as e:
+                messages.error(request, str(e))
+                # If validation error occurs, delete the listing if it was created
+                if 'listing' in locals():
+                    listing.delete()
+
             except Exception as e:
-                messages.error(request, f'Error creating listing: {str(e)}')
+                messages.error(request, 'An unexpected error occurred. Please try again.')
+                logger.error(f'Error creating listing: {str(e)}')
+                # If any other error occurs, delete the listing if it was created
+                if 'listing' in locals():
+                    listing.delete()
+
         else:
-            messages.error(request, 'Please correct the errors below.')
+            # Form validation errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
+
     else:
         form = RoomListingForm()
 
-    return render(request, 'accounts/create_listing.html', {'form': form})
+    context = {
+        'form': form,
+        'page': 'create_listing'  # Add this to help with template rendering
+    }
+
+    return render(request, 'accounts/create_listing.html', context)
+
 
 @login_required
 def my_profile(request):
@@ -240,3 +287,10 @@ class AccountDetailView(DetailView):
 # My Viewings
 def my_viewings(request):
     return render(request, 'path/to/template.html')
+
+
+def create_listing(request):
+    context = {
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
+    }
+    return render(request, 'accounts/create_listing.html', context)

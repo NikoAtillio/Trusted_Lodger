@@ -2,8 +2,14 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from allauth.account.forms import SignupForm
 from django.core.exceptions import ValidationError
-from datetime import datetime
+from datetime import datetime, date
 from .models import User, Profile, RoomListing, RoomImage, Message
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
+
 
 class CustomSignupForm(SignupForm):
     user_type = forms.ChoiceField(
@@ -22,18 +28,9 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'password1',
-            'password2',
-            'user_type',
-            'gender',
-            'dob_day',
-            'dob_month',
-            'dob_year',
-            'user_status',
-            'profile_picture'
+            'first_name', 'last_name', 'email', 'password1', 'password2',
+            'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year',
+            'user_status', 'profile_picture'
         ]
 
         GENDER_CHOICES = [
@@ -125,7 +122,7 @@ class UserRegistrationForm(UserCreationForm):
     def clean_profile_picture(self):
         picture = self.cleaned_data.get('profile_picture')
         if picture:
-            if picture.size > 5 * 1024 * 1024:  # 5 MB limit
+            if picture.size > 5 * 1024 * 1024:
                 raise ValidationError("The file is too large. Maximum size is 5 MB.")
             if not picture.name.lower().endswith(('.png', '.jpg', '.jpeg')):
                 raise ValidationError("File type not supported. Please upload a PNG or JPG image.")
@@ -133,8 +130,6 @@ class UserRegistrationForm(UserCreationForm):
 
     def clean(self):
         cleaned_data = super().clean()
-
-        # Validate date of birth
         dob_day = cleaned_data.get('dob_day')
         dob_month = cleaned_data.get('dob_month')
         dob_year = cleaned_data.get('dob_year')
@@ -144,13 +139,11 @@ class UserRegistrationForm(UserCreationForm):
                 dob = datetime(dob_year, dob_month, dob_day)
                 today = datetime.now()
                 age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-
                 if age < 17:
                     raise ValidationError('You must be at least 17 years old to register.')
             except ValueError:
                 raise ValidationError('Please enter a valid date of birth.')
 
-        # Validate user status
         user_status = cleaned_data.get('user_status')
         if not user_status:
             raise ValidationError('Please select at least one status option.')
@@ -192,13 +185,8 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
-            'bio',
-            'location',
-            'personality_type',
-            'living_preferences',
-            'occupation',
-            'availability',
-            'budget'
+            'bio', 'location', 'personality_type', 'living_preferences',
+            'occupation', 'availability', 'budget'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -264,36 +252,129 @@ class ProfileEditForm(forms.ModelForm):
 
         return profile
 
-from django import forms
-from .models import RoomListing, RoomImage
-
 class RoomListingForm(forms.ModelForm):
-    images = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
-        required=False
+    uk_postcode_validator = RegexValidator(
+        regex=r'^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$',
+        message='Enter a valid UK postcode'
+    )
+
+    postcode = forms.CharField(
+        validators=[uk_postcode_validator],
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., SW1A 1AA'}),
+        help_text='Enter a valid UK postcode'
+    )
+
+    price = forms.DecimalField(
+        min_value=1,
+        max_value=10000,
+        widget=forms.NumberInput(attrs={
+            'placeholder': '£ per month',
+            'step': '0.01'
+        }),
+        help_text='Monthly rent between £1 and £10,000'
+    )
+
+    availability = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'min': date.today().isoformat()
+        }),
+        help_text='When is the property available from?'
     )
 
     class Meta:
         model = RoomListing
         exclude = ['owner', 'created_at', 'updated_at']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'availability': forms.DateInput(attrs={'type': 'date'}),
-            'minimum_term': forms.NumberInput(attrs={'min': '1'}),
-            'maximum_term': forms.NumberInput(attrs={'min': '1'}),
-            'min_age': forms.NumberInput(attrs={'min': '18'}),
-            'max_age': forms.NumberInput(attrs={'min': '18'}),
+            'title': forms.TextInput(attrs={'placeholder': 'Enter listing title'}),
+            'description': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Describe the property...'
+            }),
+            'minimum_term': forms.NumberInput(attrs={
+                'min': '1',
+                'placeholder': 'Minimum months'
+            }),
+            'maximum_term': forms.NumberInput(attrs={
+                'min': '1',
+                'placeholder': 'Maximum months'
+            }),
+            'min_age': forms.NumberInput(attrs={
+                'min': '18',
+                'placeholder': 'Minimum age'
+            }),
+            'max_age': forms.NumberInput(attrs={
+                'min': '18',
+                'placeholder': 'Maximum age'
+            }),
+            'deposit': forms.NumberInput(attrs={
+                'min': '0',
+                'placeholder': 'Deposit amount'
+            }),
         }
 
-    def clean(self):
-        cleaned_data = super().clean()
-        min_age = cleaned_data.get('min_age')
-        max_age = cleaned_data.get('max_age')
+    def clean_images(self):
+        images = self.files.getlist('images')
+        if not images:
+            return []
 
-        if min_age and max_age and min_age > max_age:
-            raise forms.ValidationError("Minimum age cannot be greater than maximum age")
+        if len(images) > 10:
+            raise forms.ValidationError('Maximum 10 images allowed')
 
-        return cleaned_data
+        max_size = 5 * 1024 * 1024  # 5MB
+        allowed_types = ['image/jpeg', 'image/png', 'image/jpg']
+        processed_images = []
+
+        for image in images:
+            if image.content_type not in allowed_types:
+                raise forms.ValidationError(
+                    f'Image {image.name} is not a valid image type. Use JPEG or PNG'
+                )
+
+            if image.size > max_size:
+                processed_image = self.compress_image(image)
+                processed_images.append(processed_image)
+            else:
+                processed_images.append(image)
+
+        return processed_images
+
+    def compress_image(self, image):
+        img = Image.open(image)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+
+        max_dimension = 1920
+        ratio = min(max_dimension/float(img.size[0]), max_dimension/float(img.size[1]))
+        new_size = tuple([int(x*ratio) for x in img.size])
+
+        img = img.resize(new_size, Image.Resampling.LANCZOS)
+
+        output = BytesIO()
+        img.save(output, format='JPEG', quality=85, optimize=True)
+        output.seek(0)
+
+        return InMemoryUploadedFile(
+            output,
+            'ImageField',
+            f"{image.name.split('.')[0]}_compressed.jpg",
+            'image/jpeg',
+            sys.getsizeof(output),
+            None
+        )
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            if self.cleaned_data.get('images'):
+                for image in self.cleaned_data['images']:
+                    RoomImage.objects.create(
+                        room_listing=instance,
+                        image=image,
+                        order=0
+                    )
+        return instance
 
 class MessageForm(forms.ModelForm):
     class Meta:

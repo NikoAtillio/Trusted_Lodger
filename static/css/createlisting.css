@@ -51,17 +51,116 @@ input[type="file"] {
     padding: 10px 0;
 }
 
-.image-preview {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px 0;
+.drop-zone {
+    border: 2px dashed var(--primary-color);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
 }
 
-.image-preview img {
-    max-width: 150px;
-    height: auto;
+.drop-zone.highlight {
+    background-color: rgba(188, 184, 138, 0.1);
+    border-color: #a89f6d;
+}
+
+.drop-zone-text {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.upload-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border: none;
     border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+.upload-progress-container {
+    width: 100%;
+    height: 4px;
+    background-color: #f0f0f0;
+    margin: 10px 0;
+    display: none;
+}
+
+.upload-progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.preview-item {
+    cursor: move;
+    position: relative;
+}
+
+.preview-controls {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 5px;
+}
+
+.bulk-select {
+    width: 20px;
+    height: 20px;
+}
+
+.bulk-actions {
+    margin: 10px 0;
+}
+
+.bulk-remove-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+}
+
+.preview-item {
+    position: relative;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff4444;
 }
 
 .map-container {
