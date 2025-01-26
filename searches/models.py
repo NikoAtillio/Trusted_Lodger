@@ -15,7 +15,7 @@ class SavedSearch(models.Model):
     location = models.CharField(max_length=255)
     min_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     max_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    property_type = models.CharField(max_length=100, blank=True)
+    property_type = models.TextField(blank=True, help_text="Comma-separated list of property types")
     room_size = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     amenities = models.TextField(blank=True, null=True, help_text="Comma-separated list of amenities")
@@ -27,7 +27,6 @@ class SavedSearch(models.Model):
 
     def __str__(self):
         return f"{self.search_name} - {self.location}"
-
 class SavedAd(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     ad = models.ForeignKey(Ad, on_delete=models.CASCADE)

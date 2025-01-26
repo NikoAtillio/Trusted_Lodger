@@ -180,12 +180,12 @@ def create_listing(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    # Create listing
+                    # Create the RoomListing object
                     listing = form.save(commit=False)
                     listing.owner = request.user
                     listing.save()
 
-                    # Handle images
+                    # Handle image uploads
                     images = request.FILES.getlist('images')
                     for index, image in enumerate(images):
                         RoomImage.objects.create(
@@ -259,9 +259,3 @@ class AccountDetailView(DetailView):
 def my_viewings(request):
     return render(request, 'path/to/template.html')
 
-
-def create_listing(request):
-    context = {
-        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
-    }
-    return render(request, 'accounts/create_listing.html', context)

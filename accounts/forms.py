@@ -289,6 +289,13 @@ class RoomListingForm(forms.ModelForm):
         help_text='When is the property available from?'
     )
 
+    # Use a regular FileField for multiple file uploads
+    images = forms.FileField(
+        widget=forms.FileInput(attrs={'multiple': True}),
+        required=False,
+        help_text='Upload up to 10 images (JPEG, PNG, GIF)'
+    )
+
     class Meta:
         model = RoomListing
         exclude = ['owner', 'created_at', 'updated_at']
@@ -321,99 +328,19 @@ class RoomListingForm(forms.ModelForm):
         }
 
     def clean_images(self):
-        """Handle image validation and processing"""
+        """Validate and process uploaded images."""
         images = self.files.getlist('images')
-        if not images:
-            return []
-
         if len(images) > 10:
-            raise forms.ValidationError('Maximum 10 images allowed')
+            raise forms.ValidationError('You can upload a maximum of 10 images.')
 
-        max_size = 5 * 1024 * 1024  # 5MB
-        allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif']
-        processed_images = []
-
+        allowed_types = ['image/jpeg', 'image/png', 'image/gif']
         for image in images:
-            # Check file type
             if image.content_type not in allowed_types:
-                raise forms.ValidationError(
-                    f'Image {image.name} must be JPEG, JPG, PNG, or GIF'
-                )
+                raise forms.ValidationError(f'File type not supported: {image.name}')
+            if image.size > 5 * 1024 * 1024:  # 5MB limit
+                raise forms.ValidationError(f'File too large: {image.name}')
 
-            try:
-                # Process image if it's too large
-                if image.size > max_size:
-                    processed_image = self.compress_image(image)
-                    processed_images.append(processed_image)
-                else:
-                    processed_images.append(image)
-            except Exception as e:
-                raise forms.ValidationError(f'Error processing image {image.name}: {str(e)}')
-
-        return processed_images
-
-    def compress_image(self, image):
-        """Compress and resize image while maintaining quality"""
-        try:
-            img = Image.open(image)
-
-            # Convert RGBA to RGB if necessary
-            if img.mode in ('RGBA', 'P'):
-                img = img.convert('RGB')
-
-            # Calculate new dimensions while maintaining aspect ratio
-            max_dimension = 1920
-            width, height = img.size
-            if width > max_dimension or height > max_dimension:
-                ratio = min(max_dimension/width, max_dimension/height)
-                new_size = (int(width * ratio), int(height * ratio))
-                img = img.resize(new_size, Image.Resampling.LANCZOS)
-
-            # Save with optimal settings
-            output = BytesIO()
-            img.save(
-                output,
-                format='JPEG',
-                quality=85,
-                optimize=True,
-                progressive=True
-            )
-            output.seek(0)
-
-            # Preserve original filename but indicate compression
-            original_name = image.name.rsplit('.', 1)[0]
-            return InMemoryUploadedFile(
-                output,
-                'ImageField',
-                f"{original_name}_optimized.jpg",
-                'image/jpeg',
-                output.tell(),
-                None
-            )
-        except Exception as e:
-            raise forms.ValidationError(f'Error compressing image: {str(e)}')
-
-    def save(self, commit=True):
-        """Save the listing and associated images"""
-        instance = super().save(commit=False)
-        if commit:
-            instance.save()
-
-            # Handle image uploads
-            if self.cleaned_data.get('images'):
-                for index, image in enumerate(self.cleaned_data['images']):
-                    try:
-                        RoomImage.objects.create(
-                            room_listing=instance,
-                            image=image,
-                            order=index
-                        )
-                    except Exception as e:
-                        # Log the error but continue with other images
-                        logger.error(f'Error saving image {index}: {str(e)}')
-                        continue
-
-        return instance
+        return images
 
 
 class MessageForm(forms.ModelForm):

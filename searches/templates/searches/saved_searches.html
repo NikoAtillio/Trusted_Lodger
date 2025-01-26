@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
+<div class="saved-searches-container">
+    <h2>Saved Searches</h2>
+
+    {% if saved_searches %}
+        <ul>
+            {% for search in saved_searches %}
+                <li>
+                    <h3>{{ search.search_name }}</h3>
+                    <p><strong>Location:</strong> {{ search.location }}</p>
+                    <p><strong>Price Range:</strong> £{{ search.min_rent }} - £{{ search.max_rent }}</p>
+                    <p><strong>Room Size:</strong> {{ search.room_size }}</p>
+                    <p><strong>Property Type:</strong> {{ search.property_type }}</p>
+                    <a href="{% url 'searches:search_results' %}?location={{ search.location }}&min_rent={{ search.min_rent }}&max_rent={{ search.max_rent }}&room_size={{ search.room_size }}&property_type={{ search.property_type }}" class="btn-primary">View Results</a>
+                    <a href="{% url 'searches:delete_saved_search' search.id %}" class="btn-danger">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no saved searches.</p>
+    {% endif %}
+</div>
 {% endblock %}

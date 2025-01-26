@@ -23,6 +23,11 @@ def search_results(request):
     room_size = request.GET.get('room_size', '')
     min_rent = request.GET.get('min_rent', '')
     max_rent = request.GET.get('max_rent', '')
+    property_type = request.GET.getlist('property_type', [])
+    search_type = request.GET.get('search_type', '')
+    keywords = request.GET.get('keywords', '')
+    move_in_date = request.GET.get('move_in_date', '')
+    min_stay = request.GET.get('min_stay', '')
     sort_by = request.GET.get('sort_by', '')
 
     # Apply filters
@@ -37,6 +42,14 @@ def search_results(request):
         listings = listings.filter(price__gte=min_rent)
     if max_rent:
         listings = listings.filter(price__lte=max_rent)
+    if property_type:
+        listings = listings.filter(property_type__in=property_type)
+    if keywords:
+        listings = listings.filter(description__icontains=keywords)
+    if move_in_date:
+        listings = listings.filter(available_from__lte=move_in_date)
+    if min_stay:
+        listings = listings.filter(minimum_stay__gte=min_stay)
 
     # Apply sorting
     if sort_by == 'price_low_to_high':
@@ -93,7 +106,10 @@ def save_search(request):
                 location=form.cleaned_data.get('location', ''),
                 min_rent=form.cleaned_data.get('min_rent'),
                 max_rent=form.cleaned_data.get('max_rent'),
-                room_size=form.cleaned_data.get('room_type', '')
+                room_size=form.cleaned_data.get('room_size', ''),
+                property_type=','.join(form.cleaned_data.get('property_type', [])),  # Save as comma-separated string
+                amenities=form.cleaned_data.get('keywords', ''),  # Save keywords as amenities
+                created_at=form.cleaned_data.get('move_in_date', None)
             )
             search.save()
             messages.success(request, 'Search saved successfully!')
