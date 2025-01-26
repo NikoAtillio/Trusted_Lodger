@@ -10,6 +10,10 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 import logging
+from django import forms
+from .models import RoomListing, RoomImage
+from django.core.validators import FileExtensionValidator
+
 
 logger = logging.getLogger(__name__)
 
@@ -260,42 +264,6 @@ class ProfileEditForm(forms.ModelForm):
 
 
 class RoomListingForm(forms.ModelForm):
-    uk_postcode_validator = RegexValidator(
-        regex=r'^[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}$',
-        message='Enter a valid UK postcode'
-    )
-
-    postcode = forms.CharField(
-        validators=[uk_postcode_validator],
-        widget=forms.TextInput(attrs={'placeholder': 'e.g., SW1A 1AA'}),
-        help_text='Enter a valid UK postcode'
-    )
-
-    price = forms.DecimalField(
-        min_value=1,
-        max_value=10000,
-        widget=forms.NumberInput(attrs={
-            'placeholder': '£ per month',
-            'step': '0.01'
-        }),
-        help_text='Monthly rent between £1 and £10,000'
-    )
-
-    availability = forms.DateField(
-        widget=forms.DateInput(attrs={
-            'type': 'date',
-            'min': date.today().isoformat()
-        }),
-        help_text='When is the property available from?'
-    )
-
-    # Use a regular FileField for multiple file uploads
-    images = forms.FileField(
-        widget=forms.FileInput(attrs={'multiple': True}),
-        required=False,
-        help_text='Upload up to 10 images (JPEG, PNG, GIF)'
-    )
-
     class Meta:
         model = RoomListing
         exclude = ['owner', 'created_at', 'updated_at']
@@ -327,22 +295,26 @@ class RoomListingForm(forms.ModelForm):
             }),
         }
 
-    def clean_images(self):
-        """Validate and process uploaded images."""
-        images = self.files.getlist('images')
-        if len(images) > 10:
-            raise forms.ValidationError('You can upload a maximum of 10 images.')
 
-        allowed_types = ['image/jpeg', 'image/png', 'image/gif']
-        for image in images:
-            if image.content_type not in allowed_types:
-                raise forms.ValidationError(f'File type not supported: {image.name}')
-            if image.size > 5 * 1024 * 1024:  # 5MB limit
-                raise forms.ValidationError(f'File too large: {image.name}')
+class RoomImageForm(forms.ModelForm):
+    class Meta:
+        model = RoomImage
+        fields = ['image']
 
-        return images
+    def clean_image(self):
+        """Validate a single uploaded image."""
+        image = self.cleaned_data.get('image')
 
+        if not image:
+            raise forms.ValidationError('No image uploaded.')
 
+        allowed_types = ['image/jpeg', 'image/png']
+        if image.content_type not in allowed_types:
+            raise forms.ValidationError(f'File type not supported: {image.content_type}')
+        if image.size > 5 * 1024 * 1024:  # 5MB limit
+            raise forms.ValidationError('File size exceeds 5MB.')
+
+        return image
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message

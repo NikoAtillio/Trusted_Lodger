@@ -4,6 +4,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/create_listing.css' %}">
 {% endblock %}
+
 {% block content %}
 <div class="create-listing-container">
     <h1>Create New Listing</h1>
@@ -21,31 +22,10 @@
     <form id="listingForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
+        <!-- RoomListingForm fields -->
         <div class="form-group">
             <label for="title">Listing Title:</label>
             <input type="text" id="title" name="title" required placeholder="e.g., Spacious Room in Friendly House Share">
-        </div>
-
-        <div class="form-group">
-            <label for="images">Room Images (Maximum 10):</label>
-            <div id="drop-zone" class="drop-zone">
-            <div class="drop-zone-text">
-                Drag & drop images here or
-                <button type="button" class="upload-btn" onclick="document.getElementById('images').click()">
-                Browse Files
-                </button>
-            </div>
-            <div class="upload-progress-container">
-                <div id="upload-progress" class="upload-progress"></div>
-            </div>
-            <input type="file" id="images" name="images" multiple accept="image/*" style="display: none">
-            </div>
-            <div class="bulk-actions">
-                <button type="button" id="bulk-remove" class="bulk-remove-btn">
-                    Remove Selected
-                </button>
-            </div>
-            <div id="image-preview" class="image-preview"></div>
         </div>
 
         <div class="form-group">
@@ -69,6 +49,7 @@
             <textarea id="description" name="description" rows="4" required placeholder="Describe the room and living space..."></textarea>
         </div>
 
+        <!-- All your existing fields -->
         <h2>House Share Details</h2>
         <div class="form-group">
             <label for="size">Size:</label>
@@ -225,6 +206,19 @@
             <a href="{% url 'accounts:manage_listing' %}" class="btn-cancel">Cancel</a>
         </div>
     </form>
+
+    <!-- Image Upload Section -->
+    <div id="imageUploadSection" style="display: none;">
+        <h3>Upload Images</h3>
+        <input type="file" id="imageInput" name="images" multiple>
+        <button id="uploadImagesButton">Upload Images</button>
+    </div>
+
+    <div class="upload-progress-container">
+        <div id="upload-progress" class="upload-progress"></div>
+    </div>
+
+    <div id="image-preview" class="image-preview"></div>
 </div>
 {% endblock content %}
 
@@ -233,6 +227,7 @@
 <script src="{% static 'js/create_listing.js' %}"></script>
 <script src="{% static 'js/image-upload.js' %}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initMap" async defer></script>
+
 <script>
     function initMap() {
         const defaultLocation = { lat: 51.5074, lng: -0.1278 }; // London
@@ -286,9 +281,55 @@
         });
     }
 </script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        new ImageUploadHandler();
+    document.getElementById('listingForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("{% url 'accounts:create_listing' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Listing created successfully!');
+                document.getElementById('imageUploadSection').style.display = 'block';
+            } else {
+                alert('Error creating listing.');
+            }
+        });
+    });
+
+    document.getElementById('uploadImagesButton').addEventListener('click', function () {
+        const imageInput = document.getElementById('imageInput');
+        const files = imageInput.files;
+        const formData = new FormData();
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('images', files[i]);
+        }
+
+        fetch("{% url 'accounts:upload_images' listing_id=listing_id %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            } else {
+                alert('Error uploading images.');
+            }
+        });
     });
 </script>
 {% endblock %}

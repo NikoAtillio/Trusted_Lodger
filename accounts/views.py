@@ -13,6 +13,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
 import logging
 from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -173,26 +175,18 @@ def manage_listing(request):
     listings = request.user.room_listings.all()
     return render(request, 'accounts/manage_listing.html', {'listings': listings})
 
+
 @login_required
 def create_listing(request):
     if request.method == 'POST':
-        form = RoomListingForm(request.POST, request.FILES)
+        form = RoomListingForm(request.POST)
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    # Create the RoomListing object
+                    # Save the RoomListing object
                     listing = form.save(commit=False)
                     listing.owner = request.user
                     listing.save()
-
-                    # Handle image uploads
-                    images = request.FILES.getlist('images')
-                    for index, image in enumerate(images):
-                        RoomImage.objects.create(
-                            room_listing=listing,
-                            image=image,
-                            order=index
-                        )
 
                 messages.success(request, 'Listing created successfully!')
                 return redirect('accounts:manage_listing')
@@ -213,6 +207,28 @@ def create_listing(request):
     }
     return render(request, 'accounts/create_listing.html', context)
 
+
+@csrf_exempt
+@login_required
+def upload_images(request, listing_id):
+    """Handle image uploads for a specific RoomListing."""
+    if request.method == 'POST':
+        listing = RoomListing.objects.get(id=listing_id, owner=request.user)
+        images = request.FILES.getlist('images')
+
+        if len(images) > 10:
+            return JsonResponse({'error': 'You can upload a maximum of 10 images.'}, status=400)
+
+        for index, image in enumerate(images):
+            RoomImage.objects.create(
+                room_listing=listing,
+                image=image,
+                order=index
+            )
+
+        return JsonResponse({'message': 'Images uploaded successfully.'})
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 @login_required
 def my_profile(request):
