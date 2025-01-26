@@ -36,6 +36,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://trusted-lodger-07c367c9020d.herokuapp.com',
     ]
 
+# API keys
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+
 # Application definition
 INSTALLED_APPS = [
     # Custom apps
