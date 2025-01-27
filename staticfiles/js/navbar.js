@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Bootstrap initialization (only if Bootstrap is loaded)
     if (typeof bootstrap !== 'undefined') {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
         });
     }
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         let lastScrollTop = 0;
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             if (scrollTop > lastScrollTop) {
                 navbar.classList.add('hidden');
@@ -32,13 +32,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownContent = document.getElementById('dropdown-content');
 
     if (userIcon && dropdownContent) {
-        userIcon.addEventListener('click', function(event) {
+        userIcon.addEventListener('click', function (event) {
             event.stopPropagation();
             dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
         });
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             if (!dropdownContent.contains(event.target) && event.target !== userIcon) {
                 dropdownContent.style.display = 'none';
             }
@@ -51,9 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add form submission debugging
     const registrationForm = document.querySelector('form');
     if (registrationForm) {
-        registrationForm.addEventListener('submit', function(e) {
+        registrationForm.addEventListener('submit', function (e) {
             console.log('Form submission attempted');
-            
+
             // Log form data
             const formData = new FormData(this);
             for (let pair of formData.entries()) {
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Log the form's action attribute
             console.log('Form action:', this.action);
             console.log('Form method:', this.method);
-            
+
             // Log any validation errors
             const invalidFields = this.querySelectorAll(':invalid');
             if (invalidFields.length > 0) {
@@ -120,22 +120,22 @@ function validateForm() {
     const checkboxes = document.querySelectorAll('input[name="user_status"]');
     const errorElement = document.getElementById("status-error");
     let isChecked = false;
-    
+
     checkboxes.forEach((checkbox) => {
         if (checkbox.checked) {
             isChecked = true;
         }
     });
-    
+
     console.log('Checkbox validation result:', isChecked);
-    
-    if (!isChecked) {
+
+    if (!isChecked && errorElement) {
         errorElement.style.display = "block";
-        console.log('Form validation failed: no checkbox selected');
         return false;
     }
-    
-    errorElement.style.display = "none";
-    console.log('Form validation passed');
+
+    if (errorElement) {
+        errorElement.style.display = "none";
+    }
     return true;
 }

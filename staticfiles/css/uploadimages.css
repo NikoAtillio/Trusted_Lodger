@@ -1,0 +1,16 @@
+:root {
+    --primary-color: #BCB88A;
+    --secondary-color: #FFFFFF;
+    --dark-bg: #17263bf2;
+    --font-body: 'Playfair Display', serif;
+    --input-bg: #f9f9f9;
+    --input-border: #ccc;
+    --input-focus: #BCB88A;
+}
+
+.image-preview img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+}
