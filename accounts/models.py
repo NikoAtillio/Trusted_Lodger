@@ -155,7 +155,7 @@ class RoomListing(models.Model):
     balcony = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='no')
     disabled_access = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='no')
     living_room = models.CharField(max_length=7, choices=LIVING_ROOM_CHOICES, default='shared')
-    broadband = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='no')
+    broadband = models.CharField(max_length=3, choices=YES_NO_CHOICES, default='no') 
 
     # Household Details
     current_household = models.IntegerField(default=1)
