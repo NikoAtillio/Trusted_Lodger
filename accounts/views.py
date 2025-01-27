@@ -214,16 +214,28 @@ def upload_images(request, listing_id):
 
     if request.method == 'POST':
         images = request.FILES.getlist('images')
-        for image in images:
-            RoomImage.objects.create(listing=listing, image=image)
-
-        messages.success(request, 'Images uploaded successfully!')
+        try:
+            for image in images:
+                RoomImage.objects.create(listing=listing, image=image)
+            messages.success(request, 'Images uploaded successfully!')
+        except Exception as e:
+            messages.error(request, f'Error uploading images: {str(e)}')
         return redirect('accounts:manage_listing')  # Redirect to manage listings or another page
 
     context = {
         'listing': listing,
     }
     return render(request, 'accounts/upload_images.html', context)
+
+@login_required
+def manage_listing(request):
+    listings = RoomListing.objects.filter(owner=request.user)
+    context = {
+        'listings': listings,
+    }
+    return render(request, 'accounts/manage_listing.html', context)
+
+
 @login_required
 def my_profile(request):
     """Display the user's main account page."""

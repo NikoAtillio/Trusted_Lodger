@@ -202,33 +202,9 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit">Create Listing</button>
-            <a href="{% url 'accounts:manage_listing' %}" class="btn-cancel">Cancel</a>
+            <button type="submit">Create Listing & Upload Images</button>
         </div>
     </form>
-
-    <!-- Image Upload Section -->
-    <div id="imageUploadSection" style="display: none;">
-        <h3>Upload Images</h3>
-        <input type="file" id="imageInput" name="images" multiple>
-        <button id="uploadImagesButton">Upload Images</button>
-    </div>
-
-    <!-- Display Uploaded Images -->
-    <div class="uploaded-images">
-        <h3>Uploaded Images</h3>
-        <div class="image-gallery">
-            {% for image in listing.images.all %}
-            <img src="{{ image.image.url }}" alt="Room Image" style="max-width: 150px; margin: 5px;">
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="upload-progress-container">
-        <div id="upload-progress" class="upload-progress"></div>
-    </div>
-
-    <div id="image-preview" class="image-preview"></div>
 </div>
 {% endblock content %}
 
@@ -287,75 +263,5 @@
             }
         });
     }
-</script>
-
-<script>
-    document.getElementById('listingForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch("{% url 'accounts:create_listing' %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Listing created successfully!');
-                document.getElementById('imageUploadSection').style.display = 'block';
-            } else {
-                alert('Error creating listing.');
-            }
-        });
-    });
-
-    document.getElementById('uploadImagesButton').addEventListener('click', function () {
-        const imageInput = document.getElementById('imageInput');
-        const files = imageInput.files;
-        const formData = new FormData();
-
-        for (let i = 0; i < files.length; i++) {
-            formData.append('images', files[i]);
-        }
-
-        fetch("{% url 'accounts:upload_images' listing_id=listing.id %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-                location.reload(); // Refresh to show uploaded images
-            } else {
-                alert('Error uploading images.');
-            }
-        });
-    });
-
-    document.getElementById('imageInput').addEventListener('change', function(event) {
-        const previewContainer = document.getElementById('image-preview');
-        previewContainer.innerHTML = ''; // Clear previous previews
-        const files = event.target.files;
-
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.maxWidth = '150px';
-                img.style.margin = '5px';
-                previewContainer.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    });
 </script>
 {% endblock %}

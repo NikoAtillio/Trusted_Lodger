@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
+<h1>Manage Your Listings</h1>
+<ul>
+    {% for listing in listings %}
+    <li>
+        <h2>{{ listing.title }}</h2>
+        <p>{{ listing.description }}</p>
+        <a href="{% url 'accounts:upload_images' listing_id=listing.id %}">Edit Images</a>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

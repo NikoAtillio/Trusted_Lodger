@@ -315,6 +315,7 @@ class RoomImageForm(forms.ModelForm):
             raise forms.ValidationError('File size exceeds 5MB.')
 
         return image
+    
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message

@@ -13,6 +13,7 @@ class ImageUploadHandler {
     }
 
     initializeEventListeners() {
+        // Drag-and-drop events
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             this.dropZone.addEventListener(eventName, this.preventDefaults);
         });
@@ -34,6 +35,7 @@ class ImageUploadHandler {
             this.handleFiles(droppedFiles);
         });
 
+        // File input change event
         this.fileInput.addEventListener('change', (e) => {
             this.handleFiles(e.target.files);
         });
@@ -41,6 +43,11 @@ class ImageUploadHandler {
         // Bulk remove button
         document.getElementById('bulk-remove').addEventListener('click', () => {
             this.bulkRemove();
+        });
+
+        // Upload button
+        document.getElementById('upload-button').addEventListener('click', () => {
+            this.uploadImages();
         });
     }
 
@@ -176,6 +183,35 @@ class ImageUploadHandler {
         });
     }
 
+    async uploadImages() {
+        const formData = new FormData();
+        this.uploadedFiles.forEach(file => {
+            formData.append('images', file);
+        });
+
+        try {
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert('Images uploaded successfully!');
+                this.uploadedFiles.clear();
+                this.previewContainer.innerHTML = ''; // Clear previews
+            } else {
+                alert('Error uploading images.');
+            }
+        } catch (error) {
+            console.error('Error uploading images:', error);
+            alert('An error occurred while uploading images.');
+        }
+    }
+
     updateProgress(percent) {
         this.progressBar.style.width = percent + '%';
         this.progressBar.style.display = percent > 0 ? 'block' : 'none';
@@ -205,3 +241,8 @@ class ImageUploadHandler {
         });
     }
 }
+
+// Initialize the handler
+document.addEventListener('DOMContentLoaded', () => {
+    new ImageUploadHandler();
+});

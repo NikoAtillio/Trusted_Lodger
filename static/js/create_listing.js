@@ -1,45 +1,3 @@
-// Image Preview
-// Image Preview
-function handleImagePreview() {
-    const input = document.getElementById('images');
-    const preview = document.getElementById('image-preview'); // Corrected ID
-
-    input.addEventListener('change', function() {
-        preview.innerHTML = ''; // Clear previous previews
-        const files = Array.from(this.files);
-
-        files.forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewItem = document.createElement('div');
-                    previewItem.classList.add('preview-item');
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('remove-btn');
-                    removeBtn.innerHTML = '&times;';
-                    removeBtn.addEventListener('click', () => {
-                        previewItem.remove();
-                    });
-
-                    previewItem.appendChild(img);
-                    previewItem.appendChild(removeBtn);
-                    preview.appendChild(previewItem);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    });
-}
-
-// Initialize everything when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    handleImagePreview();
-});
-
 // Google Maps Integration
 let map, marker;
 
@@ -105,6 +63,5 @@ function validateForm() {
 
 // Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    handleImagePreview();
     // Google Maps script will call initMap automatically
 });
