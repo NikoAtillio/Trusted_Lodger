@@ -1,98 +1,131 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/managelisting.css' %}">
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="search-results-container">
-    <h2>Search Results</h2>
-    <p>{{ total_results }} results found for "{{ search_location }}"</p>
+<div class="container">
+    <div class="search-grid">
+        <!-- Filter Form -->
+        <aside>
+            <form action="{% url 'searches:search_results' %}" method="GET" id="filterForm" class="search-widget-form">
+                <section id="searchWidget" class="panel panel-header-closed search-widget panel-standard">
+                    <header>
+                        <h3 id="search-for-title">Search Filters</h3>
+                    </header>
+                    <div>
+                        <div class="form-group__radio">
+                            <input type="radio" name="flatshare_type" value="offered" id="flatshare_type-offered" {% if request.GET.flatshare_type == "offered" %}checked{% endif %}>
+                            <label for="flatshare_type-offered">Rooms for Rent</label>
+                        </div>
+                        <div class="form-group__radio">
+                            <input type="radio" name="flatshare_type" value="wanted" id="flatshare_type-wanted" {% if request.GET.flatshare_type == "wanted" %}checked{% endif %}>
+                            <label for="flatshare_type-wanted">Rooms Wanted</label>
+                        </div>
+                        <div class="form-group__radio">
+                            <input type="radio" name="flatshare_type" value="buddyup" id="flatshare_type-buddyup" {% if request.GET.flatshare_type == "buddyup" %}checked{% endif %}>
+                            <label for="flatshare_type-buddyup">Buddy Ups</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="search_by_location_field">Search Location</label>
+                            <input type="text" name="location" id="search_by_location_field" value="{{ request.GET.location }}" placeholder="e.g., Bristol">
+                        </div>
+                        <div class="form-group">
+                            <label for="radius">Search Radius</label>
+                            <select name="radius" id="radius">
+                                <option value="0" {% if request.GET.radius == "0" %}selected{% endif %}>This area only</option>
+                                <option value="5" {% if request.GET.radius == "5" %}selected{% endif %}>5 miles</option>
+                                <option value="10" {% if request.GET.radius == "10" %}selected{% endif %}>10 miles</option>
+                                <option value="20" {% if request.GET.radius == "20" %}selected{% endif %}>20 miles</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price_min">Min Price (£)</label>
+                            <input type="number" name="price_min" id="price_min" value="{{ request.GET.price_min }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="price_max">Max Price (£)</label>
+                            <input type="number" name="price_max" id="price_max" value="{{ request.GET.price_max }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="room_size">Room Size</label>
+                            <select name="room_size" id="room_size">
+                                <option value="" {% if not request.GET.room_size %}selected{% endif %}>Any</option>
+                                <option value="Single" {% if request.GET.room_size == "Single" %}selected{% endif %}>Single</option>
+                                <option value="Double" {% if request.GET.room_size == "Double" %}selected{% endif %}>Double</option>
+                            </select>
+                        </div>
+                        <aside>
+                            <form method="GET" id="filterForm" class="search-widget-form">
+                                {{ form.as_p }}
+                                <button type="submit" class="button button--wide">Search</button>
+                            </form>
+                        </aside>                    </div>
+                </section>
+            </form>
+        </aside>
 
-    <!-- Filters Section -->
-    <div class="filters-container">
-        <form id="filters-form" action="{% url 'searches:search_results' %}" method="get">
-            <!-- Location -->
-            <div class="form-group">
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" value="{{ form.location.value }}" placeholder="Enter city, town, or postcode" />
-            </div>
+        <!-- Search Results -->
+        <main>
+            <h1>Search Results</h1>
+            <ul>
+                {% for listing in listings %}
+                <li class="listing-card">
+                    <div class="listing-header">
+                        {% if listing.get_main_image %}
+                        <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image">
+                        {% else %}
+                        <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image">
+                        {% endif %}
+                        <div>
+                            <h2>{{ listing.title }}</h2>
+                            <p><strong>Location:</strong> {{ listing.location }}</p>
+                            <p><strong>Price:</strong> £{{ listing.price }} / month</p>
+                            <p><strong>Room Size:</strong> {{ listing.size }}</p>
+                            <p><strong>Description:</strong> {{ listing.description|truncatewords:20 }}</p>
+                            <button class="expand-button">View Details</button>
+                        </div>
+                    </div>
 
-            <!-- Room Size -->
-            <div class="form-group">
-                <label for="room_size">Room Size:</label>
-                <select id="room_size" name="room_size">
-                    <option value="any" {% if form.room_size.value == "any" %}selected{% endif %}>Any</option>
-                    <option value="Single" {% if form.room_size.value == "Single" %}selected{% endif %}>Single Room</option>
-                    <option value="Double" {% if form.room_size.value == "Double" %}selected{% endif %}>Double Room</option>
-                    <option value="Ensuite" {% if form.room_size.value == "Ensuite" %}selected{% endif %}>Ensuite Room</option>
-                    <option value="Studio" {% if form.room_size.value == "Studio" %}selected{% endif %}>Studio</option>
-                </select>
-            </div>
-
-            <!-- Price Range -->
-            <div class="form-group">
-                <label for="min_rent">Price Range (£/month):</label>
-                <input type="number" id="min_rent" name="min_rent" value="{{ form.min_rent.value }}" placeholder="Min" />
-                <input type="number" id="max_rent" name="max_rent" value="{{ form.max_rent.value }}" placeholder="Max" />
-            </div>
-
-            <!-- Property Type -->
-            <div class="form-group">
-                <label>Property Type:</label>
-                {% for choice in form.property_type.field.choices %}
-                    <label>
-                        <input type="checkbox" name="property_type" value="{{ choice.0 }}" {% if choice.0 in form.property_type.value %}checked{% endif %} />
-                        {{ choice.1 }}
-                    </label>
+                    <!-- Expandable details -->
+                    <div class="listing-details" style="display: none;">
+                        <p><strong>Postcode:</strong> {{ listing.postcode }}</p>
+                        <p><strong>Available From:</strong> {{ listing.available_from }}</p>
+                        <p><strong>Minimum Term:</strong> {{ listing.minimum_term }} months</p>
+                        <p><strong>Maximum Term:</strong> {{ listing.maximum_term }} months</p>
+                        <p><strong>Deposit:</strong> £{{ listing.deposit }}</p>
+                        <p><strong>Bills Included:</strong> {{ listing.bills_included }}</p>
+                        <p><strong>Furnishings:</strong> {{ listing.furnishings }}</p>
+                        <p><strong>Parking:</strong> {{ listing.parking }}</p>
+                        <p><strong>Garden/Patio:</strong> {{ listing.garden }}</p>
+                        <p><strong>Balcony/Roof Terrace:</strong> {{ listing.balcony }}</p>
+                        <p><strong>Disabled Access:</strong> {{ listing.disabled_access }}</p>
+                        <p><strong>Living Room:</strong> {{ listing.living_room }}</p>
+                        <p><strong>Broadband Included:</strong> {{ listing.broadband }}</p>
+                        <p><strong>Current Household:</strong> {{ listing.current_household }}</p>
+                        <p><strong>Total Rooms:</strong> {{ listing.total_rooms }}</p>
+                        <p><strong>Ages:</strong> {{ listing.ages }}</p>
+                        <p><strong>Smoker:</strong> {{ listing.smoker }}</p>
+                        <p><strong>Pets:</strong> {{ listing.pets }}</p>
+                        <p><strong>Occupation:</strong> {{ listing.occupation }}</p>
+                        <p><strong>Gender:</strong> {{ listing.gender }}</p>
+                        <p><strong>Couples OK:</strong> {{ listing.couples_ok }}</p>
+                        <p><strong>Smoking OK:</strong> {{ listing.smoking_ok }}</p>
+                        <p><strong>Pets OK:</strong> {{ listing.pets_ok }}</p>
+                        <p><strong>Preferred Occupation:</strong> {{ listing.occupation_preference }}</p>
+                        <p><strong>References Required:</strong> {{ listing.references_required }}</p>
+                        <p><strong>Min Age:</strong> {{ listing.min_age }}</p>
+                        <p><strong>Max Age:</strong> {{ listing.max_age }}</p>
+                    </div>
+                </li>
+                {% empty %}
+                <p>No results found. Try adjusting your filters.</p>
                 {% endfor %}
-            </div>
-
-            <!-- Search Type -->
-            <div class="form-group">
-                <label>Search Type:</label>
-                {% for choice in form.search_type.field.choices %}
-                    <label>
-                        <input type="radio" name="search_type" value="{{ choice.0 }}" {% if form.search_type.value == choice.0 %}checked{% endif %} />
-                        {{ choice.1 }}
-                    </label>
-                {% endfor %}
-            </div>
-
-            <!-- Keywords -->
-            <div class="form-group">
-                <label for="keywords">Keywords:</label>
-                <input type="text" id="keywords" name="keywords" value="{{ form.keywords.value }}" placeholder="Search by keywords..." />
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn-primary">Apply Filters</button>
-        </form>
-    </div>
-
-    <!-- Results Section -->
-    <div class="results-container">
-        {% if listings %}
-            {% for listing in listings %}
-                <div class="listing-card">
-                    <h3>{{ listing.title }}</h3>
-                    <p><strong>Location:</strong> {{ listing.location }}</p>
-                    <p><strong>Price:</strong> £{{ listing.price }} / month</p>
-                    <p><strong>Room Size:</strong> {{ listing.size }}</p>
-                    <p><strong>Description:</strong> {{ listing.description|truncatewords:20 }}</p>
-                    <a href="{% url 'searches:property_detail' listing.pk %}" class="btn-secondary">View Details</a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No results found. Try adjusting your filters.</p>
-        {% endif %}
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination-container">
-        {% if listings.has_previous %}
-            <a href="?{% if request.GET.page %}page={{ listings.previous_page_number }}&{% endif %}{{ request.GET.urlencode }}" class="btn-secondary">Previous</a>
-        {% endif %}
-        <span>Page {{ listings.number }} of {{ listings.paginator.num_pages }}</span>
-        {% if listings.has_next %}
-            <a href="?{% if request.GET.page %}page={{ listings.next_page_number }}&{% endif %}{{ request.GET.urlencode }}" class="btn-secondary">Next</a>
-        {% endif %}
+            </ul>
+        </main>
     </div>
 </div>
 {% endblock %}

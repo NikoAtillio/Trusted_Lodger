@@ -1,8 +1,6 @@
 from django import forms
 from accounts.models import RoomListing
-
-from django import forms
-
+from datetime import date
 class AdvancedSearchForm(forms.Form):
     """Form for advanced search filters"""
     # Location and Basic Info
@@ -156,3 +154,69 @@ class AdvancedSearchForm(forms.Form):
             )
 
         return cleaned_data
+    
+    from django import forms
+from datetime import date
+
+
+class SearchFilterForm(forms.Form):
+    location = forms.CharField(
+        max_length=100,
+        required=False,
+        label="Location",
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., Bristol'})
+    )
+    room_size = forms.ChoiceField(
+        choices=[('any', 'Any'), ('Single', 'Single'), ('Double', 'Double')],
+        required=False,
+        label="Room Size",
+        initial='any'
+    )
+    min_rent = forms.IntegerField(
+        required=False,
+        label="Min Rent (£)",
+        widget=forms.NumberInput(attrs={'placeholder': 'e.g., 500'})
+    )
+    max_rent = forms.IntegerField(
+        required=False,
+        label="Max Rent (£)",
+        widget=forms.NumberInput(attrs={'placeholder': 'e.g., 1000'})
+    )
+    property_type = forms.MultipleChoiceField(
+        choices=[('Flat', 'Flat'), ('House', 'House'), ('Studio', 'Studio')],
+        required=False,
+        label="Property Type",
+        widget=forms.CheckboxSelectMultiple
+    )
+    search_type = forms.ChoiceField(
+        choices=[('', 'Any'), ('offered', 'Rooms for Rent'), ('wanted', 'Rooms Wanted')],
+        required=False,
+        label="Search Type"
+    )
+    keywords = forms.CharField(
+        max_length=100,
+        required=False,
+        label="Keywords",
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., garden, parking'})
+    )
+    move_in_date = forms.DateField(
+        required=False,
+        label="Move-in Date",
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    min_stay = forms.IntegerField(
+        required=False,
+        label="Min Stay (months)",
+        widget=forms.NumberInput(attrs={'placeholder': 'e.g., 6'})
+    )
+    sort_by = forms.ChoiceField(
+        choices=[
+            ('', 'Relevance'),
+            ('price_low_to_high', 'Price: Low to High'),
+            ('price_high_to_low', 'Price: High to Low'),
+            ('newest', 'Newest'),
+            ('location', 'Location')
+        ],
+        required=False,
+        label="Sort By"
+    )

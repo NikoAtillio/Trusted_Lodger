@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 import json
-from .forms import AdvancedSearchForm
+from .forms import AdvancedSearchForm, SearchFilterForm
 from accounts.models import RoomListing, Message
 from .models import SavedSearch, SavedAd
 
@@ -18,48 +18,52 @@ def search_results(request):
     """Handle search results with filters, sorting, and pagination."""
     listings = RoomListing.objects.all()
 
-    # Get search parameters
-    location = request.GET.get('location', '')
-    room_size = request.GET.get('room_size', '')
-    min_rent = request.GET.get('min_rent', '')
-    max_rent = request.GET.get('max_rent', '')
-    property_type = request.GET.getlist('property_type', [])
-    search_type = request.GET.get('search_type', '')
-    keywords = request.GET.get('keywords', '')
-    move_in_date = request.GET.get('move_in_date', '')
-    min_stay = request.GET.get('min_stay', '')
-    sort_by = request.GET.get('sort_by', '')
+    # Initialize the form with GET data
+    form = SearchFilterForm(request.GET)
 
-    # Apply filters
-    if location:
-        listings = listings.filter(
-            Q(location__icontains=location) |
-            Q(postcode__icontains=location)
-        )
-    if room_size and room_size != 'any':
-        listings = listings.filter(size=room_size)
-    if min_rent:
-        listings = listings.filter(price__gte=min_rent)
-    if max_rent:
-        listings = listings.filter(price__lte=max_rent)
-    if property_type:
-        listings = listings.filter(property_type__in=property_type)
-    if keywords:
-        listings = listings.filter(description__icontains=keywords)
-    if move_in_date:
-        listings = listings.filter(available_from__lte=move_in_date)
-    if min_stay:
-        listings = listings.filter(minimum_stay__gte=min_stay)
+    if form.is_valid():
+        # Get cleaned data from the form
+        location = form.cleaned_data.get('location')
+        room_size = form.cleaned_data.get('room_size')
+        min_rent = form.cleaned_data.get('min_rent')
+        max_rent = form.cleaned_data.get('max_rent')
+        property_type = form.cleaned_data.get('property_type')
+        search_type = form.cleaned_data.get('search_type')
+        keywords = form.cleaned_data.get('keywords')
+        move_in_date = form.cleaned_data.get('move_in_date')
+        min_stay = form.cleaned_data.get('min_stay')
+        sort_by = form.cleaned_data.get('sort_by')
 
-    # Apply sorting
-    if sort_by == 'price_low_to_high':
-        listings = listings.order_by('price')
-    elif sort_by == 'price_high_to_low':
-        listings = listings.order_by('-price')
-    elif sort_by == 'newest':
-        listings = listings.order_by('-created_at')
-    elif sort_by == 'location':
-        listings = listings.order_by('location')
+        # Apply filters
+        if location:
+            listings = listings.filter(
+                Q(location__icontains=location) |
+                Q(postcode__icontains=location)
+            )
+        if room_size and room_size != 'any':
+            listings = listings.filter(size=room_size)
+        if min_rent:
+            listings = listings.filter(price__gte=min_rent)
+        if max_rent:
+            listings = listings.filter(price__lte=max_rent)
+        if property_type:
+            listings = listings.filter(property_type__in=property_type)
+        if keywords:
+            listings = listings.filter(description__icontains=keywords)
+        if move_in_date:
+            listings = listings.filter(available_from__lte=move_in_date)
+        if min_stay:
+            listings = listings.filter(minimum_stay__gte=min_stay)
+
+        # Apply sorting
+        if sort_by == 'price_low_to_high':
+            listings = listings.order_by('price')
+        elif sort_by == 'price_high_to_low':
+            listings = listings.order_by('-price')
+        elif sort_by == 'newest':
+            listings = listings.order_by('-created_at')
+        elif sort_by == 'location':
+            listings = listings.order_by('location')
 
     # Pagination
     paginator = Paginator(listings, 10)  # 10 results per page
@@ -68,14 +72,13 @@ def search_results(request):
 
     # Context for the template
     context = {
-        'form': AdvancedSearchForm(request.GET),  # Pre-fill the form with current filters
+        'form': form,  # Pass the form to the template
         'listings': page_obj,
         'total_results': listings.count(),
-        'search_location': location,
-        'search_type': room_size,
     }
 
     return render(request, 'searches/search_results.html', context)
+
 
 @login_required
 def property_detail(request, pk):
