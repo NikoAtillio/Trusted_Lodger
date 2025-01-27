@@ -141,7 +141,7 @@ class RoomListing(models.Model):
     postcode = models.CharField(max_length=10, default="Not specified")
 
     # Room Details
-    size = models.CharField(max_length=100, default="Not specified")
+    size = models.CharField(max_length=50, choices=[('Single', 'Single'), ('Double', 'Double'), ('single', 'single'), ('double', 'double')], default='Single')    
     availability = models.CharField(max_length=100, default="Immediately")
     minimum_term = models.IntegerField(validators=[MinValueValidator(1)], default=1)
     maximum_term = models.IntegerField(null=True, blank=True, default=12)

@@ -38,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 # API keys
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+print("Google Maps API Key:", os.environ.get('GOOGLE_MAPS_API_KEY'))
 
 # Application definition
 INSTALLED_APPS = [

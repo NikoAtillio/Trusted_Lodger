@@ -197,7 +197,6 @@ def create_listing(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
-
     else:
         form = RoomListingForm()
 
@@ -205,6 +204,7 @@ def create_listing(request):
         'form': form,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     }
+    print("Context:", context)  # Debug the context
     return render(request, 'accounts/create_listing.html', context)
 
 
