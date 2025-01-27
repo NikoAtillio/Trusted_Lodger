@@ -163,17 +163,37 @@ def edit_profile(request):
 
     return render(request, 'accounts/edit_profile.html', context)
 
+
+@login_required
+def edit_ad(request, listing_id):
+    # Fetch the listing object, ensuring it belongs to the logged-in user
+    listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
+
+    if request.method == 'POST':
+        # Bind the form with POST data and files
+        form = RoomListingForm(request.POST, request.FILES, instance=listing)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your ad has been updated successfully!')
+            return redirect('accounts:manage_listing')  # Redirect to the manage listings page
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        # Pre-fill the form with the current listing details
+        form = RoomListingForm(instance=listing)
+
+    context = {
+        'form': form,
+        'listing': listing,
+    }
+    return render(request, 'accounts/edit_ad.html', context)
+
+
 @login_required
 def inbox(request):
     """Display user's messages."""
     messages = request.user.received_messages.all()
     return render(request, 'accounts/inbox.html', {'messages': messages})
-
-@login_required
-def manage_listing(request):
-    """Handle property listing management."""
-    listings = request.user.room_listings.all()
-    return render(request, 'accounts/manage_listing.html', {'listings': listings})
 
 
 @login_required
@@ -210,22 +230,48 @@ def create_listing(request):
 
 @login_required
 def upload_images(request, listing_id):
-    listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
+    try:
+        # Fetch the RoomListing object
+        listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
 
-    if request.method == 'POST':
-        images = request.FILES.getlist('images')
-        try:
+        if request.method == 'POST':
+            # Handle POST request: Process uploaded images
+            images = request.FILES.getlist('images')
             for image in images:
-                RoomImage.objects.create(listing=listing, image=image)
-            messages.success(request, 'Images uploaded successfully!')
-        except Exception as e:
-            messages.error(request, f'Error uploading images: {str(e)}')
-        return redirect('accounts:manage_listing')  # Redirect to manage listings or another page
+                RoomImage.objects.create(room_listing=listing, image=image)
+                
+            # Return a JSON response instead of redirecting
+            return JsonResponse({'success': True, 'message': 'Image uploaded successfully!'})
 
-    context = {
-        'listing': listing,
-    }
-    return render(request, 'accounts/upload_images.html', context)
+            # Redirect back to the same page to display the uploaded images
+            # return redirect('accounts:upload_images', listing_id=listing.id)
+
+        # Handle GET request: Render the upload_images.html template
+        images = RoomImage.objects.filter(room_listing=listing)
+        return render(request, 'accounts/upload_images.html', {'listing': listing, 'images': images})
+
+    except Exception as e:
+        logger.error(f"Error in upload_images view: {str(e)}", exc_info=True)
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+def post_ad(request, listing_id):
+    try:
+        # Fetch the RoomListing object
+        listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
+
+        # Mark the listing as live
+        listing.is_live = True
+        listing.save()
+
+        messages.success(request, 'Your ad is now live!')
+        return redirect('accounts:manage_listing')  # Redirect to the manage listings page
+
+    except Exception as e:
+        logger.error(f"Error in post_ad view: {str(e)}", exc_info=True)
+        messages.error(request, 'An error occurred while posting your ad.')
+        return redirect('accounts:upload_images', listing_id=listing_id)
+
 
 @login_required
 def manage_listing(request):
@@ -234,6 +280,16 @@ def manage_listing(request):
         'listings': listings,
     }
     return render(request, 'accounts/manage_listing.html', context)
+
+
+@login_required
+@csrf_exempt
+def delete_listing(request, listing_id):
+    if request.method == 'POST':
+        listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
+        listing.delete()
+        return JsonResponse({'success': True, 'message': 'Listing deleted successfully!'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
 @login_required

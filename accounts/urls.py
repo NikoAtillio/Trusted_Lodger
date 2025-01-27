@@ -18,8 +18,10 @@ urlpatterns = [
     path('profile/delete/', views.delete_profile, name='delete_profile'),
     path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
     path('myaccount/<slug:pk>/', views.AccountDetailView.as_view(), name="myaccount"),
-    path('my-viewings/', views.my_viewings, name='my_viewings'),
+    path('edit-ad/<int:listing_id>/', views.edit_ad, name='edit_ad'),    
     path('upload-images/<int:listing_id>/', views.upload_images, name='upload_images'),
+    path('post-ad/<int:listing_id>/', views.post_ad, name='post_ad'),
+    path('delete-listing/<int:listing_id>/', views.delete_listing, name='delete_listing'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

@@ -162,7 +162,7 @@ class ImageUploadHandler {
             reader.readAsDataURL(file);
             reader.onloadend = () => {
                 const preview = document.createElement('div');
-                preview.className = 'preview-item';
+                preview.className = 'preview-item'; // Ensure the correct class is applied
                 preview.setAttribute('data-filename', file.name);
                 preview.innerHTML = `
                     <img src="${reader.result}" alt="${file.name}">
@@ -172,12 +172,13 @@ class ImageUploadHandler {
                     </div>
                     <div class="preview-progress"></div>
                 `;
-
+    
+                // Add event listener for the remove button
                 preview.querySelector('.remove-btn').addEventListener('click', () => {
                     this.uploadedFiles.delete(file);
                     preview.remove();
                 });
-
+    
                 resolve(preview);
             };
         });
@@ -185,10 +186,12 @@ class ImageUploadHandler {
 
     async uploadImages() {
         const formData = new FormData();
-        this.uploadedFiles.forEach(file => {
-            formData.append('images', file);
-        });
-
+        const images = document.getElementById('images').files;
+    
+        for (let i = 0; i < images.length; i++) {
+            formData.append('images', images[i]);
+        }
+    
         try {
             const response = await fetch(window.location.href, {
                 method: 'POST',
@@ -197,18 +200,22 @@ class ImageUploadHandler {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             });
-
+    
             if (response.ok) {
+                // Parse the JSON response
                 const data = await response.json();
-                alert('Images uploaded successfully!');
-                this.uploadedFiles.clear();
-                this.previewContainer.innerHTML = ''; // Clear previews
+                alert(data.message || 'Images uploaded successfully!');
+    
+                // Optionally reload the page to show the uploaded images
+                window.location.reload();
             } else {
-                alert('Error uploading images.');
+                // Handle non-200 responses
+                const errorData = await response.json();
+                alert(errorData.error || 'An error occurred while uploading images.');
             }
         } catch (error) {
-            console.error('Error uploading images:', error);
-            alert('An error occurred while uploading images.');
+            console.error('Error parsing JSON response:', error);
+            alert('An unexpected error occurred. Please try again.');
         }
     }
 

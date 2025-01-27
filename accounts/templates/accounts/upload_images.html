@@ -8,7 +8,7 @@
 {% block content %}
 <div class="upload-images-container">
     <h1>Upload Images for {{ listing.title }}</h1>
-
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -32,11 +32,12 @@
     <div id="upload-progress" class="progress-bar"></div>
 
     <!-- Buttons -->
-    <button id="upload-button" class="btn btn-primary">Upload Images</button>
+    <a href="{% url 'accounts:post_ad' listing.id %}" class="btn btn-primary">Post Ad</a>    
     <button id="bulk-remove" class="btn btn-danger">Remove Selected</button>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="{% static 'js/upload-images.js' %}"></script>
 {% endblock %}
