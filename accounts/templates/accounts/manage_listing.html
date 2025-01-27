@@ -11,16 +11,23 @@
 </head>
 <h1>Manage Your Listings</h1>
 
-<ul class="listing-container">
+<ul>
     {% for listing in listings %}
     <li class="listing-card">
         <div class="listing-header">
-            <h2>{{ listing.title }}</h2>
-            <p><strong>Location:</strong> {{ listing.location }}</p>
-            <p><strong>Price:</strong> £{{ listing.price }} / month</p>
-            <p><strong>Room Size:</strong> {{ listing.size }}</p>
-            <p><strong>Description:</strong> {{ listing.description|truncatewords:20 }}</p>
-            <button class="expand-button">View Details</button>
+            {% if listing.get_main_image %}
+            <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image">
+            {% else %}
+            <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image">
+            {% endif %}
+            <div>
+                <h2>{{ listing.title }}</h2>
+                <p><strong>Location:</strong> {{ listing.location }}</p>
+                <p><strong>Price:</strong> £{{ listing.price }} / month</p>
+                <p><strong>Room Size:</strong> {{ listing.size }}</p>
+                <p><strong>Description:</strong> {{ listing.description|truncatewords:20 }}</p>
+                <button class="expand-button">View Details</button>
+            </div>
         </div>
 
         <!-- Expandable details -->
@@ -61,6 +68,7 @@
     <p>You have no active listings. <a href="{% url 'accounts:create_listing' %}">Create a new listing</a>.</p>
     {% endfor %}
 </ul>
+
 <!-- Modal overlay -->
 <div class="modal-overlay" id="modalOverlay"></div>
 
@@ -77,6 +85,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Delete functionality
         const modal = document.getElementById('deleteModal');
         const overlay = document.getElementById('modalOverlay');
     
@@ -114,6 +123,20 @@
                     modal.style.display = 'none';
                     overlay.style.display = 'none';
                 };
+            });
+        });
+    
+        // Expand/collapse "View Details" functionality
+        document.querySelectorAll('.expand-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const details = button.closest('.listing-card').querySelector('.listing-details');
+                if (details.style.display === 'none' || details.style.display === '') {
+                    details.style.display = 'block'; // Show details
+                    button.textContent = 'Hide Details'; // Update button text
+                } else {
+                    details.style.display = 'none'; // Hide details
+                    button.textContent = 'View Details'; // Update button text
+                }
             });
         });
     });

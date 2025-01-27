@@ -1,6 +1,238 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/editprofile.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Find Your Perfect Roommate!</h2>
-<p>Use our platform to connect with potential roommates.</p>
+<div class="container">
+    <div class="profile-grid">
+        <!-- Left Navigation -->
+        <div class="nav-section">
+            <a href="{% url 'accounts:inbox' %}" class="nav-link">
+                <i class="fas fa-envelope"></i>
+                Messages
+            </a>
+            <a href="{% url 'accounts:manage_listing' %}" class="nav-link">
+                <i class="fas fa-ad"></i>
+                My Ads
+            </a>
+            <a href="#saved" class="nav-link">
+                <i class="fas fa-heart"></i>
+                Saved Ads
+            </a>
+            <a href="#searches" class="nav-link">
+                <i class="fas fa-search"></i>
+                Saved Searches
+            </a>
+            <a href="{% url 'accounts:my_profile' %}" class="nav-link">
+                <i class="fas fa-user"></i>
+                View Profile
+            </a>
+            <a href="{% url 'accounts:delete_profile' %}" class="nav-link">
+                <i class="fas fa-trash"></i>
+                Delete Profile
+            </a>
+        </div>
+
+        <!-- Edit Ad Form -->
+        <div class="profile-content">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-header">
+                    <h2>Edit Your Listing</h2>
+                </div>
+
+                <!-- RoomListingForm fields -->
+                <div class="form-group">
+                    <label for="title">Listing Title:</label>
+                    <input type="text" id="title" name="title" value="{{ form.title.value }}" required placeholder="e.g., Spacious Room in Friendly House Share">
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" value="{{ form.location.value }}" required placeholder="Enter the property address">
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="postcode">Postcode:</label>
+                    <input type="text" id="postcode" name="postcode" value="{{ form.postcode.value }}" required placeholder="e.g., SW1A 1AA">
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price (£/monthly):</label>
+                    <input type="number" id="price" name="price" value="{{ form.price.value }}" required placeholder="e.g., 800">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4" required placeholder="Describe the room and living space...">{{ form.description.value }}</textarea>
+                </div>
+
+                <h2>House Share Details</h2>
+                <div class="form-group">
+                    <label for="size">Size:</label>
+                    <input type="text" id="size" name="size" value="{{ form.size.value }}" required placeholder="e.g., 12x15 ft">
+                </div>
+                <div class="form-group">
+                    <label for="availability">Availability:</label>
+                    <input type="date" id="availability" name="availability" value="{{ form.available_from.value }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="minimum_term">Minimum Term (months):</label>
+                    <input type="number" id="minimum_term" name="minimum_term" value="{{ form.minimum_term.value }}" required min="1" placeholder="e.g., 6">
+                </div>
+                <div class="form-group">
+                    <label for="maximum_term">Maximum Term (months):</label>
+                    <input type="number" id="maximum_term" name="maximum_term" value="{{ form.maximum_term.value }}" min="1" placeholder="e.g., 12">
+                </div>
+                <div class="form-group">
+                    <label for="deposit">Deposit (£):</label>
+                    <input type="number" id="deposit" name="deposit" value="{{ form.deposit.value }}" required placeholder="e.g., 800">
+                </div>
+                <div class="form-group">
+                    <label for="bills_included">Bills Included?</label>
+                    <select id="bills_included" name="bills_included">
+                        <option value="yes" {% if form.bills_included.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.bills_included.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="furnishings">Furnishings:</label>
+                    <input type="text" id="furnishings" name="furnishings" value="{{ form.furnishings.value }}" required placeholder="e.g., Fully furnished">
+                </div>
+                <div class="form-group">
+                    <label for="parking">Parking:</label>
+                    <select id="parking" name="parking">
+                        <option value="yes" {% if form.parking.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.parking.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="garden">Garden/Patio:</label>
+                    <select id="garden" name="garden">
+                        <option value="yes" {% if form.garden.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.garden.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="balcony">Balcony/Roof Terrace:</label>
+                    <select id="balcony" name="balcony">
+                        <option value="yes" {% if form.balcony.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.balcony.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="disabled_access">Disabled Access:</label>
+                    <select id="disabled_access" name="disabled_access">
+                        <option value="yes" {% if form.disabled_access.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.disabled_access.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="living_room">Living Room:</label>
+                    <select id="living_room" name="living_room">
+                        <option value="shared" {% if form.living_room.value == "shared" %}selected{% endif %}>Shared</option>
+                        <option value="private" {% if form.living_room.value == "private" %}selected{% endif %}>Private</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="broadband">Broadband Included:</label>
+                    <select id="broadband" name="broadband">
+                        <option value="yes" {% if form.broadband.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.broadband.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="current_household">Current Household:</label>
+                    <input type="number" id="current_household" name="current_household" value="{{ form.current_household.value }}" required placeholder="e.g., 3">
+                </div>
+                <div class="form-group">
+                    <label for="total_rooms">Total # Rooms:</label>
+                    <input type="number" id="total_rooms" name="total_rooms" value="{{ form.total_rooms.value }}" required placeholder="e.g., 4">
+                </div>
+                <div class="form-group">
+                    <label for="ages">Ages:</label>
+                    <input type="text" id="ages" name="ages" value="{{ form.ages.value }}" required placeholder="e.g., 25-30">
+                </div>
+                <div class="form-group">
+                    <label for="smoker">Smoker?</label>
+                    <select id="smoker" name="smoker">
+                        <option value="yes" {% if form.smoker.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.smoker.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pets">Any Pets?</label>
+                    <select id="pets" name="pets">
+                        <option value="yes" {% if form.pets.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.pets.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="occupation">Occupation:</label>
+                    <input type="text" id="occupation" name="occupation" value="{{ form.occupation.value }}" required placeholder="e.g., Professional, Student">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <input type="text" id="gender" name="gender" value="{{ form.gender.value }}" required placeholder="e.g., Mixed, Female only">
+                </div>
+
+                <h2>New Housemate Preferences</h2>
+                <div class="form-group">
+                    <label for="couples_ok">Couples OK?</label>
+                    <select id="couples_ok" name="couples_ok">
+                        <option value="yes" {% if form.couples_ok.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.couples_ok.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="smoking_ok">Smoking OK?</label>
+                    <select id="smoking_ok" name="smoking_ok">
+                        <option value="yes" {% if form.smoking_ok.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.smoking_ok.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pets_ok">Pets OK?</label>
+                    <select id="pets_ok" name="pets_ok">
+                        <option value="yes" {% if form.pets_ok.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.pets_ok.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="occupation_preference">Preferred Occupation:</label>
+                    <input type="text" id="occupation_preference" name="occupation_preference" value="{{ form.occupation_preference.value }}" required placeholder="e.g., Professional, Student">
+                </div>
+                <div class="form-group">
+                    <label for="references_required">References Required?</label>
+                    <select id="references_required" name="references_required">
+                        <option value="yes" {% if form.references_required.value == "yes" %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if form.references_required.value == "no" %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="min_age">Min Age:</label>
+                    <input type="number" id="min_age" name="min_age" value="{{ form.min_age.value }}" required min="18" placeholder="e.g., 21">
+                </div>
+                <div class="form-group">
+                    <label for="max_age">Max Age:</label>
+                    <input type="number" id="max_age" name="max_age" value="{{ form.max_age.value }}" required min="18" placeholder="e.g., 35">
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="save-button">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'accounts:manage_listing' %}" class="cancel-button">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

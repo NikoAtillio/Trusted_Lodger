@@ -187,8 +187,9 @@ class RoomListing(models.Model):
         return f"{self.title} - {self.location}"
     
     def get_main_image(self):
-        """Returns the first image of the listing or None"""
-        return self.images.first()
+        """Returns the URL of the first image of the listing or None"""
+        main_image = self.images.first()
+        return main_image.image_url if main_image else None
 
     def get_image_count(self):
         """Returns the number of images for this listing"""
