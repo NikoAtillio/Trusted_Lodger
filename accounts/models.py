@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from datetime import datetime
+from PIL import Image
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -236,13 +237,17 @@ class RoomImage(models.Model):
         return f"Image {self.order} for {self.room_listing}"
 
     def save(self, *args, **kwargs):
-        # If this is a new image, set the order to the next available number
-        if not self.pk:
+        if not self.pk and self.room_listing:
             last_order = RoomImage.objects.filter(
                 room_listing=self.room_listing
             ).aggregate(models.Max('order'))['order__max']
             self.order = (last_order or 0) + 1
         super().save(*args, **kwargs)
+        if self.image:
+            img = Image.open(self.image.path)
+            img = img.convert('RGB')  # Ensure compatibility
+            img.thumbnail((800, 800))  # Resize to max 800x800
+            img.save(self.image.path, quality=85)  # Save with reduced quality
 
     @property
     def image_url(self):

@@ -188,8 +188,8 @@ def create_listing(request):
                     listing.owner = request.user
                     listing.save()
 
-                messages.success(request, 'Listing created successfully!')
-                return redirect('accounts:manage_listing')
+                messages.success(request, 'Listing created successfully! Now upload images.')
+                return redirect('accounts:upload_images', listing_id=listing.id)  # Redirect to upload images page
 
             except Exception as e:
                 messages.error(request, f'Error creating listing: {str(e)}')
@@ -208,28 +208,22 @@ def create_listing(request):
     return render(request, 'accounts/create_listing.html', context)
 
 
-@csrf_exempt
 @login_required
 def upload_images(request, listing_id):
-    """Handle image uploads for a specific RoomListing."""
+    listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
+
     if request.method == 'POST':
-        listing = RoomListing.objects.get(id=listing_id, owner=request.user)
         images = request.FILES.getlist('images')
+        for image in images:
+            RoomImage.objects.create(listing=listing, image=image)
 
-        if len(images) > 10:
-            return JsonResponse({'error': 'You can upload a maximum of 10 images.'}, status=400)
+        messages.success(request, 'Images uploaded successfully!')
+        return redirect('accounts:manage_listing')  # Redirect to manage listings or another page
 
-        for index, image in enumerate(images):
-            RoomImage.objects.create(
-                room_listing=listing,
-                image=image,
-                order=index
-            )
-
-        return JsonResponse({'message': 'Images uploaded successfully.'})
-
-    return JsonResponse({'error': 'Invalid request method.'}, status=400)
-
+    context = {
+        'listing': listing,
+    }
+    return render(request, 'accounts/upload_images.html', context)
 @login_required
 def my_profile(request):
     """Display the user's main account page."""

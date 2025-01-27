@@ -19,4 +19,8 @@ urlpatterns = [
     path('register/profile/', views.register_view, name='register_profile'),  # For profile registration
     path('myaccount/<slug:pk>/', views.AccountDetailView.as_view(), name="myaccount"),
     path('my-viewings/', views.my_viewings, name='my_viewings'),
+    path('upload-images/<int:listing_id>/', views.upload_images, name='upload_images'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

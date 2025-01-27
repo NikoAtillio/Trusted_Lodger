@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Profile, RoomListing, Message
+from .models import User, Profile, RoomListing, Message, RoomImage
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'user_type', 'is_staff')
@@ -62,6 +62,11 @@ class RoomListingAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
                 )
+    
+    @admin.register(RoomImage)
+    class RoomImageAdmin(admin.ModelAdmin):
+        list_display = ('room_listing', 'image', 'created_at')
+        search_fields = ('room_listing__title',)
     
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'subject', 'created_at', 'is_read')

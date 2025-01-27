@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from .models import Profile, User, RoomImage
 from django.db import models
+from PIL import Image
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -18,3 +19,10 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             instance.image.delete(save=False)
         except:
             pass
+        
+@receiver(post_save, sender=RoomImage)
+def resize_image(sender, instance, **kwargs):
+    image = Image.open(instance.image.path)
+    max_size = (800, 800)
+    image.thumbnail(max_size)
+    image.save(instance.image.path)

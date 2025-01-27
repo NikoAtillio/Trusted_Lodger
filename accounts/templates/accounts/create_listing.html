@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/create_listing.css' %}">
+<link rel="stylesheet" href="{% static 'css/createlisting.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -214,6 +214,16 @@
         <button id="uploadImagesButton">Upload Images</button>
     </div>
 
+    <!-- Display Uploaded Images -->
+    <div class="uploaded-images">
+        <h3>Uploaded Images</h3>
+        <div class="image-gallery">
+            {% for image in listing.images.all %}
+            <img src="{{ image.image.url }}" alt="Room Image" style="max-width: 150px; margin: 5px;">
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="upload-progress-container">
         <div id="upload-progress" class="upload-progress"></div>
     </div>
@@ -223,9 +233,6 @@
 {% endblock content %}
 
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-<script src="{% static 'js/create_listing.js' %}"></script>
-<script src="{% static 'js/image-upload.js' %}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initMap" async defer></script>
 
 <script>
@@ -315,7 +322,7 @@
             formData.append('images', files[i]);
         }
 
-        fetch("{% url 'accounts:upload_images' listing_id=listing_id %}", {
+        fetch("{% url 'accounts:upload_images' listing_id=listing.id %}", {
             method: 'POST',
             body: formData,
             headers: {
@@ -326,9 +333,28 @@
         .then(data => {
             if (data.message) {
                 alert(data.message);
+                location.reload(); // Refresh to show uploaded images
             } else {
                 alert('Error uploading images.');
             }
+        });
+    });
+
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = ''; // Clear previous previews
+        const files = event.target.files;
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '150px';
+                img.style.margin = '5px';
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
         });
     });
 </script>
