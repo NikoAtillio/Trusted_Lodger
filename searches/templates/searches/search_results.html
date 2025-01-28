@@ -11,11 +11,14 @@
         <!-- Filter Form -->
         <aside>
             <form action="{% url 'searches:search_results' %}" method="GET" id="filterForm" class="search-widget-form">
-                <section id="searchWidget" class="panel panel-header-closed search-widget panel-standard">
+                <section id="searchWidget" class="panel search-widget">
                     <header>
-                        <h3 id="search-for-title">Search Filters</h3>
+                        <h3>Search Filters</h3>
                     </header>
-                    <div>
+                    
+                    <!-- Search Type -->
+                    <div class="filter-section">
+                        <h4>Search Type</h4>
                         <div class="form-group__radio">
                             <input type="radio" name="flatshare_type" value="offered" id="flatshare_type-offered" {% if request.GET.flatshare_type == "offered" %}checked{% endif %}>
                             <label for="flatshare_type-offered">Rooms for Rent</label>
@@ -24,45 +27,115 @@
                             <input type="radio" name="flatshare_type" value="wanted" id="flatshare_type-wanted" {% if request.GET.flatshare_type == "wanted" %}checked{% endif %}>
                             <label for="flatshare_type-wanted">Rooms Wanted</label>
                         </div>
-                        <div class="form-group__radio">
-                            <input type="radio" name="flatshare_type" value="buddyup" id="flatshare_type-buddyup" {% if request.GET.flatshare_type == "buddyup" %}checked{% endif %}>
-                            <label for="flatshare_type-buddyup">Buddy Ups</label>
-                        </div>
+                    </div>
+        
+                    <!-- Location -->
+                    <div class="filter-section">
+                        <h4>Location</h4>
                         <div class="form-group">
-                            <label for="search_by_location_field">Search Location</label>
-                            <input type="text" name="location" id="search_by_location_field" value="{{ request.GET.location }}" placeholder="e.g., Bristol">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" value="{{ request.GET.location }}" placeholder="Enter location">
                         </div>
                         <div class="form-group">
                             <label for="radius">Search Radius</label>
                             <select name="radius" id="radius">
-                                <option value="0" {% if request.GET.radius == "0" %}selected{% endif %}>This area only</option>
-                                <option value="5" {% if request.GET.radius == "5" %}selected{% endif %}>5 miles</option>
-                                <option value="10" {% if request.GET.radius == "10" %}selected{% endif %}>10 miles</option>
-                                <option value="20" {% if request.GET.radius == "20" %}selected{% endif %}>20 miles</option>
+                                <option value="0">This area only</option>
+                                <option value="5">Within 5 miles</option>
+                                <option value="10">Within 10 miles</option>
+                                <option value="20">Within 20 miles</option>
                             </select>
                         </div>
+                    </div>
+        
+                    <!-- Price Range -->
+                    <div class="filter-section">
+                        <h4>Price Range</h4>
                         <div class="form-group">
-                            <label for="price_min">Min Price (£)</label>
-                            <input type="number" name="price_min" id="price_min" value="{{ request.GET.price_min }}">
+                            <label for="min_price">Min Price (£)</label>
+                            <input type="number" id="min_price" name="min_price" value="{{ request.GET.min_price }}" placeholder="Min price">
                         </div>
                         <div class="form-group">
-                            <label for="price_max">Max Price (£)</label>
-                            <input type="number" name="price_max" id="price_max" value="{{ request.GET.price_max }}">
+                            <label for="max_price">Max Price (£)</label>
+                            <input type="number" id="max_price" name="max_price" value="{{ request.GET.max_price }}" placeholder="Max price">
                         </div>
+                    </div>
+        
+                    <!-- Room Details -->
+                    <div class="filter-section">
+                        <h4>Room Details</h4>
                         <div class="form-group">
                             <label for="room_size">Room Size</label>
                             <select name="room_size" id="room_size">
-                                <option value="" {% if not request.GET.room_size %}selected{% endif %}>Any</option>
-                                <option value="Single" {% if request.GET.room_size == "Single" %}selected{% endif %}>Single</option>
-                                <option value="Double" {% if request.GET.room_size == "Double" %}selected{% endif %}>Double</option>
+                                <option value="">Any</option>
+                                <option value="Single">Single</option>
+                                <option value="Double">Double</option>
                             </select>
                         </div>
-                        <aside>
-                            <form method="GET" id="filterForm" class="search-widget-form">
-                                {{ form.as_p }}
-                                <button type="submit" class="button button--wide">Search</button>
-                            </form>
-                        </aside>                    </div>
+                        <div class="form-group">
+                            <label for="availability">Available From</label>
+                            <input type="date" id="availability" name="availability" value="{{ request.GET.availability }}">
+                        </div>
+                    </div>
+        
+                    <!-- Amenities -->
+                    <div class="filter-section">
+                        <h4>Amenities</h4>
+                        <div class="form-group">
+                            <label for="bills_included">Bills Included</label>
+                            <select name="bills_included" id="bills_included">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="parking">Parking</label>
+                            <select name="parking" id="parking">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="garden">Garden/Patio</label>
+                            <select name="garden" id="garden">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <!-- Preferences -->
+                    <div class="filter-section">
+                        <h4>Preferences</h4>
+                        <div class="form-group">
+                            <label for="couples_ok">Couples Allowed</label>
+                            <select name="couples_ok" id="couples_ok">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="smoking_ok">Smoking Allowed</label>
+                            <select name="smoking_ok" id="smoking_ok">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pets_ok">Pets Allowed</label>
+                            <select name="pets_ok" id="pets_ok">
+                                <option value="">Any</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+        
+                    <button type="submit" class="button button--wide">Apply Filters</button>
                 </section>
             </form>
         </aside>
@@ -74,50 +147,61 @@
                 {% for listing in listings %}
                 <li class="listing-card">
                     <div class="listing-header">
-                        {% if listing.get_main_image %}
-                        <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image">
-                        {% else %}
-                        <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image">
-                        {% endif %}
-                        <div>
+                        <div class="listing-image-container">
+                            {% if listing.get_main_image %}
+                            <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image">
+                            {% else %}
+                            <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image">
+                            {% endif %}
+                        </div>
+                        <div class="listing-info">
                             <h2>{{ listing.title }}</h2>
                             <p><strong>Location:</strong> {{ listing.location }}</p>
                             <p><strong>Price:</strong> £{{ listing.price }} / month</p>
                             <p><strong>Room Size:</strong> {{ listing.size }}</p>
                             <p><strong>Description:</strong> {{ listing.description|truncatewords:20 }}</p>
-                            <button class="expand-button">View Details</button>
+                            <button class="button expand-button">View Details</button>
                         </div>
                     </div>
 
-                    <!-- Expandable details -->
                     <div class="listing-details" style="display: none;">
-                        <p><strong>Postcode:</strong> {{ listing.postcode }}</p>
-                        <p><strong>Available From:</strong> {{ listing.available_from }}</p>
-                        <p><strong>Minimum Term:</strong> {{ listing.minimum_term }} months</p>
-                        <p><strong>Maximum Term:</strong> {{ listing.maximum_term }} months</p>
-                        <p><strong>Deposit:</strong> £{{ listing.deposit }}</p>
-                        <p><strong>Bills Included:</strong> {{ listing.bills_included }}</p>
-                        <p><strong>Furnishings:</strong> {{ listing.furnishings }}</p>
-                        <p><strong>Parking:</strong> {{ listing.parking }}</p>
-                        <p><strong>Garden/Patio:</strong> {{ listing.garden }}</p>
-                        <p><strong>Balcony/Roof Terrace:</strong> {{ listing.balcony }}</p>
-                        <p><strong>Disabled Access:</strong> {{ listing.disabled_access }}</p>
-                        <p><strong>Living Room:</strong> {{ listing.living_room }}</p>
-                        <p><strong>Broadband Included:</strong> {{ listing.broadband }}</p>
-                        <p><strong>Current Household:</strong> {{ listing.current_household }}</p>
-                        <p><strong>Total Rooms:</strong> {{ listing.total_rooms }}</p>
-                        <p><strong>Ages:</strong> {{ listing.ages }}</p>
-                        <p><strong>Smoker:</strong> {{ listing.smoker }}</p>
-                        <p><strong>Pets:</strong> {{ listing.pets }}</p>
-                        <p><strong>Occupation:</strong> {{ listing.occupation }}</p>
-                        <p><strong>Gender:</strong> {{ listing.gender }}</p>
-                        <p><strong>Couples OK:</strong> {{ listing.couples_ok }}</p>
-                        <p><strong>Smoking OK:</strong> {{ listing.smoking_ok }}</p>
-                        <p><strong>Pets OK:</strong> {{ listing.pets_ok }}</p>
-                        <p><strong>Preferred Occupation:</strong> {{ listing.occupation_preference }}</p>
-                        <p><strong>References Required:</strong> {{ listing.references_required }}</p>
-                        <p><strong>Min Age:</strong> {{ listing.min_age }}</p>
-                        <p><strong>Max Age:</strong> {{ listing.max_age }}</p>
+                        <div class="listing-details-grid">
+                            <div class="details-column">
+                                <h3>Property Details</h3>
+                                <p><strong>Postcode:</strong> {{ listing.postcode }}</p>
+                                <p><strong>Available From:</strong> {{ listing.available_from }}</p>
+                                <p><strong>Minimum Term:</strong> {{ listing.minimum_term }} months</p>
+                                <p><strong>Maximum Term:</strong> {{ listing.maximum_term }} months</p>
+                                <p><strong>Deposit:</strong> £{{ listing.deposit }}</p>
+                            </div>
+                            
+                            <div class="details-column">
+                                <h3>Amenities</h3>
+                                <p><strong>Bills Included:</strong> {{ listing.bills_included }}</p>
+                                <p><strong>Furnishings:</strong> {{ listing.furnishings }}</p>
+                                <p><strong>Parking:</strong> {{ listing.parking }}</p>
+                                <p><strong>Garden/Patio:</strong> {{ listing.garden }}</p>
+                                <p><strong>Balcony/Roof Terrace:</strong> {{ listing.balcony }}</p>
+                            </div>
+                            
+                            <div class="details-column">
+                                <h3>Household</h3>
+                                <p><strong>Current Household:</strong> {{ listing.current_household }}</p>
+                                <p><strong>Total Rooms:</strong> {{ listing.total_rooms }}</p>
+                                <p><strong>Ages:</strong> {{ listing.ages }}</p>
+                                <p><strong>Gender:</strong> {{ listing.gender }}</p>
+                                <p><strong>Occupation:</strong> {{ listing.occupation }}</p>
+                            </div>
+                            
+                            <div class="details-column">
+                                <h3>Preferences</h3>
+                                <p><strong>Couples OK:</strong> {{ listing.couples_ok }}</p>
+                                <p><strong>Smoking OK:</strong> {{ listing.smoking_ok }}</p>
+                                <p><strong>Pets OK:</strong> {{ listing.pets_ok }}</p>
+                                <p><strong>Min Age:</strong> {{ listing.min_age }}</p>
+                                <p><strong>Max Age:</strong> {{ listing.max_age }}</p>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 {% empty %}
@@ -127,4 +211,21 @@
         </main>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.expand-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const details = this.closest('.listing-card').querySelector('.listing-details');
+            const isHidden = details.style.display === 'none';
+            
+            details.style.display = isHidden ? 'block' : 'none';
+            this.textContent = isHidden ? 'Hide Details' : 'View Details';
+        });
+    });
+});
+</script>
 {% endblock %}

@@ -1,49 +1,197 @@
+/* Container and Grid Layout */
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
 .search-grid {
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
 }
 
+/* Filter Sidebar Styles */
 aside {
     background: #f9f9f9;
-    padding: 1rem;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.search-widget header {
+    margin-bottom: 1.5rem;
+}
+
+.search-widget h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.form-group__radio {
+    margin-bottom: 0.75rem;
+}
+
+.form-group__radio label {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
+
+/* Search Results Styles */
+main {
+    background: #fff;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search-widget-form {
+main h1 {
+    font-size: 1.75rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+/* Listing Card Styles */
+.listing-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.listing-header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.listing-image {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.listing-info {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
+}
+
+.listing-info h2 {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+}
+
+.listing-info p {
+    margin: 0.25rem 0;
+    color: #666;
+}
+
+/* Expandable Details */
+.listing-details {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.listing-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
 }
 
-.search-widget-form .form-group {
-    margin-bottom: 1rem;
+.listing-details p {
+    margin: 0.5rem 0;
 }
 
-.search-widget-form label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.search-widget-form input,
-.search-widget-form select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.search-widget-form button {
+/* Buttons */
+.button {
     background-color: #007bff;
     color: white;
-    padding: 0.75rem;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
-.search-widget-form button:hover {
+.button:hover {
     background-color: #0056b3;
+}
+
+.expand-button {
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    aside {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .listing-header {
+        grid-template-columns: 1fr;
+    }
+    
+    .listing-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+/* Add to your existing CSS */
+.filter-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-section h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.search-widget {
+    position: sticky;
+    top: 2rem;
 }
