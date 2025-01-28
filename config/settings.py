@@ -28,7 +28,7 @@ print("- Secret Key exists:", bool(os.environ.get('SECRET_KEY')))
 SECRET_KEY = os.environ.get("SECRET_KEY") or 'django-insecure-l^g7)-e&8ohk%nv$o@b=&a7+u_6yymc0thh0u7=5q4q=#32_@s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' 
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'false' 
 ALLOWED_HOSTS = ['8000-nikoatillio-trustedlodg-dm2l7gobngp.ws.codeinstitute-ide.net', 'localhost', '.herokuapp.com', '127.0.0.1', 'trusted-lodger-07c367c9020d.herokuapp.com']
 
 CSRF_TRUSTED_ORIGINS = [
