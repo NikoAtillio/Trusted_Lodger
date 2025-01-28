@@ -1,105 +1,11 @@
 {% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ property.title }} - Property Detail</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-
-    {% block content %}
-    <!-- [Previous content remains the same until the Contact Sidebar form] -->
-
-            <!-- Contact Sidebar -->
-            <div class="md:col-span-1">
-                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-6">
-                    <h3 class="text-xl font-semibold mb-4">Contact Property Owner</h3>
-                    <div class="mb-4">
-                        <img src="https://placehold.co/100x100" alt="Owner Profile" class="w-16 h-16 rounded-full mx-auto mb-2">
-                        <p class="text-center font-medium">{{ property.owner.get_full_name }}</p>
-                    </div>
-                    <!-- Updated form for AJAX submission -->
-                    <form id="messageForm" class="space-y-4">
-                        {% csrf_token %}
-                        <div>
-                            <label class="block text-gray-700 mb-2">Message</label>
-                            <textarea id="messageContent" name="message" class="w-full p-2 border rounded-lg" rows="4" 
-                                    placeholder="I'm interested in this property..."></textarea>
-                        </div>
-                        <button type="button" id="sendMessageButton" 
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
-                            Send Message
-                        </button>
-                    </form>
-                    <!-- Message response container -->
-                    <div id="messageResponse" class="mt-4 text-sm hidden"></div>
-                </div>
-            </div>
-
-    <!-- [Rest of the content remains the same] -->
-
-    <!-- Add this script section just before the closing body tag -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const messageForm = document.getElementById('messageForm');
-            const sendButton = document.getElementById('sendMessageButton');
-            const messageContent = document.getElementById('messageContent');
-            const messageResponse = document.getElementById('messageResponse');
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-            sendButton.addEventListener('click', function() {
-                // Disable button while sending
-                sendButton.disabled = true;
-                sendButton.classList.add('opacity-50');
-                sendButton.textContent = 'Sending...';
-
-                // Clear previous response
-                messageResponse.classList.remove('text-green-600', 'text-red-600', 'hidden');
-                messageResponse.textContent = 'Sending message...';
-
-                fetch("{% url 'searches:send_message_ajax' property.pk %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({
-                        message: messageContent.value
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Show response message
-                    messageResponse.classList.remove('hidden');
-                    if (data.success) {
-                        messageResponse.classList.remove('text-red-600');
-                        messageResponse.classList.add('text-green-600');
-                        messageContent.value = ''; // Clear the message input
-                    } else {
-                        messageResponse.classList.remove('text-green-600');
-                        messageResponse.classList.add('text-red-600');
-                    }
-                    messageResponse.textContent = data.message;
-                })
-                .catch(error => {
-                    messageResponse.classList.remove('hidden', 'text-green-600');
-                    messageResponse.classList.add('text-red-600');
-                    messageResponse.textContent = 'An error occurred while sending your message. Please try again.';
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    // Re-enable button
-                    sendButton.disabled = false;
-                    sendButton.classList.remove('opacity-50');
-                    sendButton.textContent = 'Send Message';
-                });
-            });
-        });
-    </script>
-    {% endblock %}
-</body>
-</html>
+{% block content %}
+    <!-- Your property detail content here -->
+    <div class="property-details">
+        <h1>{{ property.title }}</h1>
+        <p>Location: {{ property.location }}</p>
+        <p>Price: £{{ property.price }}</p>
+        <!-- Other property details -->
+    </div>
+{% endblock %}

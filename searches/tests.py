@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from accounts.models import RoomListing
-from searches.models import SavedSearch, SavedAd
+from searches.models import PropertySearch
 from django.utils import timezone
 
 User = get_user_model()
