@@ -121,6 +121,18 @@ class RoomListing(models.Model):
         ('Ensuite', 'Ensuite Room'),
         ('Studio', 'Studio'),
     ]
+    
+    SEARCH_TYPE = [
+        ('offered', 'Rooms for Rent'),
+        ('wanted', 'Rooms Wanted'),
+        ('coliving', 'CoLiving'),
+    ]
+
+    search_type = models.CharField(
+        max_length=20,
+        choices=SEARCH_TYPE,
+        default='offered'
+    )
 
     YES_NO_CHOICES = [
         ('yes', 'Yes'),
@@ -138,7 +150,7 @@ class RoomListing(models.Model):
     description = models.TextField(default="Room description not provided")
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], default=0.00)
     location = models.CharField(max_length=255, default="Location not specified")
-    postcode = models.CharField(max_length=10, default="Not specified")
+    postcode = models.CharField(max_length=20, default="Not specified")
 
     # Room Details
     size = models.CharField(max_length=50, choices=[('Single', 'Single'), ('Double', 'Double'), ('single', 'single'), ('double', 'double')], default='Single')    

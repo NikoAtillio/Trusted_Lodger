@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
@@ -7,8 +6,7 @@ from django.http import JsonResponse
 import json
 from django.conf import settings
 from .forms import AdvancedSearchForm, SearchFilterForm
-from accounts.models import RoomListing, Message
-from .models import SavedSearch, SavedAd
+from accounts.models import RoomListing
 
 def search(request):
     """Initial search page with basic search form"""
@@ -30,8 +28,8 @@ def search_results(request):
         # Get cleaned data from the form
         location = form.cleaned_data.get('location')
         room_size = form.cleaned_data.get('room_size')
-        min_rent = form.cleaned_data.get('min_rent')
-        max_rent = form.cleaned_data.get('max_rent')
+        min_price = form.cleaned_data.get('min_price')
+        max_price = form.cleaned_data.get('max_price')
         property_type = form.cleaned_data.get('property_type')
         search_type = form.cleaned_data.get('search_type')
         keywords = form.cleaned_data.get('keywords')
@@ -46,11 +44,11 @@ def search_results(request):
                 Q(postcode__icontains=location)
             )
         if room_size and room_size != 'any':
-            listings = listings.filter(size=room_size)
-        if min_rent:
-            listings = listings.filter(price__gte=min_rent)
-        if max_rent:
-            listings = listings.filter(price__lte=max_rent)
+            listings = listings.filter(size__iexact=room_size)        
+        if min_price:
+            listings = listings.filter(price__gte=min_price)
+        if max_price:
+            listings = listings.filter(price__lte=max_price)
         if property_type:
             listings = listings.filter(property_type=property_type)
         if keywords:
@@ -59,6 +57,8 @@ def search_results(request):
             listings = listings.filter(available_from__lte=move_in_date)
         if min_stay:
             listings = listings.filter(minimum_stay__gte=min_stay)
+        if search_type:
+            listings = listings.filter(search_type=search_type)
 
         # Apply sorting
         if sort_by == 'price_low_to_high':
@@ -97,137 +97,29 @@ def search_results(request):
 @login_required
 def property_detail(request, pk):
     listing = get_object_or_404(RoomListing, pk=pk)
-    # Use the helper method instead of direct splitting
-    amenities_list = listing.get_amenities_list()
+    # Create amenities list from the listing's attributes
+    amenities_list = []
+    if listing.parking == 'yes':
+        amenities_list.append('Parking')
+    if listing.garden == 'yes':
+        amenities_list.append('Garden')
+    if listing.balcony == 'yes':
+        amenities_list.append('Balcony')
+    if listing.broadband == 'yes':
+        amenities_list.append('Broadband')
+    if listing.disabled_access == 'yes':
+        amenities_list.append('Disabled Access')
+    if listing.living_room == 'yes':
+        amenities_list.append('Living Room')
 
-    # Add more context data that might be useful
     context = {
         'property': listing,
         'amenities_list': amenities_list,
-        'has_amenities': bool(amenities_list),  # Helper for template conditions
+        'has_amenities': bool(amenities_list),
         'similar_properties': RoomListing.objects.filter(
-            room_type=listing.room_type
-        ).exclude(pk=listing.pk)[:3]  # Add similar properties
+            size=listing.size
+        ).exclude(pk=listing.pk)[:3]
     }
     return render(request, 'searches/property_detail.html', context)
 
-@login_required
-def save_search(request):
-    """Save search criteria for alerts"""
-    if request.method == 'POST':
-        form = AdvancedSearchForm(request.POST)
-        if form.is_valid():
-            search = SavedSearch(
-                user=request.user,
-                search_name=request.POST.get('search_name', 'Unnamed Search'),
-                location=form.cleaned_data.get('location', ''),
-                min_rent=form.cleaned_data.get('min_rent'),
-                max_rent=form.cleaned_data.get('max_rent'),
-                room_size=form.cleaned_data.get('room_size', ''),
-                property_type=','.join(form.cleaned_data.get('property_type', [])),  # Save as comma-separated string
-                amenities=form.cleaned_data.get('keywords', ''),  # Save keywords as amenities
-                created_at=form.cleaned_data.get('move_in_date', None)
-            )
-            search.save()
-            messages.success(request, 'Search saved successfully!')
-            return redirect('searches:saved_searches')
-    return redirect('searches:search_results')
 
-@login_required
-def saved_searches(request):
-    """View saved searches"""
-    searches = SavedSearch.objects.filter(user=request.user)
-    return render(request, 'searches/saved_searches.html', {'saved_searches': searches})
-
-@login_required
-def delete_saved_search(request, search_id):
-    """Delete a saved search"""
-    search = get_object_or_404(SavedSearch, id=search_id, user=request.user)
-    search.delete()
-    messages.success(request, 'Search deleted successfully!')
-    return redirect('searches:saved_searches')
-
-@login_required
-def edit_saved_search(request, search_id):
-    """Edit a saved search"""
-    search = get_object_or_404(SavedSearch, id=search_id, user=request.user)
-
-    if request.method == 'POST':
-        form = AdvancedSearchForm(request.POST)
-        if form.is_valid():
-            # Update the saved search with new values
-            search.search_name = request.POST.get('search_name', 'Unnamed Search')
-            search.location = form.cleaned_data.get('location', '')
-            search.min_rent = form.cleaned_data.get('min_rent')
-            search.max_rent = form.cleaned_data.get('max_rent')
-            search.room_size = form.cleaned_data.get('room_type', '')
-            search.save()
-
-            messages.success(request, 'Search updated successfully!')
-            return redirect('searches:saved_searches')
-    else:
-        # Pre-fill form with existing saved search data
-        initial_data = {
-            'location': search.location,
-            'min_rent': search.min_rent,
-            'max_rent': search.max_rent,
-            'room_type': search.room_size
-        }
-        form = AdvancedSearchForm(initial=initial_data)
-
-    return render(request, 'searches/edit_saved_search.html', {
-        'form': form,
-        'search': search
-    })
-
-@login_required
-def send_message_ajax(request, pk):
-    """Handle sending a message via AJAX"""
-    if request.method == 'POST':
-        try:
-            # Parse JSON data from request body
-            data = json.loads(request.body)
-            message_content = data.get('message', '').strip()
-
-            # Get the listing
-            listing = get_object_or_404(RoomListing, pk=pk)
-
-            if message_content:
-                # Create the message
-                Message.objects.create(
-                    sender=request.user,
-                    recipient=listing.owner,
-                    subject=f"Message about {listing.title}",
-                    content=message_content
-                )
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Your message has been sent successfully!'
-                })
-            else:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Please enter a message before sending.'
-                })
-
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'success': False,
-                'message': 'Invalid request format.'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': f'An error occurred: {str(e)}'
-            })
-
-    return JsonResponse({
-        'success': False,
-        'message': 'Invalid request method.'
-    })
-
-@login_required
-def saved_ads(request):
-    """View saved ads"""
-    saved_ads = SavedAd.objects.filter(user=request.user)
-    return render(request, 'searches/saved_ads.html', {'saved_ads': saved_ads})

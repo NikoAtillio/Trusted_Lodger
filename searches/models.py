@@ -1,41 +1,63 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from accounts.models import RoomListing
 
-class Ad(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-
-    def __str__(self):
-        return self.title
-
-class SavedSearch(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    search_name = models.CharField(max_length=100)
+class PropertySearch(models.Model):
+    """Model to store search parameters and results"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    search_date = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=255)
-    min_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    max_rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    property_type = models.TextField(blank=True, help_text="Comma-separated list of property types")
-    room_size = models.CharField(max_length=50, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    amenities = models.TextField(blank=True, null=True, help_text="Comma-separated list of amenities")
+    search_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('offered', 'Rooms for Rent'),
+            ('wanted', 'Rooms Wanted'),
+            ('coliving', 'CoLiving Search')
+        ]
+    )
+    property_type = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=[
+            ('Flat', 'Flat'),
+            ('House', 'House'),
+            ('Studio', 'Studio')
+        ]
+    )
+    min_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    max_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+    room_size = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=[
+            ('Single', 'Single'),
+            ('Double', 'Double')
+        ]
+    )
+    availability_date = models.DateField(null=True, blank=True)
 
     class Meta:
-        ordering = ['-created_at']
-        verbose_name = "Saved Search"
-        verbose_name_plural = "Saved Searches"
+        verbose_name_plural = "Property searches"
+        ordering = ['-search_date']
 
     def __str__(self):
-        return f"{self.search_name} - {self.location}"
-class SavedAd(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
-    saved_at = models.DateTimeField(auto_now_add=True)
+        return f"Search by {self.user or 'Anonymous'} - {self.location} ({self.search_date.date()})"
 
-    class Meta:
-        ordering = ['-saved_at']
-        verbose_name = "Saved Ad"
-        verbose_name_plural = "Saved Ads"
-
-    def __str__(self):
-        return f'{self.user.email} - {self.ad.title}'

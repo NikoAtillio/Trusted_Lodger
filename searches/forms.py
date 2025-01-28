@@ -189,7 +189,7 @@ class SearchFilterForm(forms.Form):
         widget=forms.CheckboxSelectMultiple
     )
     search_type = forms.ChoiceField(
-        choices=[('', 'Any'), ('offered', 'Rooms for Rent'), ('wanted', 'Rooms Wanted')],
+        choices=[('', 'Any')] + RoomListing.SEARCH_TYPE,  # Match the model's attribute name
         required=False,
         label="Search Type"
     )

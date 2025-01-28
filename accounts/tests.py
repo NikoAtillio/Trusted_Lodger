@@ -49,7 +49,10 @@ class RoomListingModelTest(TestCase):
             title="Test Room",
             description="Test Description",
             price=500.00,
-            location="Test Location"
+            location="Test Location",
+            postcode="SW1A 1AA",  # Valid UK postcode format
+            size="Single",
+            search_type="offered"
         )
 
     def test_room_listing_creation(self):
@@ -76,13 +79,36 @@ class RoomListingViewTests(TestCase):
         test_data = {
             'title': 'Test Room',
             'description': 'A nice room',
-            'room_type': 'Single',
+            'size': 'Single',  # Changed from room_type to size
             'price': '500.00',
             'location': 'London',
-            'postcode': '12345',
+            'postcode': 'SW1A 1AA',  # Valid UK postcode format
             'available_from': date.today(),
-            'minimum_stay': 1,
-            'bills_included': True
+            'minimum_term': 1,  # Changed from minimum_stay to minimum_term
+            'bills_included': 'yes',  # Changed to match choices
+            'search_type': 'offered',
+            'deposit': '500.00',
+            'furnishings': 'Furnished',
+            'parking': 'no',
+            'garden': 'no',
+            'balcony': 'no',
+            'disabled_access': 'no',
+            'living_room': 'shared',
+            'broadband': 'yes',
+            'current_household': 1,
+            'total_rooms': 1,
+            'ages': '18-30',
+            'smoker': 'no',
+            'pets': 'no',
+            'occupation': 'Professional',
+            'gender': 'Any',
+            'couples_ok': 'no',
+            'smoking_ok': 'no',
+            'pets_ok': 'no',
+            'occupation_preference': 'Any',
+            'references_required': 'yes',
+            'min_age': 18,
+            'max_age': 99
         }
 
         response = self.client.post(reverse('accounts:create_listing'), test_data)

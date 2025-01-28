@@ -33,26 +33,19 @@ class CustomSignupForm(SignupForm):
 
 
 class UserRegistrationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = [
-            'first_name', 'last_name', 'email', 'password1', 'password2',
-            'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year',
-            'user_status', 'profile_picture'
-        ]
+    # Define choices at class level
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ]
 
-        GENDER_CHOICES = [
-            ('male', 'Male'),
-            ('female', 'Female'),
-            ('other', 'Other'),
-            ('prefer_not_to_say', 'Prefer not to say'),
-        ]
-
-        USER_STATUS_CHOICES = [
-            ('looking_for_share', 'I am looking for a flat or house share'),
-            ('have_share', 'I have a flat or house share'),
-            ('find_people', 'I\'d like to find people to form a new share')
-        ]
+    USER_STATUS_CHOICES = [
+        ('offered', 'I have a room to rent'),
+        ('wanted', 'I am looking for a room'),
+        ('coliving', 'I am interested in co-living'),
+    ]
 
     user_type = forms.ChoiceField(
         choices=[('tenant', 'Tenant'), ('landlord', 'Landlord')],
@@ -63,7 +56,7 @@ class UserRegistrationForm(UserCreationForm):
     )
 
     gender = forms.ChoiceField(
-        choices=Meta.GENDER_CHOICES,
+        choices=GENDER_CHOICES,
         widget=forms.RadioSelect,
         required=True,
         error_messages={'required': 'Please select your gender'}
@@ -103,11 +96,19 @@ class UserRegistrationForm(UserCreationForm):
     )
 
     user_status = forms.MultipleChoiceField(
-        choices=Meta.USER_STATUS_CHOICES,
+        choices=USER_STATUS_CHOICES,  # Changed from Meta.USER_STATUS_CHOICES
         widget=forms.CheckboxSelectMultiple,
         required=True,
         error_messages={'required': 'Please select at least one option'}
     )
+
+    class Meta:
+        model = User
+        fields = [
+            'first_name', 'last_name', 'email', 'password1', 'password2',
+            'user_type', 'gender', 'dob_day', 'dob_month', 'dob_year',
+            'user_status', 'profile_picture'
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -181,12 +182,12 @@ class ProfileEditForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField()
-    gender = forms.ChoiceField(choices=UserRegistrationForm.Meta.GENDER_CHOICES)
+    gender = forms.ChoiceField(choices=UserRegistrationForm.GENDER_CHOICES)
     dob_day = forms.IntegerField(min_value=1, max_value=31)
     dob_month = forms.IntegerField(min_value=1, max_value=12)
     dob_year = forms.IntegerField(min_value=1900, max_value=datetime.now().year)
     user_status = forms.MultipleChoiceField(
-        choices=UserRegistrationForm.Meta.USER_STATUS_CHOICES,
+        choices=UserRegistrationForm.USER_STATUS_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -298,18 +299,7 @@ class RoomListingForm(forms.ModelForm):
     price = forms.DecimalField(max_digits=10, decimal_places=2, required=True, label="Price (£/monthly)")
     size = forms.CharField(max_length=50, required=True, label="Size (e.g., 12x15 ft)")
     description = forms.CharField(widget=forms.Textarea, required=True, label="Description")
-    available_from = forms.DateField(widget=forms.DateInput(attrs={
-            'type': 'date',
-            'class': 'form-control',
-            'required': True,
-            'placeholder': 'dd/mm/yyyy',
-            'pattern': r'\d{2}/\d{2}/\d{4}',
-            'data-date-format': 'dd/mm/yyyy'
-        }
-    ),
-    input_formats=['%d/%m/%Y', '%Y-%m-%d'],
-    help_text='Format: dd/mm/yyyy'
-)
+    available_from = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), label="Available From")
     minimum_term = forms.IntegerField(min_value=1, required=True, label="Minimum Term (months)")
     maximum_term = forms.IntegerField(min_value=1, required=False, label="Maximum Term (months)")
     deposit = forms.DecimalField(max_digits=10, decimal_places=2, required=True, label="Deposit (£)")
@@ -367,27 +357,7 @@ class RoomListingForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         if self.cleaned_data.get('available_from'):
-            # Store the date in both fields for compatibility
             instance.available_from = self.cleaned_data['available_from']
-            instance.availability = self.cleaned_data['available_from'].strftime('%d/%m/%Y')
         if commit:
             instance.save()
         return instance
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.available_from:
-            self.initial['available_from'] = self.instance.available_from.strftime('%Y-%m-%d')
-        
-    def clean_available_from(self):
-        available_from = self.cleaned_data.get('available_from')
-        if available_from:
-            if available_from < datetime.now().date():
-                raise ValidationError("The available from date cannot be in the past.")
-
-            # Convert to dd/mm/yyyy format for display
-            try:
-                return available_from
-            except ValueError:
-                raise ValidationError("Invalid date format. Please use dd/mm/yyyy")
-        return available_from

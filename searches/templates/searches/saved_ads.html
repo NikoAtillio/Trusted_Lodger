@@ -1,14 +1,48 @@
 {% extends 'base.html' %}
+    {% collect static %}
+    {% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4">Your Saved Properties</h2>
+        
+        {% if saved_ads %}
+            <div class="row">
+                {% for saved_ad in saved_ads %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ saved_ad.ad.title }}</h5>
+                                <p class="card-text">
+                                    <strong>Location:</strong> {{ saved_ad.ad.location }}<br>
+                                    <strong>Price:</strong> £{{ saved_ad.ad.price }}<br>
+                                    <strong>Size:</strong> {{ saved_ad.ad.size }}
+                                </p>
+                                <p class="card-text text-muted">
+                                    <small>Saved on: {{ saved_ad.saved_at|date:"d M Y" }}</small>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'searches:property_detail' saved_ad.ad.pk %}" class="btn btn-primary">View Details</a>
+                                    <form method="post" action="{% url 'searches:delete_saved_ad' saved_ad.pk %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to remove this property from your saved list?')">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p>You haven't saved any properties yet.</p>
+                <a href="{% url 'searches:search' %}" class="btn btn-primary">Browse Properties</a>
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+    {% block extra_js %}
 
-{% block content %}
-<div class="saved-ads">
-    <h1>My Saved Ads</h1>
-    <ul>
-        {% for saved_ad in saved_ads %}
-        <li>{{ saved_ad.ad.title }} - <a href="{% url 'property_detail' saved_ad.ad.pk %}">View Ad</a></li>
-        {% empty %}
-        <li>No saved ads found.</li>
-        {% endfor %}
-    </ul>
-</div>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
+

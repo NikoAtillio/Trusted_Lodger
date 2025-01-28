@@ -1,0 +1,189 @@
+/* Container Layout */
+.search-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+    margin: 2rem;
+    max-width: 1400px;
+    margin: 2rem auto;
+}
+
+/* Quick Search Section */
+.quick-search {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 75%;
+}
+
+.quick-search h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.quick-search form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quick-search input[type="text"] {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.quick-search button {
+    background-color: #007bff;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.quick-search button:hover {
+    background-color: #0056b3;
+}
+
+.search-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Main Search Section */
+.main-search {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-search h2 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: #333;
+}
+
+.main-search p {
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+/* Main Search Layout */
+.main-search-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.location-map-column {
+    width: 100%;
+}
+
+.property-details-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 2.5rem;
+}
+
+/* Update this in your search.css */
+.map-container {
+    width: 100%;
+    height: 300px;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    position: relative; /* Add this */
+    overflow: hidden; /* Add this */
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Additional Criteria */
+.additional-criteria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Search Controls */
+.search-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.button--wide {
+    flex: 0 0 50%;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button--wide:hover {
+    background-color: #0056b3;
+}
+
+.sort-group {
+    flex: 1;
+    margin: 0;
+}
+
+.sort-group select {
+    width: 100%;
+    padding: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .search-container {
+        grid-template-columns: 1fr;
+        margin: 1rem;
+    }
+
+    .quick-search {
+        width: 100%;
+    }
+
+    .main-search-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .property-details-column {
+        padding-top: 0;
+    }
+}
+

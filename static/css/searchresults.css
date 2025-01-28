@@ -1,8 +1,14 @@
+
+
 /* Container and Grid Layout */
 .container {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin-top: 1rem;  /* Reduced from 2rem */
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .search-grid {

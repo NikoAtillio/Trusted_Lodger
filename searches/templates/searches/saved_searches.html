@@ -1,6 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% endblock %}
+
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4">Your Saved Searches</h2>
+
+        {% if saved_searches %}
+            <div class="row">
+                {% for search in saved_searches %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ search.search_name }}</h5>
+                                <p class="card-text">
+                                    <strong>Location:</strong> {{ search.location }}<br>
+                                    <strong>Price Range:</strong> £{{ search.min_rent|default:"Any" }} - £{{ search.max_rent|default:"Any" }}<br>
+                                    <strong>Room Size:</strong> {{ search.room_size|default:"Any" }}
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'searches:search_results' %}?location={{ search.location }}" class="btn btn-primary">Run Search</a>
+                                    <div>
+                                        <a href="{% url 'searches:edit_saved_search' search.id %}" class="btn btn-outline-secondary">Edit</a>
+                                        <a href="{% url 'searches:delete_saved_search' search.id %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this saved search?')">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p>You haven't saved any searches yet.</p>
+                <a href="{% url 'searches:search' %}" class="btn btn-primary">Start a New Search</a>
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 <div class="saved-searches-container">
     <h2>Saved Searches</h2>
 
@@ -22,4 +67,7 @@
         <p>You have no saved searches.</p>
     {% endif %}
 </div>
+{% endblock %}
+{% block extra_js %}
+
 {% endblock %}

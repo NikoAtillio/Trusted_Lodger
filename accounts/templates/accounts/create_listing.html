@@ -29,6 +29,13 @@
         </div>
 
         <div class="form-group">
+            <label for="search_type">Listing Type:</label>
+            <select id="search_type" name="search_type" required>
+                <option value="offered">Rooms for Rent</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="location">Location:</label>
             <input type="text" id="location" name="location" required placeholder="Enter the property address">
             <div id="map" style="height: 300px;"></div>

@@ -1,69 +1,203 @@
-.search-results-container {
-    display: flex;
-    gap: 20px;
-    margin: 20px;
+
+
+/* Container and Grid Layout */
+.container {
+    margin-top: 1rem;  /* Reduced from 2rem */
 }
 
-.filters {
-    flex: 1;
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.search-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+}
+
+/* Filter Sidebar Styles */
+aside {
     background: #f9f9f9;
-    padding: 20px;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.search-widget header {
+    margin-bottom: 1.5rem;
+}
+
+.search-widget h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.form-group__radio {
+    margin-bottom: 0.75rem;
+}
+
+.form-group__radio label {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
+
+/* Search Results Styles */
+main {
+    background: #fff;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.results {
-    flex: 2;
+main h1 {
+    font-size: 1.75rem;
+    color: #333;
+    margin-bottom: 1.5rem;
 }
 
-.results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+/* Listing Card Styles */
+.listing-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
 }
 
-.listings {
-    list-style: none;
-    padding: 0;
+.listing-header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.listing-image {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.listing-info {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0.5rem;
 }
 
-.listing {
-    display: flex;
-    gap: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.listing-info h2 {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
 }
 
-.carousel img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
+.listing-info p {
+    margin: 0.25rem 0;
+    color: #666;
 }
 
-.details {
-    flex: 1;
+/* Expandable Details */
+.listing-details {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-top: 1px solid #ddd;
 }
 
-.view-details-btn {
-    background: #BCB88A;
+.listing-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.listing-details p {
+    margin: 0.5rem 0;
+}
+
+/* Buttons */
+.button {
+    background-color: #007bff;
     color: white;
-    padding: 10px 20px;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
-    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
-.save-search-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #BCB88A;
-    cursor: pointer;
+.button:hover {
+    background-color: #0056b3;
+}
+
+.expand-button {
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    aside {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .listing-header {
+        grid-template-columns: 1fr;
+    }
+    
+    .listing-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+
+/* Add to your existing CSS */
+.filter-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-section h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.search-widget {
+    position: sticky;
+    top: 2rem;
 }

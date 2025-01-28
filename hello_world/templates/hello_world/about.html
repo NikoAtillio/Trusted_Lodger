@@ -1,18 +1,115 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}" />
+{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero">
-    <div class="hero-image-container">
-        <img src="{% static 'images/housemates.jpg' %}" alt="Hero Image" class="hero-image">
-        <div class="hero-text-box">
-            <h2>Find Your Perfect Roommate!</h2>
-            <p>Use our platform to connect with potential roommates.</p>
-            <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up</a>
+
+<!-- About the Company Section -->
+<section class="about-company">
+    <h2>About Us</h2>
+    <p>At Trusted Lodger, we’re reimagining the house-sharing experience in the UK by focusing on what truly matters: compatibility, trust, and community. Our platform brings lodgers and homesharers together in a smarter, more personalised way, ensuring harmonious living arrangements for all. Whether you're a young professional, a student, or a senior seeking intergenerational living, we offer a diverse range of options to suit your needs. Trusted Lodger helps you find not just a place to stay, but a supportive community.</p>
+    <br>
+    <p>For landlords, we're transforming spare rooms into extraordinary opportunities for extra income, meaningful connections, and even companionship. We handle the hard stuff—background checks, secure payments, and setting you up for success—so you can focus on living your best life. Our AI-powered matching system pairs individuals based on personality types and lifestyle preferences, creating a seamless, secure, and enjoyable house-sharing experience. With Trusted Lodger, it's about building a network of like-minded individuals who value trust, safety, and sustainability. Join us and experience a smarter way to live together.</p>
+</section>
+
+<!-- How the Website Works Section -->
+<section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps-container">
+        <div class="step">
+            <h3>Step 1: Create Your Story</h3>
+            <ul>
+                <li>Tell us about yourself through our intuitive profile builder</li>
+                <li>Share your interests, lifestyle, and what makes you unique</li>
+                <li>For landlords: Showcase your home's personality and the community you want to create</li>
+                <li>For lodgers: Highlight what matters to you in your ideal living space</li>
+            </ul>
+        </div>
+        <div class="step">
+            <h3>Step 2: Discover Your Match</h3>
+            <ul>
+                <li>Browse through carefully curated listings that match your preferences</li>
+                <li>Use smart filters to find the perfect location, budget, and living arrangement</li>
+                <li>Access detailed profiles of potential housemates or lodgers</li>
+                <li>Explore intergenerational living options for seniors and young professionals</li>
+                <li>View verified listings with secure payment options</li>
+            </ul>
+        </div>
+        <div class="step">
+            <h3>Step 3: Connect & Move Forward</h3>
+            <ul>
+                <li>Let our AI matching system introduce you to compatible housemates</li>
+                <li>Chat securely through our platform to get to know each other</li>
+                <li>Schedule viewings with confidence, knowing background checks are complete</li>
+                <li>Enjoy a smooth transition with our secure payment system</li>
+                <li>Join our growing community of satisfied homesharers</li>
+            </ul>
         </div>
     </div>
 </section>
 
+<!-- FAQ Section -->
+<section class="faq">
+    <h2>Frequently Asked Questions</h2>
+    
+    <!-- General Questions -->
+    <div class="faq-category">
+        <h3>General Information</h3>
+        <div class="faq-container">
+            <div class="faq-card">
+                <h4>What exactly is a live-in landlord?</h4>
+                <p>Simply put, a 'live-in landlord' or 'resident landlord', is someone that rents out part of their home, while also living in the property.</p>
+            </div>
+            <div class="faq-card">
+                <h4>What is Trusted Lodger?</h4>
+                <p>Trusted Lodger is an online platform that connects lodgers with live-in landlords across the UK. We provide a secure, easy, and affordable way to find a place to call home while fostering meaningful connections and creating welcoming living spaces.</p>
+            </div>
+            <div class="faq-card">
+                <h4>What makes Trusted Lodger different?</h4>
+                <p>Unlike other platforms, Trusted Lodger focuses on smaller, more personal living arrangements—typically a live-in landlord with one or two lodgers. We prioritize compatibility, trust, and meaningful connections while offering added services like background checks and secure payments to make renting stress-free.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- For Landlords -->
+    <div class="faq-category">
+        <h3>For Landlords</h3>
+        <div class="faq-container">
+            <div class="faq-card">
+                <h4>As a homeowner, do I need permission to let out part of my house?</h4>
+                <p>If you own the property outright, no special permissions are needed. If you have an outstanding mortgage, you need to have a quick check in with your lender. Most mortgage agreements allow you to take in a lodger as long as you live in the property.</p>
+            </div>
+            <div class="faq-card">
+                <h4>Why should I use Trusted Lodger?</h4>
+                <p>Trusted Lodger helps you easily rent out your spare room while ensuring safety and simplicity. Whether you're looking for extra income, companionship, or a bit of help around the house, we provide a secure platform that takes care of everything from finding the right lodger to managing rent payments.</p>
+            </div>
+            <div class="faq-card">
+                <h4>How much does it cost to list my room?</h4>
+                <p>We offer a free tier where you can list one room, get basic visibility, and receive one free monthly boost. If you want to attract more interest, our paid plans start at £12.95 for a two-week upgrade and go up to £45.95 per month for premium features like weekly boosts, premium tools, and priority support.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- For Lodgers -->
+    <div class="faq-category">
+        <h3>For Lodgers</h3>
+        <div class="faq-container">
+            <div class="faq-card">
+                <h4>How does Trusted Lodger work for lodgers?</h4>
+                <p>It's simple! Sign up, create a profile, and start browsing available rooms that match your lifestyle and preferences. You can contact landlords directly through the platform and arrange a viewing or chat to find your perfect match.</p>
+            </div>
+            <div class="faq-card">
+                <h4>Is it free to use Trusted Lodger as a lodger?</h4>
+                <p>Yes, there's a free tier that lets you view up to 10 profiles per day and contact up to two matches each week. If you'd like unlimited access and advanced features like profile boosts and filters, you can upgrade to one of our paid plans starting at £9.95 for one week.</p>
+            </div>
+            <div class="faq-card">
+                <h4>I don't own my house. Can a lodger live with me?</h4>
+                <p>If you are a secure council tenant, you are allowed to sublet part of the property - as long as you have the council's permission first! Private tenants are generally prohibited from subletting but checking your contract or chatting to your landlord will be able to clarify this for you.</p>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

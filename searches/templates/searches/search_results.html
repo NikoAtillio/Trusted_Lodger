@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/searchresults.css' %}">
+<link rel="stylesheet" href="{% static 'css/searchresults.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -15,26 +15,43 @@
                     <header>
                         <h3>Search Filters</h3>
                     </header>
-                    
+
                     <!-- Search Type -->
                     <div class="filter-section">
                         <h4>Search Type</h4>
                         <div class="form-group__radio">
-                            <input type="radio" name="flatshare_type" value="offered" id="flatshare_type-offered" {% if request.GET.flatshare_type == "offered" %}checked{% endif %}>
-                            <label for="flatshare_type-offered">Rooms for Rent</label>
+                            <input type="radio" name="search_type" value="offered" id="search_type-offered" {% if request.GET.search_type == "offered" %}checked{% endif %}>
+                            <label for="search_type-offered">Rooms for Rent</label>
                         </div>
                         <div class="form-group__radio">
-                            <input type="radio" name="flatshare_type" value="wanted" id="flatshare_type-wanted" {% if request.GET.flatshare_type == "wanted" %}checked{% endif %}>
-                            <label for="flatshare_type-wanted">Rooms Wanted</label>
+                            <input type="radio" name="search_type" value="wanted" id="search_type-wanted" {% if request.GET.search_type == "wanted" %}checked{% endif %}>
+                            <label for="search_type-wanted">Rooms Wanted</label>
+                        </div>
+                        <div class="form-group__radio">
+                            <input type="radio" name="search_type" value="coliving" id="search_type-coliving" {% if request.GET.search_type == "coliving" %}checked{% endif %}>
+                            <label for="search_type-coliving">CoLiving Search</label>
                         </div>
                     </div>
-        
+
+                    <!-- Property Type -->
+                    <div class="property-details-column">
+                        <div class="form-group">
+                            <label for="property_type">Property Type</label>
+                            <select name="property_type" id="property_type">
+                                <option value="">Any</option>
+                                <option value="Flat">Flat</option>
+                                <option value="House">House</option>
+                                <option value="Studio">Studio</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Location -->
                     <div class="filter-section">
                         <h4>Location</h4>
                         <div class="form-group">
                             <label for="location">Location</label>
-                            <input type="text" id="location" name="location" value="{{ request.GET.location }}" placeholder="Enter location">
+                            <input type="text" id="location" name="location" value="{{ request.GET.location }}" placeholder="Enter location" />
                         </div>
                         <div class="form-group">
                             <label for="radius">Search Radius</label>
@@ -46,20 +63,20 @@
                             </select>
                         </div>
                     </div>
-        
+
                     <!-- Price Range -->
                     <div class="filter-section">
                         <h4>Price Range</h4>
                         <div class="form-group">
                             <label for="min_price">Min Price (£)</label>
-                            <input type="number" id="min_price" name="min_price" value="{{ request.GET.min_price }}" placeholder="Min price">
+                            <input type="number" id="min_price" name="min_price" value="{{ request.GET.min_price }}" placeholder="Min price" />
                         </div>
                         <div class="form-group">
                             <label for="max_price">Max Price (£)</label>
-                            <input type="number" id="max_price" name="max_price" value="{{ request.GET.max_price }}" placeholder="Max price">
+                            <input type="number" id="max_price" name="max_price" value="{{ request.GET.max_price }}" placeholder="Max price" />
                         </div>
                     </div>
-        
+
                     <!-- Room Details -->
                     <div class="filter-section">
                         <h4>Room Details</h4>
@@ -73,10 +90,10 @@
                         </div>
                         <div class="form-group">
                             <label for="availability">Available From</label>
-                            <input type="date" id="availability" name="availability" value="{{ request.GET.availability }}">
+                            <input type="date" id="availability" name="availability" value="{{ request.GET.availability }}" />
                         </div>
                     </div>
-        
+
                     <!-- Amenities -->
                     <div class="filter-section">
                         <h4>Amenities</h4>
@@ -105,7 +122,7 @@
                             </select>
                         </div>
                     </div>
-        
+
                     <!-- Preferences -->
                     <div class="filter-section">
                         <h4>Preferences</h4>
@@ -134,7 +151,7 @@
                             </select>
                         </div>
                     </div>
-        
+
                     <button type="submit" class="button button--wide">Apply Filters</button>
                 </section>
             </form>
@@ -149,9 +166,9 @@
                     <div class="listing-header">
                         <div class="listing-image-container">
                             {% if listing.get_main_image %}
-                            <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image">
+                            <img src="{{ listing.get_main_image }}" alt="{{ listing.title }}" class="listing-image" />
                             {% else %}
-                            <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image">
+                            <img src="{% static 'images/default-room.jpg' %}" alt="Default Room Image" class="listing-image" />
                             {% endif %}
                         </div>
                         <div class="listing-info">
@@ -164,7 +181,7 @@
                         </div>
                     </div>
 
-                    <div class="listing-details" style="display: none;">
+                    <div class="listing-details" style="display: none">
                         <div class="listing-details-grid">
                             <div class="details-column">
                                 <h3>Property Details</h3>
@@ -174,7 +191,6 @@
                                 <p><strong>Maximum Term:</strong> {{ listing.maximum_term }} months</p>
                                 <p><strong>Deposit:</strong> £{{ listing.deposit }}</p>
                             </div>
-                            
                             <div class="details-column">
                                 <h3>Amenities</h3>
                                 <p><strong>Bills Included:</strong> {{ listing.bills_included }}</p>
@@ -183,7 +199,6 @@
                                 <p><strong>Garden/Patio:</strong> {{ listing.garden }}</p>
                                 <p><strong>Balcony/Roof Terrace:</strong> {{ listing.balcony }}</p>
                             </div>
-                            
                             <div class="details-column">
                                 <h3>Household</h3>
                                 <p><strong>Current Household:</strong> {{ listing.current_household }}</p>
@@ -192,7 +207,6 @@
                                 <p><strong>Gender:</strong> {{ listing.gender }}</p>
                                 <p><strong>Occupation:</strong> {{ listing.occupation }}</p>
                             </div>
-                            
                             <div class="details-column">
                                 <h3>Preferences</h3>
                                 <p><strong>Couples OK:</strong> {{ listing.couples_ok }}</p>
@@ -215,17 +229,16 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.expand-button').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const details = this.closest('.listing-card').querySelector('.listing-details');
-            const isHidden = details.style.display === 'none';
-            
-            details.style.display = isHidden ? 'block' : 'none';
-            this.textContent = isHidden ? 'Hide Details' : 'View Details';
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".expand-button").forEach((button) => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                const details = this.closest(".listing-card").querySelector(".listing-details");
+                const isHidden = details.style.display === "none";
+                details.style.display = isHidden ? "block" : "none";
+                this.textContent = isHidden ? "Hide Details" : "View Details";
+            });
         });
     });
-});
 </script>
 {% endblock %}

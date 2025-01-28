@@ -1,7 +1,11 @@
-{% extends 'base.html' %} {% load static %} {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}" />
-<!-- Linking index.css -->
-{% endblock %} {% block content %}
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">{% endblock %}
+
+{% block content %}
 <div class="homepage-wrapper">
   <!-- Hero Section -->
   <section class="hero">
@@ -45,13 +49,13 @@
         <p>
           Explore verified listings and find the perfect place to call home.
         </p>
-        <button class="cta-button">Learn More</button>
+        <a href="{% url 'hello_world:about' %}" class="cta-button">Learn More</a>
       </div>
       <div class="feature">
         <!-- Image in CSS as background image -->
         <h3>For Landlords</h3>
         <p>List your property and find your ideal tenants with ease.</p>
-        <button class="cta-button">Learn More</button>
+        <a href="{% url 'hello_world:about' %}" class="cta-button">Learn More</a>
       </div>
     </div>
   </section>
@@ -95,7 +99,7 @@
       </div>
       <div class="cta-signup">
         <h2>It's that easy!</h2>
-        <button class="cta-button">Sign Up Now</button>
+        <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up Now</a> <!-- Link updated -->
       </div>
     </div>
   </section>

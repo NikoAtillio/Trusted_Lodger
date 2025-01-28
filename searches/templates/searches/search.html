@@ -45,17 +45,34 @@
                         <div id="map" class="map-container"></div>
                     </div>
                 </div>
-
                 <!-- Right Column: Property Details -->
                 <div class="property-details-column">
-                    <div class="form-group">
-                        <label for="property_type">Property Type</label>
-                        <select name="property_type" id="property_type">
-                            <option value="">Any</option>
-                            <option value="Flat">Flat</option>
-                            <option value="House">House</option>
-                            <option value="Studio">Studio</option>
-                        </select>
+                    <h4>Search Type</h4>
+                    <div class="form-group__radio">
+                        <input type="radio" 
+                               name="search_type" 
+                               value="offered" 
+                               id="search_type-offered" 
+                               {% if request.GET.search_type == "offered" %}checked{% endif %}>
+                        <label for="search_type-offered">Rooms for Rent</label>
+                    </div>
+                    
+                    <div class="form-group__radio">
+                        <input type="radio" 
+                               name="search_type" 
+                               value="wanted" 
+                               id="search_type-wanted" 
+                               {% if request.GET.search_type == "wanted" %}checked{% endif %}>
+                        <label for="search_type-wanted">Rooms Wanted</label>
+                    </div>
+                    
+                    <div class="form-group__radio">
+                        <input type="radio" 
+                               name="search_type" 
+                               value="coliving" 
+                               id="search_type-coliving" 
+                               {% if request.GET.search_type == "coliving" %}checked{% endif %}>
+                        <label for="search_type-coliving">CoLiving Search</label>
                     </div>
                     <div class="form-group">
                         <label for="move_in_date">Move-in Date</label>
