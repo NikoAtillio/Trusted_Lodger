@@ -315,11 +315,15 @@ Tracks user support and dispute resolution.
 
 ### Future Features
 
-- AI-powered recommendations.
+- AI-powered recommendations and personality matches.
 - Virtual tours for room listings.
 - Expansion to Europe and North America.
 
 ---
+
+### Ai Uses
+
+I used Ai for testing and formatting primarily, using Claude 3.5 and ChatGPT.
 
 ## Technologies & Languages Used
 
@@ -331,6 +335,7 @@ Tracks user support and dispute resolution.
 ---
 
 ## Deployment
+Heroku 
 
 ### Connecting to GitHub
 
@@ -347,6 +352,7 @@ Tracks user support and dispute resolution.
 ---
 
 ## Credits
+Google maps  API
 
 ### Code
 
@@ -355,7 +361,6 @@ Tracks user support and dispute resolution.
 
 ### Media
 
-- Placeholder images from Unsplash.
 
 ### Acknowledgements
 
