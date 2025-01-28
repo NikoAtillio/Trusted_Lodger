@@ -31,8 +31,8 @@ class ProfileAdmin(admin.ModelAdmin):
     get_created_at.short_description = 'Created At'
 
 class RoomListingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner', 'location', 'price', 'size', 'availability', 'created_at')
-    list_filter = ('availability', 'size', 'bills_included', 'created_at')
+    list_display = ('title', 'owner', 'location', 'price', 'size', 'available_from', 'created_at')  # Changed 'availability' to 'available_from'
+    list_filter = ('available_from', 'size', 'bills_included', 'created_at')
     search_fields = ('title', 'location', 'postcode')
     readonly_fields = ('created_at', 'updated_at')
     fieldsets = (
@@ -42,8 +42,8 @@ class RoomListingAdmin(admin.ModelAdmin):
         ('Location & Price', {
             'fields': ('location', 'postcode', 'price')
         }),
-        ('Availability', {
-            'fields': ('availability', 'minimum_term', 'maximum_term')
+        ('Availability', {  # Changed section name
+            'fields': ('available_from', 'minimum_term', 'maximum_term')  # Changed 'availability' to 'available_from'
         }),
         ('Additional Details', {
             'fields': ('bills_included', 'furnishings', 'deposit')
@@ -61,13 +61,12 @@ class RoomListingAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
-                )
-    
-    @admin.register(RoomImage)
-    class RoomImageAdmin(admin.ModelAdmin):
-        list_display = ('room_listing', 'image', 'created_at')
-        search_fields = ('room_listing__title',)
-    
+    )
+
+class RoomImageAdmin(admin.ModelAdmin):
+    list_display = ('room_listing', 'image', 'created_at')
+    search_fields = ('room_listing__title',)
+
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'subject', 'created_at', 'is_read')
     list_filter = ('is_read', 'created_at')
@@ -78,4 +77,5 @@ class MessageAdmin(admin.ModelAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(RoomListing, RoomListingAdmin)
+admin.site.register(RoomImage, RoomImageAdmin)  # Fixed registration
 admin.site.register(Message, MessageAdmin)

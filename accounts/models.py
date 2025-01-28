@@ -142,7 +142,8 @@ class RoomListing(models.Model):
 
     # Room Details
     size = models.CharField(max_length=50, choices=[('Single', 'Single'), ('Double', 'Double'), ('single', 'single'), ('double', 'double')], default='Single')    
-    availability = models.CharField(max_length=100, default="Immediately")
+    available_from = models.DateField(default=timezone.now, help_text="When is the room available from?") 
+    availability = models.CharField(max_length=10, help_text="Legacy field for compatibility", null=True, blank=True)   
     minimum_term = models.IntegerField(validators=[MinValueValidator(1)], default=1)
     maximum_term = models.IntegerField(null=True, blank=True, default=12)
     deposit = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

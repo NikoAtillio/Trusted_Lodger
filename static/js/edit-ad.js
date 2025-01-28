@@ -176,3 +176,28 @@ function validateForm() {
 
     return true;
 }
+
+// Available from date formatting
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.querySelector('input[type="date"]');
+    if (dateInput) {
+        // Set minimum date to today
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        dateInput.setAttribute('min', `${yyyy}-${mm}-${dd}`);
+
+        // Format the date when changed
+        dateInput.addEventListener('change', function() {
+            const date = new Date(this.value);
+            if (!isNaN(date.getTime())) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
+                this.setAttribute('data-formatted', formattedDate);
+            }
+        });
+    }
+});

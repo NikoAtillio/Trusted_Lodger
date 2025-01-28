@@ -298,7 +298,18 @@ class RoomListingForm(forms.ModelForm):
     price = forms.DecimalField(max_digits=10, decimal_places=2, required=True, label="Price (£/monthly)")
     size = forms.CharField(max_length=50, required=True, label="Size (e.g., 12x15 ft)")
     description = forms.CharField(widget=forms.Textarea, required=True, label="Description")
-    available_from = forms.DateField(required=True, widget=forms.DateInput(attrs={'type': 'date'}), label="Availability")
+    available_from = forms.DateField(widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control',
+            'required': True,
+            'placeholder': 'dd/mm/yyyy',
+            'pattern': r'\d{2}/\d{2}/\d{4}',
+            'data-date-format': 'dd/mm/yyyy'
+        }
+    ),
+    input_formats=['%d/%m/%Y', '%Y-%m-%d'],
+    help_text='Format: dd/mm/yyyy'
+)
     minimum_term = forms.IntegerField(min_value=1, required=True, label="Minimum Term (months)")
     maximum_term = forms.IntegerField(min_value=1, required=False, label="Maximum Term (months)")
     deposit = forms.DecimalField(max_digits=10, decimal_places=2, required=True, label="Deposit (£)")
@@ -324,11 +335,6 @@ class RoomListingForm(forms.ModelForm):
     references_required = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="References Required?")    
     min_age = forms.IntegerField(min_value=18, required=True, label="Min Age")
     max_age = forms.IntegerField(min_value=18, required=True, label="Max Age")
-    available_from = forms.DateField(
-        required=True,
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        label="Available From"
-    )
 
     class Meta:
         model = RoomListing
@@ -341,10 +347,7 @@ class RoomListingForm(forms.ModelForm):
             'couples_ok', 'smoking_ok', 'pets_ok', 'occupation_preference',
             'references_required', 'min_age', 'max_age'
         ]
-        
-    class Meta:
-        model = RoomListing
-        exclude = ['owner', 'created_at', 'updated_at', 'availability'] # Using available_from instead
+        exclude = ['owner', 'created_at', 'updated_at', 'availability']
 
     def clean_available_from(self):
         available_from = self.cleaned_data.get('available_from')
@@ -363,9 +366,28 @@ class RoomListingForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # Convert available_from to string format for availability field
         if self.cleaned_data.get('available_from'):
-            instance.availability = self.cleaned_data['available_from'].strftime('%Y-%m-%d')
+            # Store the date in both fields for compatibility
+            instance.available_from = self.cleaned_data['available_from']
+            instance.availability = self.cleaned_data['available_from'].strftime('%d/%m/%Y')
         if commit:
             instance.save()
         return instance
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.available_from:
+            self.initial['available_from'] = self.instance.available_from.strftime('%Y-%m-%d')
+        
+    def clean_available_from(self):
+        available_from = self.cleaned_data.get('available_from')
+        if available_from:
+            if available_from < datetime.now().date():
+                raise ValidationError("The available from date cannot be in the past.")
+
+            # Convert to dd/mm/yyyy format for display
+            try:
+                return available_from
+            except ValueError:
+                raise ValidationError("Invalid date format. Please use dd/mm/yyyy")
+        return available_from
