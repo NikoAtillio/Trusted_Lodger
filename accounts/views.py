@@ -12,6 +12,7 @@ from django.views.generic import DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.exceptions import ValidationError
 import logging
+from django.forms.models import model_to_dict
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -166,26 +167,42 @@ def edit_profile(request):
 
 @login_required
 def edit_ad(request, listing_id):
-    # Fetch the listing object, ensuring it belongs to the logged-in user
     listing = get_object_or_404(RoomListing, id=listing_id, owner=request.user)
 
     if request.method == 'POST':
-        # Bind the form with POST data and files
         form = RoomListingForm(request.POST, request.FILES, instance=listing)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Your ad has been updated successfully!')
-            return redirect('accounts:manage_listing')  # Redirect to the manage listings page
+            try:
+                listing = form.save(commit=False)
+                # If you need to convert available_from to availability
+                if 'available_from' in form.cleaned_data:
+                    listing.availability = form.cleaned_data['available_from']
+                listing.owner = request.user
+                listing.save()
+                messages.success(request, 'Your ad has been updated successfully!')
+                return redirect('accounts:manage_listing')
+            except Exception as e:
+                messages.error(request, f'Error saving ad: {str(e)}')
+                print(f"Error saving listing: {str(e)}")
         else:
-            messages.error(request, 'Please correct the errors below.')
+            print("Form errors:", form.errors)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
     else:
-        # Pre-fill the form with the current listing details
-        form = RoomListingForm(instance=listing)
+        # Pre-fill the form with the current listing data
+        initial_data = model_to_dict(listing)
+        # If you need to convert availability to available_from
+        if hasattr(listing, 'availability'):
+            initial_data['available_from'] = listing.availability
+        form = RoomListingForm(instance=listing, initial=initial_data)
 
     context = {
         'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
         'listing': listing,
     }
+
     return render(request, 'accounts/edit_ad.html', context)
 
 
@@ -252,7 +269,24 @@ def upload_images(request, listing_id):
 
     except Exception as e:
         logger.error(f"Error in upload_images view: {str(e)}", exc_info=True)
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
+@login_required
+def delete_image(request, image_id):
+    if request.method == 'POST':
+        try:
+            image = RoomImage.objects.get(id=image_id)
+            # Check if the user owns the image by checking the room_listing owner
+            if image.room_listing.owner == request.user:
+                image.delete()
+                return JsonResponse({'status': 'success'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+        except RoomImage.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Image not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
 
 @login_required
 def post_ad(request, listing_id):

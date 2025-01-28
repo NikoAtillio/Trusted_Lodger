@@ -3,10 +3,42 @@
 
 {% block extra_css %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/editprofile.css' %}">
+<link rel="stylesheet" href="{% static 'css/editad.css' %}">
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if form_errors %}
+    <div class="alert alert-danger">
+        <h4>Form Errors:</h4>
+        <ul>
+        {% for field, errors in form_errors.items %}
+            {% for error in errors %}
+                <li><strong>{{ field }}:</strong> {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        <ul>
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
 <div class="container">
     <div class="profile-grid">
         <!-- Left Navigation -->
@@ -39,7 +71,7 @@
 
         <!-- Edit Ad Form -->
         <div class="profile-content">
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
                 {% csrf_token %}
                 <div class="profile-header">
                     <h2>Edit Your Listing</h2>
@@ -78,8 +110,18 @@
                     <input type="text" id="size" name="size" value="{{ form.size.value }}" required placeholder="e.g., 12x15 ft">
                 </div>
                 <div class="form-group">
-                    <label for="availability">Availability:</label>
-                    <input type="date" id="availability" name="availability" value="{{ form.available_from.value }}" required>
+                    <label for="available_from">Available From</label>
+                    <input type="date" 
+                           class="form-control" 
+                           id="available_from" 
+                           name="available_from" 
+                           value="{{ form.available_from.value|date:'Y-m-d' }}" 
+                           required>
+                    {% if form.available_from.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.available_from.errors }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     <label for="minimum_term">Minimum Term (months):</label>
@@ -235,4 +277,12 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Make API key available to JavaScript
+    const googleMapsApiKey = '{{ google_maps_api_key|safe }}';
+</script>
+<script src="{% static 'js/edit-ad.js' %}"></script>
 {% endblock %}

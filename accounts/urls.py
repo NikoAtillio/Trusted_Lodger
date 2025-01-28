@@ -22,6 +22,7 @@ urlpatterns = [
     path('upload-images/<int:listing_id>/', views.upload_images, name='upload_images'),
     path('post-ad/<int:listing_id>/', views.post_ad, name='post_ad'),
     path('delete-listing/<int:listing_id>/', views.delete_listing, name='delete_listing'),
+    path('delete-image/<int:image_id>/', views.delete_image, name='delete_image'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

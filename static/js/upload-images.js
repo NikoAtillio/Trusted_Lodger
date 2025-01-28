@@ -13,42 +13,42 @@ class ImageUploadHandler {
     }
 
     initializeEventListeners() {
-        // Drag-and-drop events
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            this.dropZone.addEventListener(eventName, this.preventDefaults);
-        });
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            this.dropZone.addEventListener(eventName, () => {
-                this.dropZone.classList.add('highlight');
+        if (this.dropZone && this.fileInput) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                this.dropZone.addEventListener(eventName, this.preventDefaults);
             });
-        });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            this.dropZone.addEventListener(eventName, () => {
-                this.dropZone.classList.remove('highlight');
+            ['dragenter', 'dragover'].forEach(eventName => {
+                this.dropZone.addEventListener(eventName, () => {
+                    this.dropZone.classList.add('highlight');
+                });
             });
-        });
 
-        this.dropZone.addEventListener('drop', (e) => {
-            const droppedFiles = e.dataTransfer.files;
-            this.handleFiles(droppedFiles);
-        });
+            ['dragleave', 'drop'].forEach(eventName => {
+                this.dropZone.addEventListener(eventName, () => {
+                    this.dropZone.classList.remove('highlight');
+                });
+            });
 
-        // File input change event
-        this.fileInput.addEventListener('change', (e) => {
-            this.handleFiles(e.target.files);
-        });
+            this.dropZone.addEventListener('drop', (e) => {
+                const droppedFiles = e.dataTransfer.files;
+                this.handleFiles(droppedFiles);
+            });
 
-        // Bulk remove button
-        document.getElementById('bulk-remove').addEventListener('click', () => {
-            this.bulkRemove();
-        });
+            this.fileInput.addEventListener('change', (e) => {
+                this.handleFiles(e.target.files);
+            });
+        }
 
-        // Upload button
-        document.getElementById('upload-button').addEventListener('click', () => {
-            this.uploadImages();
-        });
+        const uploadButton = document.getElementById('upload-button');
+        if (uploadButton) {
+            uploadButton.addEventListener('click', () => this.uploadImages());
+        }
+
+        const bulkRemoveButton = document.getElementById('bulk-remove');
+        if (bulkRemoveButton) {
+            bulkRemoveButton.addEventListener('click', () => this.handleBulkRemove());
+        }
     }
 
     initializeSortable() {
@@ -98,13 +98,8 @@ class ImageUploadHandler {
 
     async processFile(file) {
         try {
-            // Show progress
             this.updateProgress(0);
-            
-            // Compress image if needed
             const compressedFile = await this.compressImage(file);
-            
-            // Create preview
             const preview = await this.createPreview(compressedFile);
             
             this.uploadedFiles.add(compressedFile);
@@ -129,7 +124,6 @@ class ImageUploadHandler {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Calculate new dimensions
                     let width = img.width;
                     let height = img.height;
                     const maxDimension = 1920;
@@ -162,59 +156,86 @@ class ImageUploadHandler {
             reader.readAsDataURL(file);
             reader.onloadend = () => {
                 const preview = document.createElement('div');
-                preview.className = 'preview-item'; // Ensure the correct class is applied
+                preview.className = 'preview-item';
                 preview.setAttribute('data-filename', file.name);
                 preview.innerHTML = `
                     <img src="${reader.result}" alt="${file.name}">
                     <div class="preview-controls">
-                        <button type="button" class="remove-btn">&times;</button>
                         <input type="checkbox" class="bulk-select">
                     </div>
                     <div class="preview-progress"></div>
                 `;
-    
-                // Add event listener for the remove button
-                preview.querySelector('.remove-btn').addEventListener('click', () => {
-                    this.uploadedFiles.delete(file);
-                    preview.remove();
+
+                const checkbox = preview.querySelector('.bulk-select');
+                checkbox.addEventListener('change', () => {
+                    preview.classList.toggle('selected', checkbox.checked);
                 });
-    
+
                 resolve(preview);
             };
         });
     }
 
+    handleBulkRemove() {
+        // Handle existing images
+        const existingCheckedBoxes = document.querySelectorAll('.existing-images .bulk-select:checked');
+        existingCheckedBoxes.forEach(checkbox => {
+            const imageId = checkbox.dataset.imageId;
+            if (imageId) {
+                fetch(`/accounts/delete-image/${imageId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        checkbox.closest('.existing-image-item').remove();
+                    }
+                })
+                .catch(error => console.error('Error deleting image:', error));
+            }
+        });
+
+        // Handle new preview images
+        const previewCheckedBoxes = document.querySelectorAll('.image-preview .bulk-select:checked');
+        previewCheckedBoxes.forEach(checkbox => {
+            const previewItem = checkbox.closest('.preview-item');
+            const filename = previewItem.getAttribute('data-filename');
+            this.uploadedFiles.forEach(file => {
+                if (file.name === filename) {
+                    this.uploadedFiles.delete(file);
+                }
+            });
+            previewItem.remove();
+        });
+    }
+
     async uploadImages() {
         const formData = new FormData();
-        const images = document.getElementById('images').files;
-    
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i]);
-        }
-    
+        this.uploadedFiles.forEach(file => {
+            formData.append('images', file);
+        });
+
         try {
             const response = await fetch(window.location.href, {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    'X-CSRFToken': this.getCsrfToken(),
                 }
             });
-    
+
             if (response.ok) {
-                // Parse the JSON response
                 const data = await response.json();
                 alert(data.message || 'Images uploaded successfully!');
-    
-                // Optionally reload the page to show the uploaded images
                 window.location.reload();
             } else {
-                // Handle non-200 responses
                 const errorData = await response.json();
                 alert(errorData.error || 'An error occurred while uploading images.');
             }
         } catch (error) {
-            console.error('Error parsing JSON response:', error);
+            console.error('Error uploading images:', error);
             alert('An unexpected error occurred. Please try again.');
         }
     }
@@ -231,25 +252,16 @@ class ImageUploadHandler {
     updateImageOrder() {
         const previews = this.previewContainer.querySelectorAll('.preview-item');
         previews.forEach((preview, index) => {
-            const filename = preview.getAttribute('data-filename');
-            // You can store the order in a hidden input or data attribute
             preview.setAttribute('data-order', index);
         });
     }
 
-    bulkRemove() {
-        const selected = this.previewContainer.querySelectorAll('.bulk-select:checked');
-        selected.forEach(checkbox => {
-            const preview = checkbox.closest('.preview-item');
-            const filename = preview.getAttribute('data-filename');
-            this.uploadedFiles.delete(Array.from(this.uploadedFiles)
-                .find(file => file.name === filename));
-            preview.remove();
-        });
+    getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
 }
 
-// Initialize the handler
+// Initialize the handler when the document is ready
 document.addEventListener('DOMContentLoaded', () => {
     new ImageUploadHandler();
 });

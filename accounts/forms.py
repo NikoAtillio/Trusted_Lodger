@@ -263,39 +263,6 @@ class ProfileEditForm(forms.ModelForm):
         return profile
 
 
-class RoomListingForm(forms.ModelForm):
-    class Meta:
-        model = RoomListing
-        exclude = ['owner', 'created_at', 'updated_at']
-        widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Enter listing title'}),
-            'description': forms.Textarea(attrs={
-                'rows': 4,
-                'placeholder': 'Describe the property...'
-            }),
-            'minimum_term': forms.NumberInput(attrs={
-                'min': '1',
-                'placeholder': 'Minimum months'
-            }),
-            'maximum_term': forms.NumberInput(attrs={
-                'min': '1',
-                'placeholder': 'Maximum months'
-            }),
-            'min_age': forms.NumberInput(attrs={
-                'min': '18',
-                'placeholder': 'Minimum age'
-            }),
-            'max_age': forms.NumberInput(attrs={
-                'min': '18',
-                'placeholder': 'Maximum age'
-            }),
-            'deposit': forms.NumberInput(attrs={
-                'min': '0',
-                'placeholder': 'Deposit amount'
-            }),
-        }
-
-
 class RoomImageForm(forms.ModelForm):
     class Meta:
         model = RoomImage
@@ -335,28 +302,33 @@ class RoomListingForm(forms.ModelForm):
     minimum_term = forms.IntegerField(min_value=1, required=True, label="Minimum Term (months)")
     maximum_term = forms.IntegerField(min_value=1, required=False, label="Maximum Term (months)")
     deposit = forms.DecimalField(max_digits=10, decimal_places=2, required=True, label="Deposit (£)")
-    bills_included = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=True, label="Bills Included?")
+    bills_included = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=True, label="Bills Included?")    
     furnishings = forms.CharField(max_length=100, required=False, label="Furnishings")
-    parking = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Parking")
-    garden = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Garden/Patio")
-    balcony = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Balcony/Roof Terrace")
-    disabled_access = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Disabled Access")
-    living_room = forms.ChoiceField(choices=[('Shared', 'Shared'), ('Private', 'Private')], required=False, label="Living Room")
-    broadband = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Broadband Included")
+    parking = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Parking")    
+    garden = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Garden/Patio")
+    balcony = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Balcony/Roof Terrace")
+    disabled_access = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Disabled Access")
+    living_room = forms.ChoiceField(choices=[('shared', 'Shared'), ('private', 'Private')], required=False, label="Living Room")
+    broadband = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Broadband Included")
     current_household = forms.IntegerField(min_value=1, required=True, label="Current Household")
     total_rooms = forms.IntegerField(min_value=1, required=True, label="Total # Rooms")
     ages = forms.CharField(max_length=50, required=True, label="Ages")
-    smoker = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Smoker?")
-    pets = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Any Pets?")
+    smoker = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Smoker?")
+    pets = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Any Pets?")
     occupation = forms.CharField(max_length=100, required=True, label="Occupation")
     gender = forms.CharField(max_length=50, required=True, label="Gender")
-    couples_ok = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Couples OK?")
-    smoking_ok = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Smoking OK?")
-    pets_ok = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="Pets OK?")
+    couples_ok = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Couples OK?")
+    smoking_ok = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Smoking OK?")
+    pets_ok = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="Pets OK?")
     occupation_preference = forms.CharField(max_length=100, required=False, label="Preferred Occupation")
-    references_required = forms.ChoiceField(choices=[('Yes', 'Yes'), ('No', 'No')], required=False, label="References Required?")
+    references_required = forms.ChoiceField(choices=[('yes', 'Yes'), ('no', 'No')], required=False, label="References Required?")    
     min_age = forms.IntegerField(min_value=18, required=True, label="Min Age")
     max_age = forms.IntegerField(min_value=18, required=True, label="Max Age")
+    available_from = forms.DateField(
+        required=True,
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label="Available From"
+    )
 
     class Meta:
         model = RoomListing
@@ -369,6 +341,10 @@ class RoomListingForm(forms.ModelForm):
             'couples_ok', 'smoking_ok', 'pets_ok', 'occupation_preference',
             'references_required', 'min_age', 'max_age'
         ]
+        
+    class Meta:
+        model = RoomListing
+        exclude = ['owner', 'created_at', 'updated_at', 'availability'] # Using available_from instead
 
     def clean_available_from(self):
         available_from = self.cleaned_data.get('available_from')
@@ -384,3 +360,12 @@ class RoomListingForm(forms.ModelForm):
         if maximum_term and minimum_term and maximum_term < minimum_term:
             raise ValidationError("Maximum term cannot be less than minimum term.")
         return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Convert available_from to string format for availability field
+        if self.cleaned_data.get('available_from'):
+            instance.availability = self.cleaned_data['available_from'].strftime('%Y-%m-%d')
+        if commit:
+            instance.save()
+        return instance
