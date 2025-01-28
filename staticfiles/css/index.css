@@ -52,117 +52,6 @@
     --max-width: 1200px;
 }
 
-/* Add these styles to your existing index.css */
-
-/* General Styles */
-.homepage-wrapper {
-    width: 100%;
-}
-
-/* Section Container */
-.section-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* CTA Button */
-.cta-button {
-    display: inline-block;
-    padding: 1rem 2rem;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.cta-button:hover {
-    background-color: var(--dark-bg);
-}
-
-/* Features Section */
-.feature {
-    background-color: var(--secondary-color);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.feature h3 {
-    color: var(--dark-bg);
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-}
-
-.feature p {
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-}
-
-/* Process Section Enhancements */
-.process-section {
-    background-color: #f8f9fa;
-}
-
-.step {
-    background-color: var(--secondary-color);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.step img {
-    max-width: 200px;
-    height: auto;
-    margin: 0 auto 1.5rem;
-    display: block;
-}
-
-.step h2 {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.step h3 {
-    color: var(--dark-bg);
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-}
-
-.step p {
-    color: var(--text-color);
-    line-height: 1.6;
-}
-
-/* About Section Enhancements */
-.about-section h3 {
-    max-width: 800px;
-    margin: 0 auto 1.5rem;
-    line-height: 1.8;
-    color: var(--text-color);
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .section-container {
-        padding: 0 15px;
-    }
-
-    .feature, .step {
-        padding: 1.5rem;
-    }
-
-    .step img {
-        max-width: 150px;
-    }
-}
-
 /* About Section */
 .about-section {
     padding: var(--spacing-lg) 0;
@@ -341,4 +230,38 @@
 .feature,
 .step {
     animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Add this after your existing styles */
+.cta-button, .auth-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover, .auth-button:hover {
+    background-color: var(--dark-bg);
+    color: var(--secondary-color);
+}
+
+.learn-more {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: var(--secondary-color);
+    text-decoration: none;
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    margin: 10px;
+    transition: all 0.3s ease;
+}
+
+.learn-more:hover {
+    background-color: var(--secondary-color);
+    color: var(--dark-bg);
 }
