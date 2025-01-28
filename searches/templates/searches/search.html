@@ -36,55 +36,71 @@
         <h2>Find Your Perfect Roommate!</h2>
         <p>Use our platform to connect with potential roommates.</p>
         <form id="main-search-form" action="{% url 'searches:search_results' %}" method="get" class="search-widget-form">
-            <div class="form-group">
-                <label for="location-main">Location</label>
-                <input type="text" id="location-main" name="location" placeholder="e.g., Bristol" />
-                <div id="map" class="map-container"></div> <!-- Google Maps API -->
+            <div class="main-search-layout">
+                <!-- Left Column: Location and Map -->
+                <div class="location-map-column">
+                    <div class="form-group">
+                        <label for="location-main">Location</label>
+                        <input type="text" id="location-main" name="location" placeholder="e.g., Bristol" />
+                        <div id="map" class="map-container"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Property Details -->
+                <div class="property-details-column">
+                    <div class="form-group">
+                        <label for="property_type">Property Type</label>
+                        <select name="property_type" id="property_type">
+                            <option value="">Any</option>
+                            <option value="Flat">Flat</option>
+                            <option value="House">House</option>
+                            <option value="Studio">Studio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="move_in_date">Move-in Date</label>
+                        <input type="date" name="move_in_date" id="move_in_date" />
+                    </div>
+                    <div class="form-group">
+                        <label for="min_stay">Min Stay (months)</label>
+                        <input type="number" name="min_stay" id="min_stay" placeholder="e.g., 6" />
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="room_size">Room Size</label>
-                <select name="room_size" id="room_size">
-                    <option value="any">Any</option>
-                    <option value="Single">Single</option>
-                    <option value="Double">Double</option>
-                </select>
+
+            <!-- Additional Search Criteria -->
+            <div class="additional-criteria">
+                <div class="form-group">
+                    <label for="room_size">Room Size</label>
+                    <select name="room_size" id="room_size">
+                        <option value="any">Any</option>
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="min_rent">Min Rent (£)</label>
+                    <input type="number" name="min_rent" id="min_rent" placeholder="e.g., 500" />
+                </div>
+                <div class="form-group">
+                    <label for="max_rent">Max Rent (£)</label>
+                    <input type="number" name="max_rent" id="max_rent" placeholder="e.g., 1000" />
+                </div>
             </div>
-            <div class="form-group">
-                <label for="min_rent">Min Rent (£)</label>
-                <input type="number" name="min_rent" id="min_rent" placeholder="e.g., 500" />
+
+            <!-- Search Controls -->
+            <div class="search-controls">
+                <button type="submit" class="button button--wide">Search</button>
+                <div class="form-group sort-group">
+                    <select name="sort_by" id="sort_by">
+                        <option value="">Relevance</option>
+                        <option value="price_low_to_high">Price: Low to High</option>
+                        <option value="price_high_to_low">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                        <option value="location">Location</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="max_rent">Max Rent (£)</label>
-                <input type="number" name="max_rent" id="max_rent" placeholder="e.g., 1000" />
-            </div>
-            <div class="form-group">
-                <label for="property_type">Property Type</label>
-                <select name="property_type" id="property_type">
-                    <option value="">Any</option>
-                    <option value="Flat">Flat</option>
-                    <option value="House">House</option>
-                    <option value="Studio">Studio</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="move_in_date">Move-in Date</label>
-                <input type="date" name="move_in_date" id="move_in_date" />
-            </div>
-            <div class="form-group">
-                <label for="min_stay">Min Stay (months)</label>
-                <input type="number" name="min_stay" id="min_stay" placeholder="e.g., 6" />
-            </div>
-            <div class="form-group">
-                <label for="sort_by">Sort By</label>
-                <select name="sort_by" id="sort_by">
-                    <option value="">Relevance</option>
-                    <option value="price_low_to_high">Price: Low to High</option>
-                    <option value="price_high_to_low">Price: High to Low</option>
-                    <option value="newest">Newest</option>
-                    <option value="location">Location</option>
-                </select>
-            </div>
-            <button type="submit" class="button button--wide">Search</button>
         </form>
     </main>
 </div>

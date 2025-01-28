@@ -1,74 +1,103 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/index.css' %}"> <!-- Linking index.css -->
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+<!-- Linking index.css -->
+{% endblock %} {% block content %}
 <div class="homepage-wrapper">
-   <!-- Hero Section -->
-<section class="hero">
+  <!-- Hero Section -->
+  <section class="hero">
     <div class="hero-content">
-        <h1>Welcome To Trusted Lodger!</h1>
-        <p>Use our platform to connect with potential roommates.</p>
-        <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up</a>
+      <h1>Welcome To Trusted Lodger!</h1>
+      <p>Use our platform to connect with potential roommates.</p>
+      <a href="{% url 'accounts:register' %}" class="cta-button">Sign Up</a>
     </div>
-</section>
+  </section>
 
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="section-container">
+      <h2>About Trusted Lodger</h2>
+      <h3>
+        Discover Trusted Lodger, the UK-based online platform that redefines
+        homesharing by connecting lodgers with homesharers in a truly innovative
+        way. With our AI-powered matching system, we pair individuals based on
+        personality types and lifestyle preferences, ensuring harmonious living
+        situations right from the start. Our unique approach not only saves time
+        and money but also removes the anxiety of moving in with incompatible
+        housemates.
+      </h3>
+      <br />
+      <h3>
+        Whether you're a young professional, a student, or a senior seeking
+        intergenerational living arrangements, Trusted Lodger offers a diverse
+        range of options to suit your needs. Join us and experience the peace of
+        mind that comes with finding like-minded individuals and creating a
+        comfortable, welcoming living environment.
+      </h3>
+    </div>
+  </section>
 
-    <!-- About Section -->
-    <section class="about-section">
-        <div class="section-container">
-            <h2>About Trusted Lodger</h2>
-            <p>Learn more about our mission to connect people and enhance communities.</p>
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="section-container">
+      <div class="feature">
+        <!-- Image in CSS as background image -->
+        <h3>For Tenants</h3>
+        <p>
+          Explore verified listings and find the perfect place to call home.
+        </p>
+        <button class="cta-button">Learn More</button>
+      </div>
+      <div class="feature">
+        <!-- Image in CSS as background image -->
+        <h3>For Landlords</h3>
+        <p>List your property and find your ideal tenants with ease.</p>
+        <button class="cta-button">Learn More</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section class="process-section">
+    <div class="section-container">
+      <h2>How Does It Work?</h2>
+      <div class="process-steps">
+        <div class="step">
+          <img src="{% static 'images/african_man.png' %}" alt="Step 1" />
+          <h2>Step 1</h2>
+          <h3>Create Your Profile</h3>
+          <p>
+            Start by creating a profile that highlights who you are and what
+            you’re looking for. Whether you’re a lodger searching for a cozy
+            space or a landlord offering a welcoming home, this step ensures we
+            can help you connect with the right match.
+          </p>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="section-container">
-            <div class="feature">
-                <!-- Image in CSS as background image -->
-                <h3>For Tenants</h3>
-                <p>Explore verified listings and find the perfect place to call home.</p>
-                <button class="cta-button">Learn More</button>
-            </div>
-            <div class="feature">
-                <!-- Image in CSS as background image -->
-                <h3>For Landlords</h3>
-                <p>List your property and find your ideal tenants with ease.</p>
-                <button class="cta-button">Learn More</button>
-            </div>
+        <div class="step">
+          <img src="{% static 'images/older_lady.png' %}" alt="Step 2" />
+          <h2>Step 2</h2>
+          <h3>Search & Find Your Match</h3>
+          <p>
+            Browse through a wide variety of listings tailored to your needs.
+            Use filters to narrow down results by location, budget, or
+            preferences to find homes or lodgers that align with your lifestyle and personality.
+          </p>
         </div>
-    </section>
-
-    <!-- Process Section -->
-    <section class="process-section">
-        <div class="section-container">
-            <h2>How Does It Work?</h2>
-            <div class="process-steps">
-                <div class="step">
-                    <img src="{% static 'images/african_man.png' %}" alt="Step 1">
-                    <h3>Step 1</h3>
-                    <p>Create your profile and get started.</p>
-                </div>
-                <div class="step">
-                    <img src="{% static 'images/older_lady.png' %}" alt="Step 2">
-                    <h3>Step 2</h3>
-                    <p>Search for listings and find your match.</p>
-                </div>
-                <div class="step">
-                    <img src="{% static 'images/white_man.png' %}" alt="Step 3">
-                    <h3>Step 3</h3>
-                    <p>Connect and finalize your choice.</p>
-                </div>
-            </div>
-            <div class="cta-signup">
-                <h2>It's that easy!</h2>
-                <button class="cta-button">Sign Up Now</button>
-            </div>
+        <div class="step">
+          <img src="{% static 'images/white_man.png' %}" alt="Step 3" />
+          <h2>Step 3</h2>
+          <h3>Match & Connect</h3>
+          <p>
+            Our AI-powered matching system pairs you with compatible
+            housemates or lodgers based on your preferences. Once you find a
+            match, connect with them to discuss further details and arrange a
+            viewing or move-in date.</p>
         </div>
-    </section>
+      </div>
+      <div class="cta-signup">
+        <h2>It's that easy!</h2>
+        <button class="cta-button">Sign Up Now</button>
+      </div>
+    </div>
+  </section>
 </div>
 {% endblock %}

@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import JsonResponse
 import json
+from django.conf import settings
 from .forms import AdvancedSearchForm, SearchFilterForm
 from accounts.models import RoomListing, Message
 from .models import SavedSearch, SavedAd
@@ -12,7 +13,11 @@ from .models import SavedSearch, SavedAd
 def search(request):
     """Initial search page with basic search form"""
     form = AdvancedSearchForm()
-    return render(request, 'searches/search.html', {'form': form})
+    context = {
+        'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,  # Pass the API key
+    }
+    return render(request, 'searches/search.html', context)
 
 def search_results(request):
     """Handle search results with filters, sorting, and pagination."""
@@ -47,7 +52,7 @@ def search_results(request):
         if max_rent:
             listings = listings.filter(price__lte=max_rent)
         if property_type:
-            listings = listings.filter(property_type__in=property_type)
+            listings = listings.filter(property_type=property_type)
         if keywords:
             listings = listings.filter(description__icontains=keywords)
         if move_in_date:
@@ -65,16 +70,25 @@ def search_results(request):
         elif sort_by == 'location':
             listings = listings.order_by('location')
 
+    else:
+        print("Invalid form submission:", form.errors)  # Debugging invalid form submissions
+
     # Pagination
     paginator = Paginator(listings, 10)  # 10 results per page
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        page_obj = paginator.get_page(paginator.num_pages)
 
     # Context for the template
     context = {
         'form': form,  # Pass the form to the template
         'listings': page_obj,
-        'total_results': listings.count(),
+        'total_results': paginator.count,  # Use paginator.count for efficiency
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,  # Pass the API key
     }
 
     return render(request, 'searches/search_results.html', context)
